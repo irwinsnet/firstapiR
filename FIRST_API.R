@@ -35,9 +35,9 @@ library("jsonlite")
 library("XML")
 
 # Server URLs and other parameters
-.staging_url = 'https://frc-staging-api.firstinspires.org'
-.production_url = 'https://frc-api.firstinspires.org'
-.version = 'v2.0'
+.staging_url = "https://frc-staging-api.firstinspires.org"
+.production_url = "https://frc-api.firstinspires.org"
+.version = "v2.0"
 
 
 # GetSession() =================================================================
@@ -153,7 +153,20 @@ GetDistricts <- function(session) {
 #' frc_data <- GetEvents(sn, team = 5803))
 #' frc_data <- GetEvents(sn, team = 360, district = 'PNW')
 #' frc_data <- GetEvents(sn, district = FALSE))
-GetEvents <- function(session, team = NULL, district = NULL) {
+GetEvents <- function(session, event = NULL, team = NULL,
+                      district = NULL, excludeDistrict = NULL) {
+  # Check for unallowed combinations of arguments.
+  if(!is.null(event) && (!is.null(team) || !is.null(district)) ||
+                              !is.null(excludeDistrict))
+    stop("If you specify an event, you cannot specify any other arguments.")
+  if(!is.null(district) && !is.null(excludeDistrict))
+    stop("You cannot specify both the district and excludeDistrict arguments.")
+  
+  event_args <- list(eventCode = event, teamNumber = team,
+                    districtCode = district, excludeDistrict = excludeDistrict)
+  
+  url <- .AddHTTPArgs("events", event_args)
+
   # Assemble URL
   url <- 'events'
   
@@ -912,6 +925,22 @@ GetAwardsList <- function(session) {
 }
 
 
+# .BuildURL() ==================================================================
+.AddHTTPArgs <- function(url, http_args) {
+  res <- url
+  
+  first_arg <- TRUE
+  
+  for(idx in 1:length(http_args)) {
+    if(!is.null(http_args[[idx]])) {
+      res <- paste(res, if(first_arg) '?' else '&', sep = '')
+      res <- paste(res, names(http_args)[idx], "=", http_args[idx], sep="")
+      first_arg <- FALSE
+    }
+  }
+  return(res)
+}
+
 # .GetHTTP() ===================================================================
 #' Send an HTTP request
 #' 
@@ -932,8 +961,8 @@ GetAwardsList <- function(session) {
 #'   the right of the season. For example,
 #'   \code{'events?teamNumber=team&districtCode=district}.
 #'
-#' @return Returns either XML text, JSON text, or an R data frame, depending on
-#'   the value of session$format.
+#' @return Returns either JSON text, an XML::XMLNode object, or an R data frame,
+#'   depending on the value of session$format.
 #' @export
 #'
 #' @examples
@@ -956,14 +985,10 @@ GetAwardsList <- function(session) {
   r <- GET(url, add_headers(.headers = headers))
 
   # Check HTTP Response Status Code
-  switch(toString(status_code(r)),
-         '400' = stop("HTTP Status 400: Incorrect URL syntax"),
-         '401' = stop("HTTP Status 401: Invalid Authorization Header"),
-         '404' = stop("HTTP Status 404: Nonexistent Event Code"),
-         '500' = stop("HTTP Status 500: Internal Server Error"),
-         '501' = stop("HTTP Status 501: Request Did Not Match API Pattern"),
-         '503' = stop("HTTP Status 503: Server is Temporarily Unavailable"))
+  if(status_code(r) != 200) stop(paste(status_code(r), content(r, "text"),
+                                       sep=": "))
 
+  # Format results based on session$format setting.
   result <- switch(tolower(session$format),
                    'json' = prettify(content(r, "text")),
                    'xml' = {
@@ -972,5 +997,5 @@ GetAwardsList <- function(session) {
                    },
                    data.frame(fromJSON(content(r, "text"))))
 
-  result
+  return(result)
 }
