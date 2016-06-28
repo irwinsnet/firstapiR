@@ -156,8 +156,8 @@ GetDistricts <- function(session) {
 GetEvents <- function(session, event = NULL, team = NULL,
                       district = NULL, excludeDistrict = NULL) {
   # Check for unallowed combinations of arguments.
-  if(!is.null(event) && (!is.null(team) || !is.null(district)) ||
-                              !is.null(excludeDistrict))
+  if(!is.null(event) && (!is.null(team) || !is.null(district) ||
+                              !is.null(excludeDistrict)))
     stop("If you specify an event, you cannot specify any other arguments.")
   if(!is.null(district) && !is.null(excludeDistrict))
     stop("You cannot specify both the district and excludeDistrict arguments.")
@@ -167,81 +167,6 @@ GetEvents <- function(session, event = NULL, team = NULL,
   
   url <- .AddHTTPArgs("events", event_args)
 
-  # Assemble URL
-  url <- 'events'
-  
-  # Add optional parameters
-  first_arg <- TRUE
-  if(!is.null(team)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'teamNumber=', team, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(district)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    if(district != FALSE)
-      url <- paste(url, 'districtCode=', district, sep = '')
-      else url <- paste(url, 'excludeDistrict=true', sep = '')
-    first_arg <- FALSE
-  }
-  
-  # Send HTTP request
-  events <- .GetHTTP(session, url)
-  
-  # Turn categorical columns into factors
-  events$Events.type <- factor(events$Events.type)
-  events$Events.districtCode <- factor(events$Events.districtCode)
-  events$Events.stateprov <- factor(events$Events.stateprov)
-  events$Events.country <- factor(events$Events.country)
-  events$Events.timezone <- factor(events$Events.timezone)
-  
-  return(events)
-}
-
-
-# GetEvent() ===================================================================
-#' Get details for a single event.
-#' 
-#' Returns details for the FIRST competition specified by the \code{event_code}
-#' parameter. Use the \code{GetEvents()} function to find the event code.
-#' 
-#' See the \emph{Event Listings} section of the FIRST API documentation. The
-#' URL format is:
-#' \code{https://frc-api.firstinspires.org/v2.0/season/events?eventCode=PNCMP}
-#'
-#' @param session A session list created with \code{GetSession()}.
-#' @param event Case insensitive event code (see \code{GetEvents()}).
-#'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      Events.code: character
-#'      Events.divisionCode: character
-#'      Events.name: character
-#'      Events.type: factor ('Regional', 'DistrictEvent',
-#'        'DistrictChampionship', 'ChampionshipSubdivision',
-#'        'ChampionshipDivision', 'Championship', 'Offseason')
-#'      Events.districtCode: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
-#'        'PNW')
-#'      Events.venue: character
-#'      Events.city: character
-#'      Events.stateprov: factor
-#'      Events.country: factor
-#'      Events.timezone: factor
-#'      Events.dateStart: character
-#'      Events.dateEnd: character
-#'      Events.eventCount: integer
-#' @export
-#'
-#' @examples
-#' sn <- GetSession(username, key)
-#' frc_data <- GetEvent <- GetEvent('CMP')
-#' frc_data <- GetEvent <- GetEvent('CMP-ARCHIMEDES')
-#' frc_data <- GetEvent <- GetEvent('WAAMV')
-#' frc_data <- GetEvent <- GetEvent('PNCMP')
-GetEvent <- function(session, event) {
-  # Assemble URL
-  url <- paste('events?eventCode=', event, sep="")
-  
   # Send HTTP request
   events <- .GetHTTP(session, url)
   
@@ -925,21 +850,31 @@ GetAwardsList <- function(session) {
 }
 
 
-# .BuildURL() ==================================================================
+# .AddHTTPArgs() ==================================================================
 .AddHTTPArgs <- function(url, http_args) {
   res <- url
   
   first_arg <- TRUE
   
   for(idx in 1:length(http_args)) {
+    # Skip NULL arguments
     if(!is.null(http_args[[idx]])) {
       res <- paste(res, if(first_arg) '?' else '&', sep = '')
+      
+      # Convert logical arguments to character values "true" or "false"
+      if(is.logical(http_args[[idx]]))
+         if(http_args[[idx]])
+           http_args[[idx]] <- "true"
+         else
+           http_args[[idx]] <- "false"
+         
       res <- paste(res, names(http_args)[idx], "=", http_args[idx], sep="")
       first_arg <- FALSE
     }
   }
   return(res)
 }
+
 
 # .GetHTTP() ===================================================================
 #' Send an HTTP request
