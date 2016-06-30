@@ -76,6 +76,36 @@ GetSession <- function(username, key,
 }
 
 
+# GetSeason() ==================================================================
+#' Get high-level information on a particular FRC season.
+#' 
+#' Returns information for the season specified in the session list (see
+#' documentation for the GetSession function for additional details.)
+#' 
+#' See the \emph{Season Summary} section of the FIRST API documentation for
+#' additional details. The URL format is:
+#' \code{https://frc-api.firstinspires.org/v2.0/season}
+#' 
+#' @return JSON or XML formatted text, or an R data frame.
+#'  data.frame column names and classes:
+#'    eventCount: integer
+#'    gameName: factor
+#'    kickoff: factor
+#'    rookieStart: integer
+#'    teamCount: integer
+#'    FRCChampionships.name: character
+#'    FRCChampionships.startDate: character
+#'    FRCChampionships.location: character
+#'    
+#'  @exp
+#' 
+#'  @examples
+#'  sn <- GetSession(username, key, season = 2015)
+#'  summary <- GetSeason(sn)
+GetSeason <- function(session) {
+  .GetHTTP(session, "")
+}
+
 # GetDistricts() ===============================================================
 #' Get a list of FIRST districts.
 #' 
@@ -90,8 +120,8 @@ GetSession <- function(username, key,
 #'   
 #' @return A data.frame, json list, or xml list.
 #'    data.frame column names and classes:
-#'      districts.code: character
-#'      districts.name: character
+#'      code: character
+#'      name: character
 #'      districtCount: integer
 #' @exp
 #' 
@@ -100,7 +130,14 @@ GetSession <- function(username, key,
 #' districts <- GetDistricts(sn)
 GetDistricts <- function(session) {
   url <- 'districts'
-  return(.GetHTTP(session, url))
+  districts <- .GetHTTP(session, url)
+  
+  # Skip rest of function for XML or JSON results
+  if(sn$format != "data.frame") return(districts)
+  
+  # Shorten the column names to reduce amount of typing required.
+  names(districts) <- .TrimColNames(names(districts))
+  return(districts)
 }
 
 
@@ -130,22 +167,22 @@ GetDistricts <- function(session) {
 #'   
 #' @return A data.frame, json list, or xml list.
 #'    data.frame column names and classes:
-#'      Events.code: character
-#'      Events.divisionCode: character
-#'      Events.name: character
-#'      Events.type: factor ('Regional', 'DistrictEvent',
+#'      code: character
+#'      divisionCode: character
+#'      name: character
+#'      type: factor ('Regional', 'DistrictEvent',
 #'        'DistrictChampionship', 'ChampionshipSubdivision',
 #'        'ChampionshipDivision', 'Championship', 'Offseason')
-#'      Events.districtCode: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
+#'      districtCode: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
 #'        'PNW')
-#'      Events.venue: character
-#'      Events.city: character
-#'      Events.stateprov: factor
-#'      Events.country: factor
-#'      Events.timezone: factor
-#'      Events.dateStart: character
-#'      Events.dateEnd', character
-#'      Events.eventCount: integer
+#'      venue: character
+#'      city: character
+#'      stateprov: factor
+#'      country: factor
+#'      timezone: factor
+#'      dateStart: character
+#'      dateEnd', character
+#'      eventCount: integer
 #' @export
 #' 
 #' @examples
@@ -170,12 +207,14 @@ GetEvents <- function(session, event = NULL, team = NULL,
   # Send HTTP request
   events <- .GetHTTP(session, url)
   
-  # Turn categorical columns into factors
-  events$Events.type <- factor(events$Events.type)
-  events$Events.districtCode <- factor(events$Events.districtCode)
-  events$Events.stateprov <- factor(events$Events.stateprov)
-  events$Events.country <- factor(events$Events.country)
-  events$Events.timezone <- factor(events$Events.timezone)
+  # Skip rest of function for XML or JSON results
+  if(sn$format != "data.frame") return(events)
+  
+  # Shorten the column names to reduce amount of typing required.
+  names(events) <- .TrimColNames(names(events))
+
+  events <- .FactorColumns(events, c("type", "districtCode", "stateprov",
+                                     "country", "timezone"))
   
   return(events)
 }
@@ -933,4 +972,18 @@ GetAwardsList <- function(session) {
                    data.frame(fromJSON(content(r, "text"))))
 
   return(result)
+}
+
+
+# .TrimColNames() ==============================================================
+.TrimColNames <- function(col_names) {
+  sub("\\w+\\.", "", col_names, perl = TRUE)
+}
+
+
+# .FactorColumns() =============================================================
+.FactorColumns <- function(df, cols) {
+  for(fc in cols)
+    df[[fc]] <- factor(df[[fc]])
+  return(df)
 }
