@@ -106,6 +106,7 @@ GetSeason <- function(session) {
   .GetHTTP(session, "")
 }
 
+
 # GetDistricts() ===============================================================
 #' Get a list of FIRST districts.
 #' 
@@ -213,10 +214,117 @@ GetEvents <- function(session, event = NULL, team = NULL,
   # Shorten the column names to reduce amount of typing required.
   names(events) <- .TrimColNames(names(events))
 
+  # Convert categorical coluns to factor data types.
   events <- .FactorColumns(events, c("type", "districtCode", "stateprov",
                                      "country", "timezone"))
   
   return(events)
+}
+
+
+# GetTeams() ===================================================================
+#' Get details for many teams.
+#' 
+#' The FIRST team listing API response will be broken up into several pages if
+#' the number of teams in the response exceeds 65, with a separate HTTP request
+#' required for each page. If the dataframe format is specified, then
+#' \code{GetTeams()} makes this transparent to the user. \code{GetTeams()} will
+#' determine the number of pages in the response, conduct an HTTP request to
+#' obtain each page, and merge all pages into a single dataframe. For the xml
+#' and json formats, \code{GetTeams()} will return a list of xml or json
+#' responses.
+#' 
+#' See the \emph{Team Listings} section of the FIRST API documentation. The
+#' URL format is:
+#' \code{https://frc-api.firstinspires.org/v2.0/season/teams&eventCode=event
+#' ?districtCode=district?state=state?page=2}
+#'
+#' @param session A session list created with \code{GetSession()}.
+#' @param event A FIRST API event code (see \code{GetEvents()}). If event is
+#'   specified, \code{GetTeams()} will filter results to all teams
+#'   particpating in the specified event. Optional.
+#' @param district The FIRST API district code (see \code{GetDistricts()}). If
+#'   disctrict is specified, \code{GetTeams()} will filter results to all teams
+#'   in the specified district.
+#' @param state A state name, spelled out entirely (i.e., 'Idaho', \emph{not}
+#'   'ID'). If state is specified, \code{GetTeams()} will filter results to all
+#'   teams in the specified state.
+#'
+#' @return If the data.frame format is specified (i.e., \code{session$format ==
+#'   'data.frame'}), returns all teams in a single data frame. If the json or
+#'   xml formates are specified, returns a list of json or xml responses, with
+#'   the length of the list being the same as the number of pages in the
+#'   response.
+#'    data.frame column names and classes:
+#'      teamNumber: character
+#'      nameFull: character
+#'      nameShort: character
+#'      city: character
+#'      stateProv: factor
+#'      country: factor
+#'      website: character
+#'      rookieYear: integer
+#'      robotName: character
+#'      districtCode: factor
+#' @export
+#'
+#' @examples
+#' sn <- GetSession(username, key)
+#' GetTeams(state = 'California')
+#' GetTeams(district = 'FIM')
+#' GetTeams(event = 'CMP-CARVER')
+GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
+                      state = NULL, page = NULL) {
+  # Check for unallowed combinations of arguments.
+  if(!is.null(team) && (!is.null(event) || !is.null(district) ||
+                         !is.null(state)))
+    stop("If you specify a team, you cannot specify any other arguments.")
+  
+  # Assemble URL
+  team_args <- list(teamNumber = team, eventCode = event,
+                    districtCode = district, state = state, page = page)
+  url <- .AddHTTPArgs("teams", team_args)
+  
+  # FIRST teams API can return multiple pages, and each page requires a separate
+  # HTTP request, so results will be stored in a list containing one list item
+  # for each page.
+  teams <- list()
+  
+  # Send HTTP request and get first page of data.
+  teams[[1]] <- .GetHTTP(session, url)
+  
+  # Skip remainder of function for XML or JSON formats.
+  if(sn$format != "data.frame") return(teams[[1]])
+  
+  # Get total number of pages
+  pages <- teams[[1]]$pageTotal[1]
+  
+  # If results consist of more than one page, send an HTTP request to get each
+  # page, storing each page of results in the list.
+  if(pages > 1) {
+    for(page in 2:pages) {
+      team_args$page <- page
+      url <- .AddHTTPArgs("teams", team_args)
+      teams[[page]] = .GetHTTP(session, url)
+    }
+    
+    # For data frames, merge all pages into one data frame.
+    if(sn$format == 'data.frame') {
+      teams_df <- teams[[1]]
+      for(page in 2:pages) {
+        teams_df <- merge(teams_df, teams[[page]], all = TRUE)
+      }
+      teams <- teams_df
+    }
+  } else teams <- teams[[1]] # For xml and json, return the list of pages.
+  
+  # Shorten the column names to reduce amount of typing required.
+  names(teams) <- .TrimColNames(names(teams))
+
+  # Convert categorical coluns to factor data types.
+  teams <- .FactorColumns(teams, c("districtCode", "stateprov", "country"))
+  
+  return(teams)
 }
 
 
@@ -351,178 +459,6 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
   sched$tournamentLevel <- factor(sched$tournamentLevel)
   
   return(sched)
-}
-
-
-# GetTeam() ====================================================================
-#' Get details for a single team.
-#' 
-#' See the \emph{Team Listings} section of the FIRST API documentation. The
-#' URL format is:
-#' \code{https://frc-api.firstinspires.org/v2.0/season/teams
-#' &teamNumber=team?page=2}
-#'
-#' @param session A session list created with \code{GetSession()}.
-#' @param team Four digit team number.
-#'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      teamNumber: character
-#'      nameFull: character
-#'      nameShort: character
-#'      city: character
-#'      stateProv: factor
-#'      country: factor
-#'      website: character
-#'      rookieYear: integer
-#'      robotName: character
-#'      districtCode: factor
-#' @export
-#'
-#' @examples
-#' sn <- GetSession(username, key)
-#' GetTeam(sn, 2930)
-GetTeam <- function(session, team) {
-  url <- paste('teams?teamNumber=', team, sep = '')
-  team <- .GetHTTP(session, url)
-  
-  # Remove unneeded columns
-  team$teamCountTotal <- NULL
-  team$teamCountPage <- NULL
-  team$pageCurrent <- NULL
-  team$pageTotal <- NULL
-  
-  # Remove "team." from start of remaining column names
-  names(team) <- substr(names(team), 7, 255)
-  
-  # Set column data types.
-  team$teamNumber <- as.character(team$teamNumber)
-  team$stateProv <- factor(team$stateProv)
-  team$country <- factor(team$country)
-  team$districtCode <- factor(team$districtCode)
-  
-  return(team)
-}
-
-
-# GetTeams() ===================================================================
-#' Get details for many teams.
-#' 
-#' The FIRST team listing API response will be broken up into several pages if
-#' the number of teams in the response exceeds 65, with a separate HTTP request
-#' required for each page. If the dataframe format is specified, then
-#' \code{GetTeams()} makes this transparent to the user. \code{GetTeams()} will
-#' determine the number of pages in the response, conduct an HTTP request to
-#' obtain each page, and merge all pages into a single dataframe. For the xml
-#' and json formats, \code{GetTeams()} will return a list of xml or json
-#' responses.
-#' 
-#' See the \emph{Team Listings} section of the FIRST API documentation. The
-#' URL format is:
-#' \code{https://frc-api.firstinspires.org/v2.0/season/teams&eventCode=event
-#' ?districtCode=district?state=state?page=2}
-#'
-#' @param session A session list created with \code{GetSession()}.
-#' @param event A FIRST API event code (see \code{GetEvents()}). If event is
-#'   specified, \code{GetTeams()} will filter results to all teams
-#'   particpating in the specified event. Optional.
-#' @param district The FIRST API district code (see \code{GetDistricts()}). If
-#'   disctrict is specified, \code{GetTeams()} will filter results to all teams
-#'   in the specified district.
-#' @param state A state name, spelled out entirely (i.e., 'Idaho', \emph{not}
-#'   'ID'). If state is specified, \code{GetTeams()} will filter results to all
-#'   teams in the specified state.
-#'
-#' @return If the data.frame format is specified (i.e., \code{session$format ==
-#'   'data.frame'}), returns all teams in a single data frame. If the json or
-#'   xml formates are specified, returns a list of json or xml responses, with
-#'   the length of the list being the same as the number of pages in the
-#'   response.
-#'    data.frame column names and classes:
-#'      teamNumber: character
-#'      nameFull: character
-#'      nameShort: character
-#'      city: character
-#'      stateProv: factor
-#'      country: factor
-#'      website: character
-#'      rookieYear: integer
-#'      robotName: character
-#'      districtCode: factor
-#' @export
-#'
-#' @examples
-#' sn <- GetSession(username, key)
-#' GetTeams(state = 'California')
-#' GetTeams(district = 'FIM')
-#' GetTeams(event = 'CMP-CARVER')
-GetTeams <- function (session, event = NULL, district = NULL, state = NULL) {
-  # Assemble URL
-  url <- 'teams'
-  
-  # Add optional parameters
-  first_arg <- TRUE
-  if(!is.null(event)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'eventCode=', event, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(district)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'districtCode=', district, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(state)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'state=', state, sep = '')
-    first_arg <- FALSE
-  }
-  
-  # FIRST teams API can return multiple pages, and each page requires a separate
-  # HTTP request, so results will be stored in a list containing one list item
-  # for each page.
-  teams <- list()
-  
-  # Send HTTP request and get first page of data.
-  teams[[1]] <- .GetHTTP(session, url)
-  
-  # Get total number of pages
-  pages <- teams[[1]]$pageTotal[1]
-  
-  # If results consist of more than one page, send an HTTP request to get each
-  # page, storing each page of results in the list.
-  if(pages > 1) {
-    for(page in 2:pages) {
-      if(page == 2) {
-        url <- paste(url, if(first_arg) '?' else '&', sep = '')
-        first_arg <- FALSE
-        url <- paste(url, 'page=', page, sep = '')
-      } else
-        substr(url, nchar(url), nchar(url)) <- as.character(page)
-      teams[[page]] = .GetHTTP(session, url)
-    }
-    
-    # For data frames, merge all pages into one data frame.
-    if(sn$format == 'data.frame') {
-      teams_df <- teams[[1]]
-      for(page in 2:pages) {
-        teams_df <- merge(teams_df, teams[[page]], all = TRUE)
-      }
-      teams <- teams_df
-    }
-  } else teams <- teams[[1]] # For xml and json, return the list of pages.
-  
-  # Remove "team." from start of remaining column names
-  names(teams)[substr(names(teams), 1, 6)=='teams.'] <- 
-    substr(names(teams)[substr(names(teams), 1, 6)=='teams.'], 7, 255)
-
-  # Set column data types.
-  teams$teamNumber <- as.character(teams$teamNumber)
-  teams$stateProv <- factor(teams$stateProv)
-  teams$country <- factor(teams$country)
-  teams$districtCode <- factor(teams$districtCode)
-  
-  return(teams)
 }
 
 
