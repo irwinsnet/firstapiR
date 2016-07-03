@@ -267,6 +267,10 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'      rookieYear: integer
 #'      robotName: character
 #'      districtCode: factor
+#'      teamCountTotal: integer
+#'      teamCountPage: integer
+#'      pageCurrent: integer
+#'      pageTotal: integer
 #' @export
 #'
 #' @examples
@@ -323,7 +327,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   names(teams) <- .TrimColNames(names(teams))
 
   # Convert categorical coluns to factor data types.
-  teams <- .FactorColumns(teams, c("districtCode", "stateprov", "country"))
+  teams <- .FactorColumns(teams, c("districtCode", "stateProv", "country"))
   
   return(teams)
 }

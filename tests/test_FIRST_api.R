@@ -49,13 +49,13 @@ test_that(".TrimColNames removes column prefixes", {
 })
 
 test_that(".GetHTTP() returns a non-empty data frame", {
-  sn <- GetSession(username, key, staging = TRUE)
-  dst <- .GetHTTP(sn, 'districts')
+  sess <- GetSession(username, key, staging = TRUE)
+  dst <- .GetHTTP(sess, 'districts')
   expect_equal(class(dst), "data.frame")
   expect_equal(nrow(dst), 8)
   expect_equal(length(dst), 3)
   
-  rm(sn)
+  rm(sess)
 })
 
 test_that(".GetHTTP() throws errors for incorrect input", {
@@ -65,14 +65,14 @@ test_that(".GetHTTP() throws errors for incorrect input", {
                "401: Unable To Determine Authorization Token")
   rm(sn_badkey)
   
-  sn <- GetSession(username, key, staging = TRUE)
-  expect_error(.GetHTTP(sn, "501BadApiPatternCheck"),
+  sess <- GetSession(username, key, staging = TRUE)
+  expect_error(.GetHTTP(sess, "501BadApiPatternCheck"),
                "501: Request Did Not Match Any Current API Pattern")
   expect_error(.GetHTTP(
-    sn, "events?eventCode=404badEventCodeCheck"),
+    sess, "events?eventCode=404badEventCodeCheck"),
                paste("404: No event was found using the Season 2016 ",
                      "and Event Code 404badEventCodeCheck", sep = ""))
-  rm(sn)
+  rm(sess)
   
   sn_badseason <- GetSession(username, key, season = 2014, staging = T)
   expect_error(.GetHTTP(sn_badseason, "districts"),
@@ -91,8 +91,8 @@ test_that(".GetHttp() returns valid JSON and XML", {
 })
 
 test_that("GetSeason() returns a data frame", {
-  sn <- GetSession(username, key, staging = TRUE)
-  season <- GetSeason(sn)
+  sess <- GetSession(username, key, staging = TRUE)
+  season <- GetSeason(sess)
   
   expect_equal(class(season), "data.frame")
   expect_equal(nrow(season), 1)
@@ -101,23 +101,23 @@ test_that("GetSeason() returns a data frame", {
                              "teamCount", "FRCChampionships.name",
                              "FRCChampionships.startDate",
                              "FRCChampionships.location"))
-  rm(sn, season)
+  rm(sess, season)
 })
 
 test_that("GetDistricts() returns a data frame", {
-  sn <- GetSession(username, key, staging = TRUE)
-  dst <- GetDistricts(sn)
+  sess <- GetSession(username, key, staging = TRUE)
+  dst <- GetDistricts(sess)
   
   expect_equal(class(dst), "data.frame")
   expect_equal(nrow(dst), 8)
   expect_equal(length(dst), 3)
   expect_equal(names(dst), c("code", "name", "districtCount"))
-  rm(sn, dst)
+  rm(sess, dst)
 })
 
 test_that("GetEvents() returns data frame", {
-  sn <- GetSession(username, key, staging = TRUE)
-  evt <- GetEvents(sn, team = 1318)
+  sess <- GetSession(username, key, staging = TRUE)
+  evt <- GetEvents(sess, team = 1318)
   expect_equal(class(evt), "data.frame")
   expect_equal(length(evt), 13)
   expect_true(is.factor(evt$type))
@@ -126,18 +126,35 @@ test_that("GetEvents() returns data frame", {
   expect_true(is.factor(evt$country))
   expect_true(is.factor(evt$timezone))
   
-  evt <- GetEvents(sn, event = "WAAMV")
+  evt <- GetEvents(sess, event = "WAAMV")
   expect_equal(nrow(evt), 1)
   expect_equal(evt$code, "WAAMV")
   
-  evt <- GetEvents(sn, excludeDistrict = TRUE)
+  evt <- GetEvents(sess, excludeDistrict = TRUE)
   expect_equal(nrow(evt), 67)
   
-  sn$staging <- FALSE
-  evt <- GetEvents(sn, district = "PNW", team = "1318")
+  sess$staging <- FALSE
+  evt <- GetEvents(sess, district = "PNW", team = "1318")
   expect_equal(nrow(evt), 4)
 
-  rm(sn, evt)
+  rm(sess, evt)
   
+})
+
+test_that("GetTeams() returns a data frame", {
+  sess <- GetSession(username, key, staging = TRUE)
+  tms <- GetTeams(sess, team = 1318)
+  expect_equal(class(tms), "data.frame")
+  expect_equal(length(tms), 14)
+  expect_equal(nrow(tms), 1)
+  expect_true(is.factor(tms$stateProv))
+  expect_true(is.factor(tms$country))
+  expect_true(is.factor(tms$districtCode))
+  
+  tms <- GetTeams(sess, district = "PNW")
+  expect_equal(class(tms), "data.frame")
+  expect_equal(nrow(tms), 158)
+  
+  rm(tms, sess)
 })
 
