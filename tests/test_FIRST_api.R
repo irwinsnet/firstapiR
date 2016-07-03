@@ -12,16 +12,16 @@ test_that("username and key defined", {
 })
 
 test_that("GetSession returns correct list", {
-  sn <- GetSession(username, key)
+  sess<- GetSession(username, key)
   
-  expect_type(sn, "list")
-  expect_equal(sn$username, username)
-  expect_equal(sn$key, key)
-  expect_equal(sn$season, 2016)
-  expect_false(sn$staging)
-  expect_equal(sn$format, "data.frame")
+  expect_type(sess, "list")
+  expect_equal(sess$username, username)
+  expect_equal(sess$key, key)
+  expect_equal(sess$season, 2016)
+  expect_false(sess$staging)
+  expect_equal(sess$format, "data.frame")
   
-  rm(sn)
+  rm(sess)
 })
 
 test_that("Version and URL variables are correct", {

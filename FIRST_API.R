@@ -138,6 +138,7 @@ GetDistricts <- function(session) {
   
   # Shorten the column names to reduce amount of typing required.
   names(districts) <- .TrimColNames(names(districts))
+  
   return(districts)
 }
 
