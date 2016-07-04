@@ -24,10 +24,7 @@
 #' with version 1.0.
 
 
-#todo: Extract add optional parameters code to private function??
-#todo: Check results from all functions and shorten compound column names
-# where appropriate.
-#todo: Set appropriate columns to factors.
+#todo: extract response header data and add to data.frame attributes.
 
 library("base64enc")
 library("httr")
@@ -137,7 +134,7 @@ GetDistricts <- function(session) {
   if(sn$format != "data.frame") return(districts)
   
   # Shorten the column names to reduce amount of typing required.
-  districts <- .TrimColNames(districts)
+  names(districts) <- .TrimColNames(names(districts))
   
   return(districts)
 }
@@ -213,7 +210,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
   if(sn$format != "data.frame") return(events)
   
   # Shorten the column names to reduce amount of typing required.
-  events <- .TrimColNames(events)
+  names(events) <- .TrimColNames(names(events))
 
   # Convert categorical coluns to factor data types.
   events <- .FactorColumns(events, c("type", "districtCode", "stateprov",
@@ -324,7 +321,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   } else teams <- teams[[1]] # For xml and json, return the list of pages.
   
   # Shorten the column names to reduce amount of typing required.
-  teams <- .TrimColNames(teams)
+  names(teams) <- .TrimColNames(names(teams))
 
   # Convert categorical coluns to factor data types.
   teams <- .FactorColumns(teams, c("districtCode", "stateProv", "country"))
@@ -377,13 +374,13 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' GetSchedule(sn, 'PNCMP', team=4911, end=25)
 GetSchedule <- function (session, event, level = 'qual', team = NULL,
                          start = NULL, end = NULL, expand.rows = FALSE) {
-  # Build URL
-  url <- paste('schedule/', event, '?tournamentLevel=', level, sep="")
+  # Check for prohibited combinations of arguments
+  # Not required because GetSchedule has no prohibited combinations.
   
-  # Add optional arguments
-  if(!is.null(team)) url <- paste(url, '&teamNumber=', team, sep = '')
-  if(!is.null(start)) url <- paste(url, '&start=', start, sep = '')
-  if(!is.null(end)) url <- paste(url, '&end=', end, sep = '')
+  # Build URL
+  sched_args <- list(tournamentLevel = level, teamNumber = team, start = start,
+                     end = end)
+  url <- .AddHTTPArgs(paste("schedule", event, sep = "/"), sched_args)
   
   # Send HTTP request
   sched <- .GetHTTP(session, url)
@@ -391,7 +388,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
   if(session$format != 'data.frame') return(sched)  
   
   # Delete 'Schedule.' from the beginning of column names.
-  names(sched) <- substr(names(sched), 10, 100)
+  names(sched) <- .TrimColNames(names(sched))
   
   # The FIRST API returns nested schedule data nested data. The remainder of 
   # this function is necessary to either extract the nested data into new
@@ -460,8 +457,9 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
     }
   }
   # Convert categorical columns to factors
-  sched$field <- factor(sched$field)
-  sched$tournamentLevel <- factor(sched$tournamentLevel)
+  sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team", 
+                                   "Blue1.team", "Blue2.team", "Blue3.team",
+                                   "field", "tournamentLevel"))
   
   return(sched)
 }
@@ -911,14 +909,17 @@ GetAwardsList <- function(session) {
                      xmlRoot(xmlTreeParse(raw_xml, asText = TRUE))
                    },
                    data.frame(fromJSON(content(r, "text"))))
+  
+  if(session$format == "data.frame" && length(result) == 0)
+    stop("No records returned.")
 
   return(result)
 }
 
 
 # .TrimColNames() ==============================================================
-.TrimColNames <- function(df) {
-  names(df) <- sub("\\w+\\.", "", names(df), perl = TRUE)
+.TrimColNames <- function(col_names) {
+  sub("\\w+\\.", "", col_names, perl = TRUE)
 }
 
 
