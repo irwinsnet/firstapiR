@@ -137,7 +137,7 @@ GetDistricts <- function(session) {
   if(sn$format != "data.frame") return(districts)
   
   # Shorten the column names to reduce amount of typing required.
-  names(districts) <- .TrimColNames(names(districts))
+  districts <- .TrimColNames(districts)
   
   return(districts)
 }
@@ -213,7 +213,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
   if(sn$format != "data.frame") return(events)
   
   # Shorten the column names to reduce amount of typing required.
-  names(events) <- .TrimColNames(names(events))
+  events <- .TrimColNames(events)
 
   # Convert categorical coluns to factor data types.
   events <- .FactorColumns(events, c("type", "districtCode", "stateprov",
@@ -324,7 +324,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   } else teams <- teams[[1]] # For xml and json, return the list of pages.
   
   # Shorten the column names to reduce amount of typing required.
-  names(teams) <- .TrimColNames(names(teams))
+  teams <- .TrimColNames(teams)
 
   # Convert categorical coluns to factor data types.
   teams <- .FactorColumns(teams, c("districtCode", "stateProv", "country"))
@@ -917,8 +917,8 @@ GetAwardsList <- function(session) {
 
 
 # .TrimColNames() ==============================================================
-.TrimColNames <- function(col_names) {
-  sub("\\w+\\.", "", col_names, perl = TRUE)
+.TrimColNames <- function(df) {
+  names(df) <- sub("\\w+\\.", "", names(df), perl = TRUE)
 }
 
 

@@ -1,0 +1,72 @@
+library("testthat")
+
+context("FIRST_R Season Data Functions")
+
+test_that("GetSeason() returns a data frame", {
+  sess <- GetSession(username, key, staging = TRUE)
+  season <- GetSeason(sess)
+  
+  expect_equal(class(season), "data.frame")
+  expect_equal(nrow(season), 1)
+  expect_equal(length(season), 8)
+  expect_equal(names(season), c("eventCount", "gameName", "kickoff", "rookieStart",
+                             "teamCount", "FRCChampionships.name",
+                             "FRCChampionships.startDate",
+                             "FRCChampionships.location"))
+  rm(sess, season)
+})
+
+test_that("GetDistricts() returns a data frame", {
+  sess <- GetSession(username, key, staging = TRUE)
+  dst <- GetDistricts(sess)
+  
+  expect_equal(class(dst), "data.frame")
+  expect_equal(nrow(dst), 8)
+  expect_equal(length(dst), 3)
+  expect_equal(names(dst), c("code", "name", "districtCount"))
+  rm(sess, dst)
+})
+
+test_that("GetEvents() returns data frame", {
+  sess <- GetSession(username, key, staging = TRUE)
+  evt <- GetEvents(sess, team = 1318)
+  expect_equal(class(evt), "data.frame")
+  expect_equal(length(evt), 13)
+  expect_true(is.factor(evt$type))
+  expect_true(is.factor(evt$districtCode))
+  expect_true(is.factor(evt$stateprov))
+  expect_true(is.factor(evt$country))
+  expect_true(is.factor(evt$timezone))
+  
+  evt <- GetEvents(sess, event = "WAAMV")
+  expect_equal(nrow(evt), 1)
+  expect_equal(evt$code, "WAAMV")
+  
+  evt <- GetEvents(sess, excludeDistrict = TRUE)
+  expect_equal(nrow(evt), 67)
+  
+  sess$staging <- FALSE
+  evt <- GetEvents(sess, district = "PNW", team = "1318")
+  expect_equal(nrow(evt), 4)
+
+  rm(sess, evt)
+  
+})
+
+test_that("GetTeams() returns a data frame", {
+  sess <- GetSession(username, key, staging = TRUE)
+  tms <- GetTeams(sess, team = 1318)
+  expect_equal(class(tms), "data.frame")
+  expect_equal(length(tms), 14)
+  expect_equal(nrow(tms), 1)
+  expect_true(is.factor(tms$stateProv))
+  expect_true(is.factor(tms$country))
+  expect_true(is.factor(tms$districtCode))
+  
+  tms <- GetTeams(sess, district = "PNW")
+  expect_equal(class(tms), "data.frame")
+  expect_equal(nrow(tms), 158)
+  
+  rm(tms, sess)
+})
+
