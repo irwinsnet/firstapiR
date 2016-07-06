@@ -373,7 +373,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' GetSchedule(sn, 'WAAMV', level='playoff')
 #' GetSchedule(sn, 'PNCMP', team=4911, end=25)
 GetSchedule <- function (session, event, level = 'qual', team = NULL,
-                         start = NULL, end = NULL, expand.rows = FALSE) {
+                         start = NULL, end = NULL, expand_rows = FALSE) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
   
@@ -394,7 +394,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
   # this function is necessary to either extract the nested data into new
   # columns or to add rows so that the scheule data can be saved as csv data.
   
-  if(expand.rows) {
+  if(expand_rows) {
     # Add columns for team number, station, and surrogate
     sched['teamNumber'] <- vector(mode = "integer", length = nrow(sched))
     sched['station'] <- vector(mode = "character", length = nrow(sched))
@@ -405,22 +405,22 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
     sched$Teams <- NULL
     
     # Expand the matches data frame so there are six rows per match.
-    xSched <- sched[sort(rep(1:nrow(sched), 6)), ]
+    sched <- sched[sort(rep(1:nrow(sched), 6)), ]
     
     # Fill in team and station data.
     for(mtch in 1:length(teams)) {
       for(tm in 1:6) {
         mrow <- (mtch-1)*6 + tm
-        xSched$teamNumber[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
-        xSched$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
-        xSched$surrogate[[mrow]] <- teams[[mtch]][["surrogate"]][[tm]]
+        sched$teamNumber[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
+        sched$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
+        sched$surrogate[[mrow]] <- teams[[mtch]][["surrogate"]][[tm]]
       }
     }
     
-    xSched$teamNumber <- factor(xSched$teamNumber)
-    xSched$station <- factor(xSched$station)
+    # Transform categorical columns into factors.
+    sched <- .FactorColumns(sched, c("teamNumber", "station", "field",
+                                     "tournamentLevel"))
     
-    sched <- xSched
   } else {
     # Add columns for each operating station
     cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")  
@@ -451,16 +451,10 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
     sched$Teams <- NULL
     
     # Convert categorical data to factors
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      sched[[cname.team]] <- factor(sched[[cname.team]])
+    sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team", 
+                                     "Blue1.team", "Blue2.team", "Blue3.team",
+                                     "field", "tournamentLevel"))
     }
-  }
-  # Convert categorical columns to factors
-  sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team", 
-                                   "Blue1.team", "Blue2.team", "Blue3.team",
-                                   "field", "tournamentLevel"))
-  
   return(sched)
 }
 
