@@ -459,6 +459,124 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 }
 
 
+# GetHybridSchedule() ===========================================================
+GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
+                              end = NULL, expand_rows = FALSE) {
+  # Check for prohibited combinations of arguments
+  # Not required because GetSchedule has no prohibited combinations.
+  
+  # Build URL
+  sched_args <- list(start = start, end = end)
+  url <- .AddHTTPArgs(paste("schedule", event, level, "hybrid", sep = "/"),
+                      sched_args)
+  
+  # Send HTTP request
+  sched <- .GetHTTP(session, url)
+  
+  if(session$format != 'data.frame') return(sched)  
+  
+  # Delete 'Schedule.' from the beginning of column names.
+  names(sched) <- .TrimColNames(names(sched))
+  
+  # The FIRST API returns nested schedule data nested data. The remainder of 
+  # this function is necessary to either extract the nested data into new
+  # columns or to add rows so that the scheule data can be saved as csv data.
+  
+  if(expand_rows) {
+    # Add columns for team number, station, and surrogate
+    sched['teamNumber'] <- vector(mode = "integer", length = nrow(sched))
+    sched['station'] <- vector(mode = "character", length = nrow(sched))
+    sched['surrogate'] <- vector(mode = "logical", length = nrow(sched))
+    sched['disqualified'] <- vector(mode = "logical", length = nrow(sched))
+    
+    # Add combined scores columns
+    sched['scoreFinal'] <- vector(mode = "integer", length = nrow(sched))
+    sched['scoreFoul'] <- vector(mode = "integer", length = nrow(sched))
+    sched['scoreAuto'] <- vector(mode = "integer", length = nrow(sched))
+    
+    # Extract teams and delete nested teams column.
+    teams <- sched$Teams
+    sched$Teams <- NULL
+    
+    # Expand the matches data frame so there are six rows per match.
+    sched <- sched[sort(rep(1:nrow(sched), 6)), ]
+    
+    # Fill in team and station data.
+    for(mtch in 1:length(teams)) {
+      for(tm in 1:6) {
+        mrow <- (mtch-1)*6 + tm
+        sched$teamNumber[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
+        sched$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
+        sched$surrogate[[mrow]] <- teams[[mtch]][["surrogate"]][[tm]]
+        sched$surrogate[[mrow]] <- teams[[mtch]][["dq"]][[tm]]
+        
+        # Extract red and blue scores into combined scoreing columns
+        if(substr(sched$station[mrow], 1, 1) == 'R')
+          score <- 'scoreRed'
+        else
+          score <- 'scoreBlue'
+        sched$scoreFinal[[mrow]] <- sched[[paste(score, 'Final', sep="")]][[mrow]]
+        sched$scoreFoul[[mrow]] <- sched[[paste(score, 'Foul', sep = "")]][[mrow]]
+        sched$scoreAuto[[mrow]] <- sched[[paste(score, 'Auto', sep = "")]][[mrow]]
+      }
+    }
+
+    # Remove redundent score columns
+    sched$scoreRedFinal <- NULL
+    sched$scoreBlueFinal <- NULL
+    sched$scoreRedFoul <- NULL
+    sched$scoreBlueFoul <- NULL
+    sched$scoreRedAuto <- NULL
+    sched$scoreBlueAuto <- NULL
+    
+    # Transform categorical columns into factors.
+    sched <- .FactorColumns(sched, c("teamNumber", "station",
+                                     "tournamentLevel"))
+    
+  } else {
+    # Add columns for each operating station
+    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")  
+    for(col in cols) {
+      cname.team <- paste(col, "team", sep = ".")
+      sched[cname.team] <- vector(mode = "character",
+                                  length = length(sched$matchNumber))
+      cname.surr <- paste(col, "surrogate", sep = ".")
+      sched[cname.surr] <- vector(mode = "logical",
+                                  length = length(sched$matchNumber))
+      cname.dq <- paste(col, "dq", sep = ".")
+      sched[cname.dq] <- vector(mode = "logical", length = nrow(sched))
+    }
+    
+    # Extract data from nested Teams column and insert into new operating station
+    # columns
+    for(mtch in 1:length(sched$matchNumber)){
+      for(tm in 1:6){
+        station <- sched$Teams[[mtch]][["station"]][[tm]]
+        team <- sched$Teams[[mtch]][["teamNumber"]][[tm]]
+        surrogate <- sched$Teams[[mtch]][["surrogate"]][[tm]]
+        dq <- sched$Teams[[mtch]][["dq"]][[tm]]
+        
+        cname.team <- paste(station, "team", sep = ".")
+        cname.surrogate <- paste(station, "surrogate", sep = ".")
+        cname.dq <- paste(station, "dq", sep = ".")
+        
+        sched[mtch, cname.team] <- team
+        sched[mtch, cname.surrogate] <- surrogate
+        sched[mtch, cname.dq] <- dq
+      }
+    }
+    sched$Teams <- NULL
+    
+    # Convert categorical data to factors
+    sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team",
+                                     "Blue1.team", "Blue2.team", "Blue3.team",
+                                     "tournamentLevel"))
+  }
+  return(sched)
+  
+}
+
+
 # GetMatchResults() ============================================================
 #' Get Match results
 #' 
@@ -533,33 +651,11 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
   # Assemble URL
   url <- paste('matches', event, sep='/')
   
-  # Add optional parameters
-  if(!is.null(level)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'tournamentLevel=', team, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(team)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'teamNumber=', team, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(match)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'matchNumber=', team, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(start)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'start=', team, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(end)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'end=', team, sep = '')
-    first_arg <- FALSE
-  }
-  
+  # Assemble URL
+  team_args <- list(tournamentLevel = level, teamNumber = team,
+                    matchNumber = match, start = start, end = end)
+  url <- .AddHTTPArgs(paste("matches", event, sep = "/"), team_args)
+
   # Send HTTP request and get data.
   matches <- .GetHTTP(session, url)
 

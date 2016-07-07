@@ -9,18 +9,22 @@ test_that("GetSchedule() returns a data frame", {
   expect_equal(class(sched), "data.frame")
   expect_equal(nrow(sched), 128)
   expect_equal(length(sched), 17)
-  
+})
+
+test_that("GetSchedule() expand_rows arg produces expanded data frame.", {
+  sess <- GetSession(username, key)
   sched <- GetSchedule(sess, event = "PNCMP", expand_rows = TRUE)
   expect_equal(class(sched), "data.frame")
   expect_equal(nrow(sched), 768)
   expect_equal(length(sched), 8)
-  
+})
+
+test_that("GetSchedule start, end, and level arguments work.", {
+  sess <- GetSession(username, key)
   sched <- GetSchedule(sess, event = "WAAMV", start = 10, end = 30)
   expect_equal(nrow(sched), 21)
   
   sched <- GetSchedule(sess, event = "WAAMV", level = "playoff")
   expect_equal(nrow(sched), 16)
-  expect_equal(sched$tournamentLevel[[1]], "Playoff")
-  
-  rm(sess, sched)
+  expect_equal(levels(sched$tournamentLevel[1]), "Playoff")
 })
