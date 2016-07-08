@@ -459,7 +459,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 }
 
 
-# GetHybridSchedule() ===========================================================
+# GetHybridSchedule() ==========================================================
 GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
                               end = NULL, expand_rows = FALSE) {
   # Check for prohibited combinations of arguments
@@ -649,12 +649,9 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
     stop("You cannot specify start or end if you specify match.")
 
   # Assemble URL
-  url <- paste('matches', event, sep='/')
-  
-  # Assemble URL
-  team_args <- list(tournamentLevel = level, teamNumber = team,
+  result_args <- list(tournamentLevel = level, teamNumber = team,
                     matchNumber = match, start = start, end = end)
-  url <- .AddHTTPArgs(paste("matches", event, sep = "/"), team_args)
+  url <- .AddHTTPArgs(paste("matches", event, sep = "/"), result_args)
 
   # Send HTTP request and get data.
   matches <- .GetHTTP(session, url)
@@ -765,41 +762,29 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
     stop("You cannot specify start or end if you specify match.")
   
   # Assemble URL
+  score_args <- list(teamNumber = team, matchNumber = match, start = start,
+                     end = end)
+  url <- .AddHTTPArgs(paste("scores", event, level, sep = "/"), score_args)
+  
+  # Assemble URL
   url <- paste('scores', event, level, sep='/')
-  
-  # Add optional parameters
-  if(!is.null(team)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'teamNumber=', team, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(match)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'matchNumber=', team, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(start)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'start=', team, sep = '')
-    first_arg <- FALSE
-  }
-  if(!is.null(end)) {
-    url <- paste(url, if(first_arg) '?' else '&', sep = '')
-    url <- paste(url, 'end=', team, sep = '')
-    first_arg <- FALSE
-  }
-  
+
   # Send HTTP request and get data.
   scores <- .GetHTTP(session, url)
   
   if(session$format != 'data.frame') return(scores)
   
   # Delete 'MatcheScores.' from the beginning of column names.
-  names(scores) <- substr(names(scores), 13, 100)
+  names(scores) <- .TrimColNames(names(scores))
   
-  xScores <- scores[sort(rep(1:nrow(scores), 2)), ]
+  # Get names of nested Alliance columns.
+  alliance_col_names <- names(scores$Alliances[[1]])
+  for(col_name in alliance_col_names) {
+    scores[col_name] <- vector(mode = "character", length = nrow(scores))
+  }
   
-  xScores
+  #scores <- scores[sort(rep(1:nrow(scores), 2)), ]
+  return(scores)
   
   # alliances <- scores$Alliances
   # Although it appears to be a data.frame, alliances is actually a list of 
