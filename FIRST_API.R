@@ -37,7 +37,7 @@ library("XML")
 .default_season <- as.integer(format(Sys.Date(), "%Y"))
 
 
-# GetSession() =================================================================
+#  GetSession() ================================================================
 #' Create a FIRST API session.
 #' 
 #' Every FIRST API function requires a session as its first parameter.
@@ -101,6 +101,8 @@ GetSession <- function(username, key,
 #' additional details. The URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season}
 #' 
+#' @param session A session list created with \code{GetSession()}.
+#' 
 #' @return JSON or XML formatted text, or an R data frame.
 #'  data.frame column names and classes:
 #'    eventCount: integer
@@ -122,7 +124,7 @@ GetSeason <- function(session) {
 }
 
 
-# GetDistricts() ===============================================================
+#  GetDistricts() ==============================================================
 #' Get a list of FIRST districts.
 #' 
 #' This function returns a list of all current districs, including their titles 
@@ -158,7 +160,7 @@ GetDistricts <- function(session) {
 }
 
 
-# GetEvents() ==================================================================
+#  GetEvents() =================================================================
 #' Get details for multiple events.
 #' 
 #' Returns details for multiple FRC events.
@@ -173,14 +175,24 @@ GetDistricts <- function(session) {
 #' the competition season. If \code{team} is specified, the results are filtered
 #' to only the events in which the FRC team participated. Similarly, if
 #' \code{district} is specified, the results are filtered to only the events
-#' that occurred within the specified district. If \code{district} is set to
-#' \code{FALSE}, no district events will be included in the results (setting
-#' \code{district} to \code{FALSE} corresponds to setting excludeDistrict to
-#' \code{TRUE} in the HTTP request).
+#' that occurred within the specified district. If \code{exclude_district} is
+#' set to TRUE, then only non-district events are returned. The \code{district}
+#' and \code{exclude_district} events may not be specified at the same time.
 #' 
 #' @param session A session list created with \code{GetSession()}.
-#' @param team Four digit team number. Optional
-#' @param district The district code (see \code{GetDistricts()}). Optional.
+#' @param event A FIRST API event code. If event is
+#'   specified, \code{GetEvents()} will return results only for the specified
+#'   event. Optional.
+#' @param team Integer team number. Optional
+#' @param district The FIRST API district code (see \code{GetDistricts()}). If
+#'   disctrict is specified, \code{GetTeams()} will filter results to all teams
+#'   in the specified district.
+#' @param exclude_district Logical value, if set to \code{TRUE}, district
+#'   events are excluded from results. Optional.
+#'   
+#' Throws an error if team argument is specified and any other arguments are
+#' specified, or if both the district and exclude_district arguments are
+#' specified.
 #'   
 #' @return A data.frame, json list, or xml list.
 #'    data.frame column names and classes:
@@ -208,16 +220,16 @@ GetDistricts <- function(session) {
 #' frc_data <- GetEvents(sn, team = 360, district = 'PNW')
 #' frc_data <- GetEvents(sn, district = FALSE))
 GetEvents <- function(session, event = NULL, team = NULL,
-                      district = NULL, excludeDistrict = NULL) {
+                      district = NULL, exclude_district = NULL) {
   # Check for unallowed combinations of arguments.
   if(!is.null(event) && (!is.null(team) || !is.null(district) ||
-                              !is.null(excludeDistrict)))
+                              !is.null(exclude_district)))
     stop("If you specify an event, you cannot specify any other arguments.")
-  if(!is.null(district) && !is.null(excludeDistrict))
-    stop("You cannot specify both the district and excludeDistrict arguments.")
+  if(!is.null(district) && !is.null(exclude_district))
+    stop("You cannot specify both the district and exclude_district arguments.")
   
   event_args <- list(eventCode = event, teamNumber = team,
-                    districtCode = district, excludeDistrict = excludeDistrict)
+                    districtCode = district, excludeDistrict = exclude_district)
   
   url <- .AddHTTPArgs("events", event_args)
 
@@ -238,7 +250,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 }
 
 
-# GetTeams() ===================================================================
+#  GetTeams() ==================================================================
 #' Get details for many teams.
 #' 
 #' The FIRST team listing API response will be broken up into several pages if
@@ -247,8 +259,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' \code{GetTeams()} makes this transparent to the user. \code{GetTeams()} will
 #' determine the number of pages in the response, conduct an HTTP request to
 #' obtain each page, and merge all pages into a single dataframe. For the xml
-#' and json formats, \code{GetTeams()} will return a list of xml or json
-#' responses.
+#' and json formats, \code{GetTeams()} will return a single page of teams.
 #' 
 #' See the \emph{Team Listings} section of the FIRST API documentation. The
 #' URL format is:
@@ -256,6 +267,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' ?districtCode=district?state=state?page=2}
 #'
 #' @param session A session list created with \code{GetSession()}.
+#' @param team Integer team number. Optional
 #' @param event A FIRST API event code (see \code{GetEvents()}). If event is
 #'   specified, \code{GetTeams()} will filter results to all teams
 #'   particpating in the specified event. Optional.
@@ -265,12 +277,12 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' @param state A state name, spelled out entirely (i.e., 'Idaho', \emph{not}
 #'   'ID'). If state is specified, \code{GetTeams()} will filter results to all
 #'   teams in the specified state.
+#' @param page Integer page number specifying which page of results should be
+#'   returned. Optional. Use only for xml or json formats.
 #'
 #' @return If the data.frame format is specified (i.e., \code{session$format ==
 #'   'data.frame'}), returns all teams in a single data frame. If the json or
-#'   xml formates are specified, returns a list of json or xml responses, with
-#'   the length of the list being the same as the number of pages in the
-#'   response.
+#'   xml formates are specified, returns a single page of json or xml responses.
 #'    data.frame column names and classes:
 #'      teamNumber: character
 #'      nameFull: character
@@ -298,7 +310,11 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && (!is.null(event) || !is.null(district) ||
                          !is.null(state)))
-    stop("If you specify a team, you cannot specify any other arguments.")
+    stop("If you specify a team, you cannot specify any other arguments")
+  if(session$format == "data.frame" && !is.null(page)) {
+    page <- NULL
+    warning("Do not specify GetTeams page argument for data frame format")
+  }
   
   # Assemble URL
   team_args <- list(teamNumber = team, eventCode = event,
@@ -348,7 +364,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 }
 
 
-# GetSchedule() ================================================================
+#  GetSchedule() ===============================================================
 #' Get the match schedule for a specific event.
 #' 
 #' See the \emph{Event Schedule} section of the FIRST API documentation. The
@@ -359,7 +375,10 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' @param session A session list created with \code{GetSession()}.
 #' @param event The FIRST API event code.
 #' @param level Either \code{qual} or \code{playoff}. Defaults to \code{qual}.
-#' @param expand.rows A logical value. Optiona, defaults to FALSE. If FALSE, the
+#' @param team
+#' @param start
+#' @param end
+#' @param expand_rows A logical value. Optiona, defaults to FALSE. If FALSE, the
 #'   dataframe will include one row for each scheduled match, with a different
 #'   column for each team. If TRUE, there will be six rows for each match, with
 #'   each row listing one assigned team and their station.
@@ -477,7 +496,27 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 }
 
 
-# GetHybridSchedule() ==========================================================
+#  GetHybridSchedule() =========================================================
+#' Get the match schedule and results.
+#' 
+#' For matches that have been played, returns the teams assigned to the match
+#' and the match results. If the mtach has not yet been played, the assigned
+#' teams and schedule data is returned, but the resutls fields are blank.
+#' 
+#' See the \emph{Hybrid Schedule} section of the FIRST API documentation. The
+#' URL format is:
+#' \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event/level/
+#' hybrid?start=start&end=end}
+#' 
+#' @param session A session list created with \code{GetSession()}.
+#' @param event The FIRST API event code.
+#' @param level Either \code{qual} or \code{playoff}. Defaults to \code{qual}.
+#' @param expand_rows A logical value. Optiona, defaults to FALSE. If FALSE, the
+#'   dataframe will include one row for each scheduled match, with a different
+#'   column for each team. If TRUE, there will be six rows for each match, with
+#'   each row listing one assigned team and their station.
+#'   
+#'   
 GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
                               end = NULL, expand_rows = FALSE) {
   # Check for prohibited combinations of arguments

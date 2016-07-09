@@ -39,7 +39,7 @@ test_that("GetEvents() returns data frame", {
   expect_equal(nrow(evt), 1)
   expect_equal(evt$code, "WAAMV")
   
-  evt <- GetEvents(sess, excludeDistrict = TRUE)
+  evt <- GetEvents(sess, exclude_district = TRUE)
   expect_equal(nrow(evt), 67)
   
   sess$staging <- FALSE
@@ -59,6 +59,13 @@ test_that("GetTeams() returns a data frame", {
   tms <- GetTeams(sess, district = "PNW")
   expect_equal(class(tms), "data.frame")
   expect_equal(nrow(tms), 158)
+})
+
+test_that("GetTeams() throws errors or warnings for incorrect arguments", {
+  expect_error(GetTeams(sess, team = 1318, event = "WAAMV"),
+              "If you specify a team, you cannot specify any other arguments")
+  expect_warning(GetTeams(sess, district = "PNW", page=2), 
+              "Do not specify GetTeams page argument for data frame format")
 })
 
 rm(sess)
