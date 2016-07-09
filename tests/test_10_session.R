@@ -1,6 +1,6 @@
 library("testthat")
 
-context("FIRST_R Sessions and Variables.")
+context("FIRST R Sessions and Variables.")
 
 test_username <- "username"
 test_key <- "key"

@@ -2,8 +2,9 @@ library("testthat")
 
 context("FIRST_R Season Data Functions")
 
+sess <- GetSession(username, key, staging = TRUE)
+
 test_that("GetSeason() returns a data frame", {
-  sess <- GetSession(username, key, staging = TRUE)
   season <- GetSeason(sess)
   
   expect_equal(class(season), "data.frame")
@@ -13,22 +14,18 @@ test_that("GetSeason() returns a data frame", {
                              "teamCount", "FRCChampionships.name",
                              "FRCChampionships.startDate",
                              "FRCChampionships.location"))
-  rm(sess, season)
 })
 
 test_that("GetDistricts() returns a data frame", {
-  sess <- GetSession(username, key, staging = TRUE)
   dst <- GetDistricts(sess)
   
   expect_equal(class(dst), "data.frame")
   expect_equal(nrow(dst), 8)
   expect_equal(length(dst), 3)
   expect_equal(names(dst), c("code", "name", "districtCount"))
-  rm(sess, dst)
 })
 
 test_that("GetEvents() returns data frame", {
-  sess <- GetSession(username, key, staging = TRUE)
   evt <- GetEvents(sess, team = 1318)
   expect_equal(class(evt), "data.frame")
   expect_equal(length(evt), 13)
@@ -48,13 +45,9 @@ test_that("GetEvents() returns data frame", {
   sess$staging <- FALSE
   evt <- GetEvents(sess, district = "PNW", team = "1318")
   expect_equal(nrow(evt), 4)
-
-  rm(sess, evt)
-  
 })
 
 test_that("GetTeams() returns a data frame", {
-  sess <- GetSession(username, key, staging = TRUE)
   tms <- GetTeams(sess, team = 1318)
   expect_equal(class(tms), "data.frame")
   expect_equal(length(tms), 14)
@@ -66,7 +59,7 @@ test_that("GetTeams() returns a data frame", {
   tms <- GetTeams(sess, district = "PNW")
   expect_equal(class(tms), "data.frame")
   expect_equal(nrow(tms), 158)
-  
-  rm(tms, sess)
 })
+
+rm(sess)
 

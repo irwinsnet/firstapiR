@@ -91,7 +91,7 @@ GetSession <- function(username, key,
 }
 
 
-# GetSeason() ==================================================================
+#  GetSeason() =================================================================
 #' Get high-level information on a particular FRC season.
 #' 
 #' Returns information for the season specified in the session list (see
@@ -112,7 +112,7 @@ GetSession <- function(username, key,
 #'    FRCChampionships.startDate: character
 #'    FRCChampionships.location: character
 #'    
-#'  @exp
+#'  @export
 #' 
 #'  @examples
 #'  sn <- GetSession(username, key, season = 2015)
@@ -149,7 +149,7 @@ GetDistricts <- function(session) {
   districts <- .GetHTTP(session, url)
   
   # Skip rest of function for XML or JSON results
-  if(sn$format != "data.frame") return(districts)
+  if(session$format != "data.frame") return(districts)
   
   # Shorten the column names to reduce amount of typing required.
   names(districts) <- .TrimColNames(names(districts))
@@ -225,7 +225,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
   events <- .GetHTTP(session, url)
   
   # Skip rest of function for XML or JSON results
-  if(sn$format != "data.frame") return(events)
+  if(session$format != "data.frame") return(events)
   
   # Shorten the column names to reduce amount of typing required.
   names(events) <- .TrimColNames(names(events))
@@ -314,7 +314,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   teams[[1]] <- .GetHTTP(session, url)
   
   # Skip remainder of function for XML or JSON formats.
-  if(sn$format != "data.frame") return(teams[[1]])
+  if(session$format != "data.frame") return(teams[[1]])
   
   # Get total number of pages
   pages <- teams[[1]]$pageTotal[1]
@@ -329,7 +329,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
     }
     
     # For data frames, merge all pages into one data frame.
-    if(sn$format == 'data.frame') {
+    if(session$format == 'data.frame') {
       teams_df <- teams[[1]]
       for(page in 2:pages) {
         teams_df <- merge(teams_df, teams[[page]], all = TRUE)
