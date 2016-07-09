@@ -40,6 +40,15 @@ test_that("GetScores() returns a data frame", {
   expect_equal(names(sc)[5:10], c("robot1Auto", "robot2Auto", "robot3Auto",
                                   "autoBouldersLow", "autoBouldersHigh", 
                                   "teleopBouldersLow"))
+  expect_true(is.factor(sc$robot1Auto))
 })
 
+
+test_that("GetScores() throws errors for incorrect arguments", {
+  expect_error(GetScores(sess, event = "WAELL", team = 4911, match = 1),
+               "You cannot specify both a team and match number")
+  expect_error(GetScores(sess, event = "WAELL", match = 2, start = 1),
+               "You cannot specify start or end if you specify match")
+  
+})
 rm(sess)

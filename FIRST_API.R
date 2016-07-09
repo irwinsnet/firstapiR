@@ -46,15 +46,17 @@ library("XML")
 #' key, season, format, and a boolean value that specifies whether to use
 #' the staging server instead of the production server.
 #'
-#' @param username The username assigned by FIRST.
-#' @param key The authorization key assigned by FIRST.
-#' @param season The 4-digit year. Defaults to the year specified in the
+#' @param username Character The username assigned by FIRST.
+#' @param key Character The authorization key assigned by FIRST.
+#' @param season Integer The 4-digit year. Defaults to the year specified in the
 #' .default_season variable at the top if this file. Must be a 4-digit number
 #'   that is equal to or less than the current year and greater than or equal to
 #'   the current year plus one.
-#' @param format The data format that will be returned by the functions. Can be
-#'   "json", "data.frame", or "xml". Defaults to "data.frame". Case insensitive.
-#' @param staging Set to TRUE to use the staging URL. Defaults to \code{FALSE}.
+#' @param format Character The data format that will be returned by the
+#'   functions. Can be "json", "data.frame", or "xml". Defaults to "data.frame".
+#'   Case insensitive.
+#' @param staging Logical Set to TRUE to use the staging URL. Defaults to
+#'   \code{FALSE}.
 #' 
 #' Throws an error if season, format, or staging arguments are not allowed
 #' values.
@@ -101,7 +103,7 @@ GetSession <- function(username, key,
 #' additional details. The URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season}
 #' 
-#' @param session A session list created with \code{GetSession()}.
+#' @param session Session A session list created with \code{GetSession()}.
 #' 
 #' @return JSON or XML formatted text, or an R data frame.
 #'  data.frame column names and classes:
@@ -134,7 +136,7 @@ GetSeason <- function(session) {
 #' See the \emph{District Listings} section of the FIRST API documentation. The 
 #' URL format is: \code{https://frc-api.firstinspires.org/v2.0/season/districts}
 #' 
-#' @param session A session list created with \code{GetSession()}.
+#' @param session Session A session list created with \code{GetSession()}.
 #'   
 #' @return A data.frame, json list, or xml list.
 #'    data.frame column names and classes:
@@ -179,16 +181,16 @@ GetDistricts <- function(session) {
 #' set to TRUE, then only non-district events are returned. The \code{district}
 #' and \code{exclude_district} events may not be specified at the same time.
 #' 
-#' @param session A session list created with \code{GetSession()}.
-#' @param event A FIRST API event code. If event is
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character A FIRST API event code. If event is
 #'   specified, \code{GetEvents()} will return results only for the specified
 #'   event. Optional.
-#' @param team Integer team number. Optional
-#' @param district The FIRST API district code (see \code{GetDistricts()}). If
-#'   disctrict is specified, \code{GetTeams()} will filter results to all teams
-#'   in the specified district.
-#' @param exclude_district Logical value, if set to \code{TRUE}, district
-#'   events are excluded from results. Optional.
+#' @param team Integer Team number. Optional
+#' @param district Characger The FIRST API district code (see
+#'   \code{GetDistricts()}). If disctrict is specified, \code{GetTeams()} will
+#'   filter results to all teams in the specified district.
+#' @param exclude_district Logical If set to \code{TRUE}, district events are
+#'   excluded from results. Optional.
 #'   
 #' Throws an error if team argument is specified and any other arguments are
 #' specified, or if both the district and exclude_district arguments are
@@ -266,18 +268,18 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' \code{https://frc-api.firstinspires.org/v2.0/season/teams&eventCode=event
 #' ?districtCode=district?state=state?page=2}
 #'
-#' @param session A session list created with \code{GetSession()}.
-#' @param team Integer team number. Optional
-#' @param event A FIRST API event code (see \code{GetEvents()}). If event is
-#'   specified, \code{GetTeams()} will filter results to all teams
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param team Integer Team number. Optional
+#' @param event Character A FIRST API event code (see \code{GetEvents()}). If
+#'   event is specified, \code{GetTeams()} will filter results to all teams
 #'   particpating in the specified event. Optional.
-#' @param district The FIRST API district code (see \code{GetDistricts()}). If
-#'   disctrict is specified, \code{GetTeams()} will filter results to all teams
-#'   in the specified district.
-#' @param state A state name, spelled out entirely (i.e., 'Idaho', \emph{not}
-#'   'ID'). If state is specified, \code{GetTeams()} will filter results to all
-#'   teams in the specified state.
-#' @param page Integer page number specifying which page of results should be
+#' @param district Character The FIRST API district code (see
+#'   \code{GetDistricts()}). If disctrict is specified, \code{GetTeams()} will
+#'   filter results to all teams in the specified district.
+#' @param state Character A state name, spelled out entirely (i.e., 'Idaho',
+#'   \emph{not} 'ID'). If state is specified, \code{GetTeams()} will filter
+#'   results to all teams in the specified state.
+#' @param page Integer Page number specifying which page of results should be
 #'   returned. Optional. Use only for xml or json formats.
 #'
 #' @return If the data.frame format is specified (i.e., \code{session$format ==
@@ -372,13 +374,14 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event?
 #' tournamentLevel=level&teamNumber=team&start=start&end=end}
 #'
-#' @param session A session list created with \code{GetSession()}.
-#' @param event The FIRST API event code.
-#' @param level Either \code{qual} or \code{playoff}. Defaults to \code{qual}.
-#' @param team
-#' @param start
-#' @param end
-#' @param expand_rows A logical value. Optiona, defaults to FALSE. If FALSE, the
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character The FIRST API event code.
+#' @param level Character Either \code{qual} or \code{playoff}. Defaults to
+#'   \code{qual}.
+#' @param team Integer team number. Optional
+#' @param start Integer Earliest match to reuturn
+#' @param end Integer Latest match to return
+#' @param expand_rows A logical value. Optional, defaults to FALSE. If FALSE, the
 #'   dataframe will include one row for each scheduled match, with a different
 #'   column for each team. If TRUE, there will be six rows for each match, with
 #'   each row listing one assigned team and their station.
@@ -386,10 +389,10 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' @return A data.frame, json list, or xml list.
 #'    data.frame column names and classes:
 #'      description: character
-#'      field: factor
+#'      field: character
 #'      tournamentLevel: factor
+#'      matchNumber: integer      
 #'      startTime: character
-#'      matchNumber: integer
 #'      
 #'      If expand.rows == FALSE
 #'        Red1.team, Red2.team, Red3.team: factor
@@ -508,15 +511,44 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #' \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event/level/
 #' hybrid?start=start&end=end}
 #' 
-#' @param session A session list created with \code{GetSession()}.
-#' @param event The FIRST API event code.
-#' @param level Either \code{qual} or \code{playoff}. Defaults to \code{qual}.
-#' @param expand_rows A logical value. Optiona, defaults to FALSE. If FALSE, the
-#'   dataframe will include one row for each scheduled match, with a different
-#'   column for each team. If TRUE, there will be six rows for each match, with
-#'   each row listing one assigned team and their station.
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character The FIRST API event code.
+#' @param level Character Either \code{qual} or \code{playoff}. Defaults to
+#'   \code{qual}. 
+#' @param expand_rows Logical Defaults to FALSE. If FALSE, the dataframe will
+#'   include one row for each scheduled match, with a different column for each
+#'   team. If TRUE, there will be six rows for each match, with each row listing
+#'   one assigned team and their station. Optional
 #'   
-#'   
+#' @return A data.frame, json list, or xml list.
+#'    data.frame column names and classes:
+#'      description: character
+#'      tournamentLevel: factor
+#'      matchNumber: integer      
+#'      startTime: character
+#'      actualStartTime: character
+#'      
+#'      If expand.rows == FALSE
+#'        scoreRedFoul, scoreRedAuto, scoreRedFinal: integer
+#'        scoreBlueFoul, scoreBlueAuto, scoreBlueFinal: integer
+#'        Red1.team, Red2.team, Red3.team: factor
+#'        Blue1.team, Blue2.team, Blue3.team: factor
+#'        Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
+#'        Blue1.surrogate, Blue2.surrogate, Blue3.surrogate: logical
+#'        Red1.dq, Red2.dq, Red3.dq, Blue1.dq, Blue2.dq, Blue3.dq: logical
+#'      If expand.rows == TRUE
+#'        teamNumber: factor
+#'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+#'        scoreFinal, scoreAuto, scoreFoul: integer
+#'        surrogate: logical
+#'        dq: logical
+#'        
+#' @export
+#' 
+#' @examples
+#' sn <- GetSession(username, key)
+#' GetHybridSchedule(sn, event = "ORPHI)
+#' GetHybridSchedule(sn, level = "playoff", start = 3, end = 6)
 GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
                               end = NULL, expand_rows = FALSE) {
   # Check for prohibited combinations of arguments
@@ -634,31 +666,29 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 }
 
 
-# GetMatchResults() ============================================================
+#  GetMatchResults() ============================================================
 #' Get Match results
-#' 
-#' Returns six rows for each match, one row for each team that participated
-#' in the match.
 #' 
 #' See the \emph{Match Results} section of the FIRST API documentation. The
 #' URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season/matches/event
 #' ?tournamentLevel=level&teamNumber=team&matchNumber=match&start=start&end=end}
 #'
-#' @param session A session list created with \code{GetSession()}.
-#' @param event A FIRST API event code (see \code{GetEvents()}).
-#' @param level Either \code{qual} or \code{playoff}. Defaults to \code{qual}.
-#' @param team Four digit team number. Optional. Returns only results for
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character A FIRST API event code (see \code{GetEvents()}).
+#' @param level Character Either \code{qual} or \code{playoff}. Defaults to
+#'   \code{qual}.
+#' @param team Integer Team number. Optional. Returns only results for
 #'   matches in wich the team participated. Cannot specify \code{match} when
 #'   \code{team} is specified.
-#' @param match An integer representing the match number. Optional. Returns
-#'   results for only the specified match. Must specify level when \code{match}
-#'   is specified. Cannot specify \code{team} when \code{match} is specified.
-#' @param start An intger representing the earliest match to return. Optional.
-#'   Must specify level when \code{start} is specified.
-#' @param end An intger representing the latest match to return. Optional.
-#'   Must specify level when \code{end} is specified.
-#' @param expand.rows A logical value. Optiona, defaults to FALSE. If FALSE, the
+#' @param match Integer Returns results for only the specified match. Must
+#'   specify level when \code{match} is specified. Cannot specify \code{team}
+#'   when \code{match} is specified.
+#' @param start Integer Eearliest match to return. Optional. Must specify level
+#'   when \code{start} is specified.
+#' @param end Integer Latest match to return. Optional. Must specify level when
+#'   \code{end} is specified.
+#' @param expand_rows A logical value. Optional, defaults to FALSE. If FALSE, the
 #'   dataframe will include one row for each completed match, with a different
 #'   column for each team. If TRUE, there will be six rows for each match, with
 #'   each row listing one assigned team and their station.
@@ -669,15 +699,11 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #'      description: character
 #'      tournamentLevel: factor
 #'      matchNumber: integer
-#'      scoreRedFinal: integer
-#'      scoreRedFoul: integer
-#'      scoreRedAuto: integer
-#'      scoreBlueFinal: integer
-#'      scoreBlueFoul: integer
-#'      scoreBlueAuto: integer
 #'      postResultTime: character
 #'      
 #'      If expand_rows == FALSE
+#'        scoreRedFinal, scoreRedAuto, scoreRedFoul: integer
+#'        scoreBlueFinal, scoreBlueAuto, scoreBlueFoul: integer
 #'        Red1.team, Red2.team, Red3.team: factor
 #'        Blue1.team, Blue2.team, Blue3.team: factor
 #'        Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
@@ -686,6 +712,8 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #'        teamNumber: factor
 #'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'        surrogate: logical
+#'        scoreFinal, scoreAuto, scoreFoul: integer
+#'        
 #' @export
 #'
 #' @examples
@@ -808,23 +836,76 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
 }
 
 
-# GetScores ====================================================================
-
+#  GetScores ====================================================================
+#' Get detailed match scores.
+#' 
+#' The results vary depending on the season requested. The 2016 data fields are
+#' listed here. See the FIRST API documentation for data fields for prior
+#' seasons. The data frame contains two rows for each match, one for blue
+#' and the other for red.
+#'
+#' See the \emph{Detailed Scores} section of the FIRST API documentation. The
+#' URL format is:
+#' \code{https://frc-api.firstinspires.org/v2.0/season/matches/event/level?
+#' teamNumber=team&matchNumber=match&start=start&end=end}
+#' 
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character A FIRST API event code (see \code{GetEvents()}).
+#' @param level Character Either \code{qual} or \code{playoff}. Defaults to
+#'   \code{qual}.
+#' @param team Integer Team number. Optional. Returns only results for
+#'   matches in wich the team participated. Cannot specify \code{match} when
+#'   \code{team} is specified.
+#' @param match Integer Returns results for only the specified match. Must
+#'   specify level when \code{match} is specified. Cannot specify \code{team}
+#'   when \code{match} is specified.
+#' @param start Integer Eearliest match to return. Optional. Must specify level
+#'   when \code{start} is specified.
+#' @param end Integer Latest match to return. Optional. Must specify level when
+#'   \code{end} is specified.
+#'   
+#' @return A data.frame, json list, or xml list.
+#'    data.frame column names and classes (2016):
+#'      matchLevel: character
+#'      matchNumber: integer
+#'      audienceGroup: character
+#'      alliance: character
+#'      robot1Auto, robot2Auto, robot3Auto: character
+#'      autoBouldersLow, autoBouldersHigh: integer
+#'      teleopBouldersLow, teleopBouldersHigh: integer
+#'      towerFaceA, towerFaceB, towerFaceC: character
+#'      towerEndStrength: integer
+#'      teleopTowerCaptured, teleopDefensesBreached: logical
+#'      position1, position2, position3, position4, position5: character
+#'      position1Crossings, position2Crossings, position3Crossings,
+#'        position4Crossings, position5Crossings: integer
+#'      foulCount, techFoulCount: integer
+#'      autoPoints, autoReachPoints, autoCrossingPoints,
+#'        autoBoulderPoints: integer
+#'      teleopPoints, teleopCrossingPoints, teleopBoulderPoints,
+#'        teleopChallengePoints, teleopScalePoints: integer
+#'      breachPoints, capturePoints: integer
+#'      adustPoints, foulPoints, totalPoints: integer
+#'      
+#' @export
+#' 
+#' @examples
+#' sn <- GetSession(username, key)
+#' GetScores(sn, event = "ARCHIMEDES")
+#' GetScores(sn, event = "WAELL", start = 1, end = 10)
+#' GetScores(sn, event = "WAELL", match = 15)
 GetScores <- function(session, event, level = 'qual', team = NULL,
                               match = NULL, start = NULL, end = NULL) {
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && !is.null(match))
-    stop("You cannot specify both a team and match number.")
+    stop("You cannot specify both a team and match number")
   if(!is.null(match) && (!is.null(start) || !is.null(end)))
-    stop("You cannot specify start or end if you specify match.")
+    stop("You cannot specify start or end if you specify match")
   
   # Assemble URL
   score_args <- list(teamNumber = team, matchNumber = match, start = start,
                      end = end)
   url <- .AddHTTPArgs(paste("scores", event, level, sep = "/"), score_args)
-  
-  # Assemble URL
-  url <- paste('scores', event, level, sep='/')
 
   # Send HTTP request and get data.
   scores <- .GetHTTP(session, url)
@@ -855,9 +936,15 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
   for(mtch in 1:length(alliances)){
     for(col_name in alliance_col_names){
       df_row <- (mtch - 1)*2
-      scores[[col_name]][df_row] <- alliances[[mtch]][[col_name]][[1]]
-      scores[[col_name]][[df_row + 1]] <- alliances[[mtch]][[col_name]][[2]]
+      scores[[col_name]][[df_row + 1]] <- alliances[[mtch]][[col_name]][[1]]
+      scores[[col_name]][[df_row + 2]] <- alliances[[mtch]][[col_name]][[2]]
     }
+  }
+  
+  # Transform categorical columns into factors
+  for(col_name in names(scores)){
+    if(is.character(scores[[col_name]]))
+      scores[[col_name]] <- factor(scores[[col_name]])
   }
   
   # Set row names to be integers.
