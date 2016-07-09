@@ -46,7 +46,8 @@ test_that(".GetHTTP() throws errors for incorrect input", {
                      "and Event Code 404badEventCodeCheck", sep = ""))
   rm(sess)
   
-  sn_badseason <- GetSession(username, key, season = 2014, staging = T)
+  sn_badseason <- GetSession(username, key, staging = T)
+  sn_badseason$season <- 2014
   expect_error(.GetHTTP(sn_badseason, "districts"),
             "400: Season must be between 2015 and the currently active season")
   rm(sn_badseason)

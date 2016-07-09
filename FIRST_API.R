@@ -1,7 +1,7 @@
-# FIRST API OVERVIEW ===========================================================
-#' FIRST API Functions
+#  OVERVIEW: FRC 1318'S FIRST API R KIT ========================================
+#' FRC 1318'S FIRST API R KIT, VERSION 0.9A
 #' 
-#' These functions will connect to the FIRST API server and download data on 
+#' The R Kit functions will connect to the FIRST API server and download data on 
 #' FIRST Robotics Competition (FRC) teams, events, match results, and awards.
 #' 
 #' The FIRST API accepts formatted hypertext transfer protocol (HTTP) GET 
@@ -11,8 +11,8 @@
 #' HTTP requests, is available at \url{http://docs.frcevents2.apiary.io/#}
 #' 
 #' A username and authorization key are required for connecting to the FIRST
-#' API. To obtain a username and key, join the FIRST Community Developers
-#' project on TeamForge at
+#' API and for using the R Kit. To obtain a username and key, join the FIRST
+#' Community Developers project on TeamForge at
 #' \url{https://usfirst.collab.net/sf/projects/first_community_developers/}
 #' 
 #' These functions return R dataframes by default. Optionally, the functions
@@ -23,53 +23,71 @@
 #' These functions use version 2.0 of the FIRST API. They have not been tested
 #' with version 1.0.
 
-
-#todo: extract response header data and add to data.frame attributes.
-
+# The FIRST API R Kit requires the following R packages. Install these
+# packages before using the R Kit. 
 library("base64enc")
 library("httr")
 library("jsonlite")
 library("XML")
 
 # Server URLs and other parameters
-.staging_url = "https://frc-staging-api.firstinspires.org"
-.production_url = "https://frc-api.firstinspires.org"
-.version = "v2.0"
+.staging_url <- "https://frc-staging-api.firstinspires.org"
+.production_url <- "https://frc-api.firstinspires.org"
+.version <- "v2.0"
+.default_season <- as.integer(format(Sys.Date(), "%Y"))
 
 
 # GetSession() =================================================================
-#' Create a FIRST API session list.
+#' Create a FIRST API session.
 #' 
-#' Every FIRST API function requires a session list as it's first parameter.
+#' Every FIRST API function requires a session as its first parameter.
 #' 
-#' The session list returned by this function contains a named element for each
-#' required or optional paramter. The name is the same as the parameter name.
+#' The session is an R list that contains the FIRST API username, authorization
+#' key, season, format, and a boolean value that specifies whether to use
+#' the staging server instead of the production server.
 #'
 #' @param username The username assigned by FIRST.
 #' @param key The authorization key assigned by FIRST.
-#' @param season The 4-digit year. Defaults to 2016. Must be a 4-digit number
+#' @param season The 4-digit year. Defaults to the year specified in the
+#' .default_season variable at the top if this file. Must be a 4-digit number
 #'   that is equal to or less than the current year and greater than or equal to
-#'   2015.
+#'   the current year plus one.
 #' @param format The data format that will be returned by the functions. Can be
 #'   "json", "data.frame", or "xml". Defaults to "data.frame". Case insensitive.
 #' @param staging Set to TRUE to use the staging URL. Defaults to \code{FALSE}.
+#' 
+#' Throws an error if season, format, or staging arguments are not allowed
+#' values.
 #'
-#' @return A list containing all GetSession parameters.
+#' @return A list containing all GetSession parameters. class: 'Session'
+#' 
 #' @export
 #'
 #' @examples
-#' sn <- GetSession('myUserName', 'myAuthorizationKey)
-#' sn <- GetSession('myUserName', 'myAuthorizationKey, season = 2015)
+#' sn <- GetSession('myUserName', 'myAuthorizationKey')
+#' sn <- GetSession('myUserName', 'myAuthorizationKey', season = 2015)
 #' sn$format <- 'xml'
 GetSession <- function(username, key,
-                  season = 2016,
-                  format = 'data.frame',
+                  season = .default_season,
+                  format = "data.frame",
                   staging = FALSE){
+  # Check for invalid arguments
+  if((season < 2015) || (season > .default_season + 1))
+    stop("season must be an integer between 2015 and next year")
+  if(!(tolower(format) %in% c("data.frame", "xml", "json")))
+    stop("format must be 'data.frame', 'xml', or 'json'")
+  if(!is.logical(staging))
+    stop("staging must be either TRUE or FALSE")
+  
+  # Build Session
   session <- list(username = username,
                   key = key,
                   staging = staging,
                   season = season,
                   format = format)
+  class(session) <- "Session"
+  
+  return(session)
 }
 
 
@@ -620,7 +638,7 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #'      scoreBlueAuto: integer
 #'      postResultTime: character
 #'      
-#'      If expand.rows == FALSE
+#'      If expand_rows == FALSE
 #'        Red1.team, Red2.team, Red3.team: factor
 #'        Blue1.team, Blue2.team, Blue3.team: factor
 #'        Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
@@ -639,7 +657,7 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #' GetMatchResults(sn, 'CMP-ARCHIMEDES', level='qual', start=10, end=20)
 GetMatchResults <- function(session, event, level = NULL, team = NULL,
                             match = NULL, start = NULL, end = NULL,
-                            expand.rows = FALSE) {
+                            expand_rows = FALSE) {
   # Check for unallowed combinations of arguments.
   if((!is.null(match) || !is.null(start) || !is.null(end)) && is.null(level))
     stop("You must specify the level when you specify match, start, or end.")
@@ -664,7 +682,7 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
   # The FIRST API returns nested schedule data. The remainder of this function
   # is necessary to extract the nested data into new rows so that the scheule
   # data can be saved as csv data.
-  if(expand.rows) {
+  if(expand_rows) {
     # Add columns for each operating station
     matches['teamNumber'] <- vector(mode = "integer", length = nrow(matches))
     matches['station'] <- vector(mode = "character", length = nrow(matches))
@@ -777,35 +795,36 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
   # Delete 'MatcheScores.' from the beginning of column names.
   names(scores) <- .TrimColNames(names(scores))
   
+  # Extract nested alliances column from data frame.
+  alliances <- scores$Alliances
+  scores$Alliances <- NULL
+  
+  # Expand data frame to include six rows for each match.
+  scores <- scores[sort(rep(1:nrow(scores), 2)), ]
+  
   # Get names of nested Alliance columns.
-  alliance_col_names <- names(scores$Alliances[[1]])
+  alliance_col_names <- names(alliances[[1]])
   for(col_name in alliance_col_names) {
-    scores[col_name] <- vector(mode = "character", length = nrow(scores))
+    col_type <- if(is.integer(alliances[[1]][[col_name]]))
+      "integer"
+    else
+      "character"
+      scores[col_name] <- vector(mode = col_type, length = nrow(scores))
+  }
+
+  # Extract nested data into new columns
+  for(mtch in 1:length(alliances)){
+    for(col_name in alliance_col_names){
+      df_row <- (mtch - 1)*2
+      scores[[col_name]][df_row] <- alliances[[mtch]][[col_name]][[1]]
+      scores[[col_name]][[df_row + 1]] <- alliances[[mtch]][[col_name]][[2]]
+    }
   }
   
-  #scores <- scores[sort(rep(1:nrow(scores), 2)), ]
+  # Set row names to be integers.
+  row.names(scores) <- 1:nrow(scores)
+  
   return(scores)
-  
-  # alliances <- scores$Alliances
-  # Although it appears to be a data.frame, alliances is actually a list of 
-  # separate data.frames, each consisting of a single column, and each column is
-  # a generic list instead of an atomic vector. This is due to how the
-  # 'jsonlite' package converts nested json text to data.frames. The following
-  # code converts alliances to a single data.frame consisting of atomic vectors.
-  # all.df <- data.frame()
-  # for(col in 1:length(alliances[[1]]))
-  #   all.df[col] <- unlist(alliances[[1]][col])
-
-  # for(col in 1:length(alliances[[1]])) {
-  #   col_name <- names(alliances[[1]][col])
-  #   col_mode <- if(is.integer(alliances[[1]][col, 1])) 'integer' else 'character'
-  #   col_mode <- 'integer'
-  #   xScores[col_name] <- vector(mode = col_mode, length = nrow(xScores))
-  # }
-  # xScores$alliance <- factor(c('Red', 'Blue'))
-  
-  # all.df
-  #xScores
 }
 
 
@@ -970,7 +989,8 @@ GetAwardsList <- function(session) {
   headers <- c(Authorization = auth.header, Accept = format.header)
   
   # Send GET request
-  r <- GET(url, add_headers(.headers = headers))
+  user_agent <- "FRC1318's FIRST_API R Functions, v0.9"
+  r <- GET(url, add_headers(.headers = headers), user_agent(user_agent))
 
   # Check HTTP Response Status Code
   if(status_code(r) != 200) stop(paste(status_code(r), content(r, "text"),
