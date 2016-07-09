@@ -954,7 +954,7 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 }
 
 
-# GetAlliances() ===============================================================
+#  GetAlliances() ==============================================================
 #' Get playoff alliances
 #' 
 #' Returns a list of playoff alliances, including the alliance captains and
@@ -964,11 +964,17 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 #' URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season/alliances/event}
 #'
-#' @param session A session list created with \code{GetSession()}.
-#' @param event Case insensitive event code (see \code{GetEvents()}).
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character Case insensitive event code (see \code{GetEvents()}).
 #'
-#' @return A data frame, XML text, or JSON text, depending on the
-#' sesssion$format setting.
+#' @return A data.frame, json list, or xml list.
+#'    data.frame column names and classes:
+#'      number: integer
+#'      name: character
+#'      captain, round1, round2, round3: integer
+#'      backup, backupReplaced: integer
+#'      count: integer
+#'    
 #' @export
 #'
 #' @examples
@@ -979,10 +985,74 @@ GetAlliances <- function (session, event) {
   url <- paste('alliances/', event, sep="")
   
   # Send HTTP request
-  .GetHTTP(session, url)
+  alliances <- .GetHTTP(session, url)
+  
+  # Skip further processing if result is not a data frame.
+  if(session$format != 'data.frame') return(sched)
+  
+  # Remove prefix from column names.
+  names(alliances) <- .TrimColNames(names(alliances))
+  
+  return(alliances)
 }
 
 
+#  GetRankings() ===============================================================
+#' Get team rankings
+#' 
+#' The results vary depending on the season requested. The 2016 data fields are
+#' listed here. See the FIRST API documentation for data fields for prior
+#' seasons.
+#' 
+#' See the \emph{Event Rankings} section of the FIRST API documentation. The
+#' URL format is:
+#' \code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?
+#' teamNumber=team&top=top}
+#'
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character, Case insensitive event code (see \code{GetEvents()}).
+#' @param team
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character Case insensitive event code (see \code{GetEvents()}).
+#' @param team Integer team number. Optional
+#' @param top Integer Number of teams to return.
+#'
+#' @return A data.frame, json list, or xml list.
+#'    data.frame column names and classes (2016):
+#'      rank: integer
+#'      teamNumber: integer
+#'      sortOrder1, sortOrder2, sortOrder3, sortOrder4, sortOrder5,
+#'        sortOrder6: integer or numeric.
+#'      wins. losses, ties: integer
+#'      qualAverage: numeric
+#'      dq: integer
+#'      matchesPlayed: integer
+#' 
+#' @export
+#'
+#' @examples
+#' sn <- GetSession(username, key)
+#' GetRankings(sn, 'WAAMV')
+#' GetRankings(sn, "PNCMP", team = 1983)
+#' GetRankings(sn, "ARCHIMEDES", top = 5)
+GetRankings <- function (session, event, team = NULL, top = NULL) {
+  # Check for unallowed combinations of arguments.
+  if(!is.null(team) && !is.null(top))
+    stop("You cannot specify both the team and top argument")
+  
+  # Assemble URL
+  rank_args <- list(teamNumber = team, top = top)
+  url <- .AddHTTPArgs(paste("rankings", event, sep = "/"), rank_args)
+  
+  # Send HTTP request and get data.
+  rankings <- .GetHTTP(session, url)
+  
+  # Delete 'Rankings.' from the beginning of column names.
+  names(rankings) <- .TrimColNames(names(rankings))
+  
+  return(rankings)
+  
+}
 # GetAwards() ==================================================================
 #' Get the awards that were presented to a team or at an event.
 #' 
