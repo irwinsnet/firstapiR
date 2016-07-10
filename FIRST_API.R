@@ -1055,7 +1055,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 }
 
 
-# GetAwards() ==================================================================
+#  GetAwards() =================================================================
 #' Get the awards that were presented to a team or at an event.
 #' 
 #' See the \emph{Event Awards} section of the FIRST API documentation. The
@@ -1076,11 +1076,11 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 #' GetAwards(sn, team = 360)
 #' GetAwards(sn, 'PNCMP, 360)
 GetAwards <- function(session, event = NULL, team = NULL) {
-  # Check for unallowed combinations of arguments.
-  if(is.null(team) && is.null(event))
+  # Check for incorrect combinations of arguments.
+  if(is.null(event) && is.null(team))
     stop("You must specify either a team number or event code")
   
-  # Assemble URL -- awards URL is different from othe API commands
+  # Assemble URL -- GetAwards URL format is different from other functions.
   url <- "awards"
   if(!is.null(event))
     url <- paste(url, event, sep = "/")
@@ -1090,7 +1090,7 @@ GetAwards <- function(session, event = NULL, team = NULL) {
   # Send HTTP request
   awards <- .GetHTTP(session, url)
   
-  # Remove prefix from column names.
+  # Remove column name prefix
   names(awards) <- .TrimColNames(names(awards))
   
   return(awards)

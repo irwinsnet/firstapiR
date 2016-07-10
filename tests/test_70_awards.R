@@ -14,20 +14,18 @@ test_that("GetAwards() returns a data frame", {
                                 "eventDivisionId", "eventCode", "name",
                                 "series", "teamNumber", "fullTeamName",
                                 "person"))
-  
 })
 
-test_that("GetAwards() team argument filters results", {
-  awards <- GetAwards(sess, event = "ORPHI", team = 1983)
-  
-  expect_equal(nrow(awards), 2)
+test_that("GetAwards team argument filters results", {
+  awards <- GetAwards(sess, event = "ARCHIMEDES", team = 180)
+  expect_equal(nrow(awards), 1)
 })
 
-test_that("GetAwards() throws errors for incorrect arguments", {
+test_that("GetAwards throws errors for incorrect arguments", {
   expect_error(GetAwards(sess),
                "You must specify either a team number or event code")
 })
-# 
+
 # test_that("GetRankings() returns a data frame", {
 #   rks <- GetRankings(sess, "PNCMP")
 # 
