@@ -15,7 +15,7 @@ test_that("GetSchedule() expand_rows arg returns expanded data frame.", {
   sched <- GetSchedule(sess, event = "PNCMP", expand_rows = TRUE)
   expect_equal(class(sched), "data.frame")
   expect_equal(nrow(sched), 768)
-  expect_equal(length(sched), 8)
+  expect_equal(length(sched), 9)
 })
 
 test_that("GetSchedule() start, end, and level arguments work.", {

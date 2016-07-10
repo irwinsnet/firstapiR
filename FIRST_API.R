@@ -403,6 +403,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'        Blue1.surrogate, Blue2.surrogate, Blue3.surrogate: logical
 #'      If expand.rows == TRUE
 #'        teamNumber: factor
+#'        alliance: factor (Red, Blue)
 #'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'        surrogate: logical
 #'      
@@ -439,6 +440,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
   if(expand_rows) {
     # Add columns for team number, station, and surrogate
     sched['teamNumber'] <- vector(mode = "integer", length = nrow(sched))
+    sched['alliance'] <- vector(mode = "character", length = nrow(sched))    
     sched['station'] <- vector(mode = "character", length = nrow(sched))
     sched['surrogate'] <- vector(mode = "logical", length = nrow(sched))
     
@@ -459,9 +461,12 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
       }
     }
     
+    # Fill in alliance data
+    sched$alliance <- substr(sched$station, 1, nchar(sched$station) - 1)
+    
     # Transform categorical columns into factors.
     sched <- .FactorColumns(sched, c("teamNumber", "station", "field",
-                                     "tournamentLevel"))
+                                     "tournamentLevel", "alliance"))
     
   } else {
     # Add columns for each operating station
