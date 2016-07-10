@@ -122,7 +122,9 @@ GetSession <- function(username, key,
 #'  sn <- GetSession(username, key, season = 2015)
 #'  summary <- GetSeason(sn)
 GetSeason <- function(session) {
-  .GetHTTP(session, "")
+  season <- .GetHTTP(session, "")
+  
+  
 }
 
 
@@ -1062,19 +1064,30 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 #' URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season/awards/event/team}
 #'
-#' @param session A session list created with \code{GetSession()}.
-#' @param event Case insensitive event code (see \code{GetEvents()}).
-#' @param team Four digit team number.
+#' @param session Session A session list created with \code{GetSession()}.
+#' @param event Character Case insensitive event code (see \code{GetEvents()}).
+#' @param team Integer Team number.
 #'
-#' @return A data frame, XML text, or JSON text, depending on the
-#' sesssion$format setting.
+#' @return A data.frame, json list, or xml list.
+#'    data.frame column names and classes:
+#'      awardId: integer
+#'      teamId: integer
+#'      eventId: integer
+#'      eventDivisionId: logical
+#'      eventCode: character
+#'      name: character
+#'      series: integer
+#'      teamNumber: integer
+#'      fullTeamName: character
+#'      person: character
+#'
 #' @export
 #'
 #' @examples
 #' sn <- GetSession(username, key)
 #' GetAwards(sn, 'PNCMP')
 #' GetAwards(sn, team = 360)
-#' GetAwards(sn, 'PNCMP, 360)
+#' GetAwards(sn, event = 'PNCMP, 360)
 GetAwards <- function(session, event = NULL, team = NULL) {
   # Check for incorrect combinations of arguments.
   if(is.null(event) && is.null(team))
@@ -1097,17 +1110,22 @@ GetAwards <- function(session, event = NULL, team = NULL) {
 }
 
 
-# GetAwardsList() ==============================================================
+#  GetAwardsList() =============================================================
 #' Get a list of all available awards for a season.
 #' 
 #' See the \emph{Awards Listing} section of the FIRST API documentation. The
 #' URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season/awards/list}
 #'
-#' @param session A session list created with \code{GetSession()}.
+#' @param session Session A list created with \code{GetSession()}.
 #'
-#' @return A data frame, XML text, or JSON text, depending on the
-#' sesssion$format setting.
+#' @return A data.frame, json list, or xml list.
+#'    data.frame column names and classes:
+#'      awardId: integer
+#'      eventType: character
+#'      description: character
+#'      forPerson: logical
+#'      
 #' @export
 #'
 #' @examples
@@ -1118,7 +1136,12 @@ GetAwardsList <- function(session) {
   url <- 'awards/list'
   
   # Send HTTP request
-  .GetHTTP(session, url)
+  alist <- .GetHTTP(session, url)
+  
+  # Remove column name prefix
+  names(alist) <- .TrimColNames(names(alist))
+  
+  return(alist)
 }
 
 
