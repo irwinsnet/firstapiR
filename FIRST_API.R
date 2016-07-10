@@ -151,7 +151,7 @@ GetSeason <- function(session) {
 #' sn <- GetSession(username, key)
 #' districts <- GetDistricts(sn)
 GetDistricts <- function(session) {
-  url <- 'districts'
+  url <- "districts"
   districts <- .GetHTTP(session, url)
   
   # Skip rest of function for XML or JSON results
@@ -1145,7 +1145,35 @@ GetAwardsList <- function(session) {
 }
 
 
-# .AddHTTPArgs() ==================================================================
+#  .AddHTTPArgs() ==============================================================
+#' Add GET parameters to URL string.
+#' 
+#' @param url Character The portion of the FIRST API URL that follows the
+#'   season parameter and forward slash, but is not a GET parameter (i.e.,
+#'   before the '?'). For most FIRST API commands, the url string will be the
+#'   simple string that identifies the command, e.g., "districts" or "teams".
+#'   A few FIRST API commands use path parameters (i.e., Detailed Scores) in
+#'   addition to GET parameters -- in such cases the url argument must contain
+#'   the path parameters separated by '/'.
+#' @param http_args List A list of all GET parameters that will be supplied to
+#'   the URL query string. The elements of the list must have a name that
+#'   that matches the name of the GET parameter (e.g., teamNumber, eventCode).
+#'   Any list elements that are NULL will be skipped.
+#'   
+#' @return Character A string containing a portion of the FIRST API URL,
+#'   starting with the path parameter immediately following the season (not
+#'   including the '/') and extending to the end of the URL, including the
+#'   GET query string.
+#'   
+#' @examples
+#'   # From GetTeams()
+#'   team_args <- list(teamNumber = team, eventCode = event,
+#'     districtCode = district, state = state, page = page)
+#'  url <- .AddHTTPArgs("teams", team_args)
+#'  
+#'  # From GetRankings()
+#'  rank_args <- list(teamNumber = team, top = top)
+#'  url <- .AddHTTPArgs(paste("rankings", event, sep = "/"), rank_args)
 .AddHTTPArgs <- function(url, http_args) {
   res <- url
   
@@ -1171,29 +1199,27 @@ GetAwardsList <- function(session) {
 }
 
 
-# .GetHTTP() ===================================================================
-#' Send an HTTP request
+#  .GetHTTP() ==================================================================
+#' Send an HTTP request.
 #' 
 #' .GetHTTP is an internal function that is not intended to be called by the
 #' user. .GetHTTP is called by other FIRST API methods. 
 #' 
 #' .GetHTTP will thow an error if any HTTP code other than 200 is received in
-#' the HTTP response:
-#'    400: Incorrect URL syntax
-#'    401: Invalid Authorization Header
-#'    404: Nonexistent Event Code
-#'    500: Internal Server Error
-#'    501: 501: Request Did Not Match API Pattern
-#'    503: Server is Temporarily Unavailable
+#' the HTTP response. The error message will include the error code and
+#' the error message from the response content. See the Response Codes section
+#' of the FIRST API documentation for additional details.
+#' 
+#' .GetHTTP will also throw an error if session$format = "data.frame" and no
+#' records are returned.
 #'
-#' @param session A session list created with \code{GetSession()}.
-#' @param url A partial FIRST API URL. The url argument includes everything to
-#'   the right of the season. For example,
-#'   \code{'events?teamNumber=team&districtCode=district}.
+#' @param session List A session list created with \code{GetSession()}.
+#' @param url Character A partial FIRST API URL. The url argument includes
+#' everything to the right of the season. For example,
+#'   \code{'events?teamNumber=team&districtCode=district}. 
 #'
 #' @return Returns either JSON text, an XML::XMLNode object, or an R data frame,
 #'   depending on the value of session$format.
-#' @export
 #'
 #' @examples
 #' sn <- GetSession(username, key)
@@ -1235,13 +1261,43 @@ GetAwardsList <- function(session) {
 }
 
 
-# .TrimColNames() ==============================================================
+#  .TrimColNames() =============================================================
+#' Remove prefixes from data frame column names.
+#' 
+#' .TrimColNames removes all portions of a string up to and including the first
+#' period. It's intended to produce shorter column names that are easier to
+#' type in R interactive sessions. Column names without periods are left
+#' unchanged.
+#' 
+#' @param col_names Character A character vector of column names, generally
+#'   provided by the names() function.
+#'   
+#' @return Character A character vector of trimmed column names, with the same
+#' length as the col_names argument.
+#' 
+#' @examples
+#' names(rankings) <- .TrimColNames(names(rankings))
 .TrimColNames <- function(col_names) {
   sub("\\w+\\.", "", col_names, perl = TRUE)
 }
 
 
-# .FactorColumns() =============================================================
+#  .FactorColumns() ============================================================
+#' Convert character columns to factors.
+#' 
+#' There are benefits to converting data frame columns with a limited number of
+#' unique character values to factors. Factors are conceptually similar to
+#' enumerations in other programming languages.
+#' 
+#' @param df Data.frame The data.frame that will have it's columns converted to
+#'   factors.
+#' @param cols Character A vector of column names that identifies the columns
+#'   that will be converted to factors.
+#'   
+#' @return Data.frame
+#' 
+#' @examples
+#' teams <- .FactorColumns(teams, c("districtCode", "stateProv", "country"))
 .FactorColumns <- function(df, cols) {
   for(fc in cols)
     df[[fc]] <- factor(df[[fc]])
