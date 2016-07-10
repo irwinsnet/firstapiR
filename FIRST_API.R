@@ -1053,6 +1053,8 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
   return(rankings)
   
 }
+
+
 # GetAwards() ==================================================================
 #' Get the awards that were presented to a team or at an event.
 #' 
@@ -1074,22 +1076,24 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 #' GetAwards(sn, team = 360)
 #' GetAwards(sn, 'PNCMP, 360)
 GetAwards <- function(session, event = NULL, team = NULL) {
-  # Assemble URL
-  url <- 'awards'
+  # Check for unallowed combinations of arguments.
+  if(is.null(team) && is.null(event))
+    stop("You must specify either a team number or event code")
   
-  # Add optional parameters
-  first_arg <- TRUE
-  if(!is.null(event)) {
-    url <- paste(url, event, sep = '/')
-    first_arg <- FALSE
-  }
-  if(!is.null(team)) {
-    url <- paste(url, team, sep = '/')
-    first_arg <- FALSE
-  }
-  
+  # Assemble URL -- awards URL is different from othe API commands
+  url <- "awards"
+  if(!is.null(event))
+    url <- paste(url, event, sep = "/")
+  if(!is.null(team))
+    url <- paste(url, team, sep = "/")
+
   # Send HTTP request
-  .GetHTTP(session, url)
+  awards <- .GetHTTP(session, url)
+  
+  # Remove prefix from column names.
+  names(awards) <- .TrimColNames(names(awards))
+  
+  return(awards)
 }
 
 
