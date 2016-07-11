@@ -9,6 +9,8 @@ test_that("GetSeason() returns a data frame", {
   
   expect_equal(class(season), "data.frame")
   expect_equal(attr(season, "FIRST_type"), "Season")
+  # expect_equal(attr(season, "url"), 
+  #              "https://frc-staging-api.firstinspires.org/v2.0/2016/")
   expect_equal(nrow(season), 1)
   expect_equal(length(season), 8)
   expect_equal(names(season), c("eventCount", "gameName", "kickoff", "rookieStart",
@@ -22,6 +24,8 @@ test_that("GetDistricts() returns a data frame", {
   
   expect_equal(class(dst), "data.frame")
   expect_equal(attr(dst, "FIRST_type"), "Districts")
+  # expect_equal(attr(dst, "url"),
+  #              "https://frc-staging-api.firstinspires.org/v2.0/2016/districts")
   expect_equal(nrow(dst), 8)
   expect_equal(length(dst), 3)
   expect_equal(names(dst), c("code", "name", "districtCount"))
@@ -31,6 +35,9 @@ test_that("GetEvents() returns data frame", {
   evt <- GetEvents(sess, team = 1318)
   expect_equal(class(evt), "data.frame")
   expect_equal(attr(evt, "FIRST_type"), "Events")
+  # expect_equal(attr(evt, "url"),
+  #     paste("https://frc-staging-api.firstinspires.org/v2.0/2016/", 
+  #           "events?teamNumber=1318", sep = ""))
   expect_equal(length(evt), 13)
   expect_true(is.factor(evt$type))
   expect_true(is.factor(evt$districtCode))
@@ -54,6 +61,9 @@ test_that("GetTeams() returns a data frame", {
   tms <- GetTeams(sess, team = 1318)
   expect_equal(class(tms), "data.frame")
   expect_equal(attr(tms, "FIRST_type"), "Teams")
+  # expect_equal(attr(tms, "url"), 
+  #             paste("https://frc-staging-api.firstinspires.org/v2.0/2016/",
+  #                   "teams?teamNumber=1318", sep = ""))
   expect_equal(length(tms), 14)
   expect_equal(nrow(tms), 1)
   expect_true(is.factor(tms$stateProv))

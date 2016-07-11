@@ -9,6 +9,8 @@ test_that("GetAwards() returns a data frame", {
   
   expect_equal(class(awards), "data.frame")
   expect_equal(attr(awards, "FIRST_type"), "Awards")
+  expect_equal(attr(awards, "url"),
+               "https://frc-api.firstinspires.org/v2.0/2016/awards/PNCMP")
   expect_equal(nrow(awards), 56)
   expect_equal(length(awards), 10)
   expect_equal(names(awards), c("awardId", "teamId", "eventId",
@@ -32,6 +34,8 @@ test_that("GetAwardsList() returns a data frame", {
 
   expect_equal(class(alist), "data.frame")
   expect_equal(attr(alist, "FIRST_type"), "AwardsList")
+  expect_equal(attr(alist, "url"),
+               "https://frc-api.firstinspires.org/v2.0/2016/awards/list")
   expect_equal(nrow(alist), 92)
   expect_equal(length(alist), 4)
   expect_equal(names(alist), c("awardId", "eventType", "description",

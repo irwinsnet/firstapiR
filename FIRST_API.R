@@ -117,6 +117,7 @@ GetSession <- function(username, key,
 #'    FRCChampionships.startDate: character
 #'    FRCChampionships.location: character
 #'  Attribute "FIRST_type": "Season"
+#'  Attribute "url": URL submitted to FIRST API
 #'    
 #'  @export
 #' 
@@ -149,7 +150,9 @@ GetSeason <- function(session) {
 #'      name: character
 #'      districtCount: integer
 #'    Attribute "FIRST_type": "Districts"
-#' @exp
+#'    Attribute "url": URL submitted to FIRST API
+#'    
+#' @export
 #' 
 #' @examples
 #' sn <- GetSession(username, key)
@@ -222,6 +225,7 @@ GetDistricts <- function(session) {
 #'      dateEnd', character
 #'      eventCount: integer
 #'    Attribute "FIRST_type": "Events"
+#'    Attribute "url": URL submitted to FIRST API
 #'    
 #' @export
 #' 
@@ -311,6 +315,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'      pageCurrent: integer
 #'      pageTotal: integer
 #'    Attribute "FIRST_type": "Teams"
+#'    Attribute "url": URL submitted to FIRST API
 #'    
 #' @export
 #'
@@ -418,6 +423,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'        surrogate: logical
 #'      Attribute "FIRST_type": "Schedule"
+#'      Attribute "url": URL submitted to FIRST API
 #'      
 #' @export
 #'
@@ -563,6 +569,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #'        surrogate: logical
 #'        dq: logical
 #'      Attribute "FIRST_type": "HybridSchedule"
+#'      Attribute "url": URL submitted to FIRST API
 #'        
 #' @export
 #' 
@@ -736,6 +743,7 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #'        surrogate: logical
 #'        scoreFinal, scoreAuto, scoreFoul: integer
 #'      Attribute "FIRST_type": "MatchResults"
+#'      Attribute "url": URL submitted to FIRST API
 #'        
 #' @export
 #'
@@ -911,6 +919,7 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
 #'      breachPoints, capturePoints: integer
 #'      adustPoints, foulPoints, totalPoints: integer
 #'    Attribute "FIRST_type": "Scores"
+#'    Attribute "url": URL submitted to FIRST API
 #'      
 #' @export
 #' 
@@ -1001,6 +1010,7 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 #'      backup, backupReplaced: integer
 #'      count: integer
 #'    Attribute "FIRST_type": "Alliances"
+#'    Attribute "url": URL submitted to FIRST API
 #'    
 #' @export
 #'
@@ -1056,6 +1066,7 @@ GetAlliances <- function (session, event) {
 #'      dq: integer
 #'      matchesPlayed: integer
 #'    Attribute "FIRST_type": "Rankings"
+#'    Attribute "url": URL submitted to FIRST API
 #' 
 #' @export
 #'
@@ -1109,6 +1120,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 #'      fullTeamName: character
 #'      person: character
 #'    Attribute "FIRST_type": "Awards"
+#'    Attribute "url": URL submitted to FIRST API
 #'
 #' @export
 #'
@@ -1156,6 +1168,7 @@ GetAwards <- function(session, event = NULL, team = NULL) {
 #'      description: character
 #'      forPerson: logical
 #'    Attribute "FIRST_type": "AwardsList"
+#'    Attribute "url": URL submitted to FIRST API
 #'      
 #' @export
 #'
@@ -1289,6 +1302,7 @@ GetAwardsList <- function(session) {
   if(session$format == "data.frame" && length(result) == 0)
     stop("No records returned.")
 
+  attr(result, "url") <- url
   return(result)
 }
 

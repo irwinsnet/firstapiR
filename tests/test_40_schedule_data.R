@@ -8,6 +8,8 @@ test_that("GetSchedule() returns a data frame", {
   sched <- GetSchedule(sess, event = "PNCMP")
   expect_equal(class(sched), "data.frame")
   expect_equal(attr(sched, "FIRST_type"), "Schedule")
+  expect_equal(attr(sched, "url"), paste("https://frc-api.firstinspires.org",
+      "/v2.0/2016/schedule/PNCMP?tournamentLevel=qual", sep = ""))
   expect_equal(nrow(sched), 128)
   expect_equal(length(sched), 17)
 })
@@ -33,6 +35,8 @@ test_that("GetHybridSchedule() returns a data frame.", {
   
   expect_equal(class(hyb), "data.frame")
   expect_equal(attr(hyb, "FIRST_type"), "HybridSchedule")
+  expect_equal(attr(hyb, "url"), 
+      "https://frc-api.firstinspires.org/v2.0/2016/schedule/WAELL/qual/hybrid")
   expect_equal(nrow(hyb), 78)
   expect_equal(length(hyb), 29)
   
