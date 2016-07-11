@@ -8,6 +8,7 @@ test_that("GetMatchResults() returns a data frame", {
   mr <- GetMatchResults(sess, event = "WAELL")
   
   expect_equal(class(mr), "data.frame")
+  expect_equal(attr(mr, "FIRST_type"), "MatchResults")
   expect_equal(nrow(mr), 94)
   expect_equal(length(mr), 23)
 })
@@ -35,6 +36,7 @@ test_that("GetScores() returns a data frame", {
   sc <- GetScores(sess, event = "WAAMV")
   
   expect_equal(class(sc), "data.frame")
+  expect_equal(attr(sc, "FIRST_type"), "Scores")
   expect_equal(nrow(sc), 156)
   expect_equal(length(sc), 42)
   expect_equal(names(sc)[5:10], c("robot1Auto", "robot2Auto", "robot3Auto",

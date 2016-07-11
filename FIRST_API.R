@@ -61,7 +61,8 @@ library("XML")
 #' Throws an error if season, format, or staging arguments are not allowed
 #' values.
 #'
-#' @return A list containing all GetSession parameters. class: 'Session'
+#' @return A list containing all GetSession parameters. The list has an
+#'   attribute, "FIRST_type", that is set to "Session".
 #' 
 #' @export
 #'
@@ -87,7 +88,7 @@ GetSession <- function(username, key,
                   staging = staging,
                   season = season,
                   format = format)
-  class(session) <- "Session"
+  attr(session, "FIRST_type") <- "Session"
   
   return(session)
 }
@@ -103,7 +104,7 @@ GetSession <- function(username, key,
 #' additional details. The URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season}
 #' 
-#' @param session Session A session list created with \code{GetSession()}.
+#' @param session List A list created with \code{GetSession()}.
 #' 
 #' @return JSON or XML formatted text, or an R data frame.
 #'  data.frame column names and classes:
@@ -115,6 +116,7 @@ GetSession <- function(username, key,
 #'    FRCChampionships.name: character
 #'    FRCChampionships.startDate: character
 #'    FRCChampionships.location: character
+#'  Attribute "FIRST_type": "Season"
 #'    
 #'  @export
 #' 
@@ -124,7 +126,8 @@ GetSession <- function(username, key,
 GetSeason <- function(session) {
   season <- .GetHTTP(session, "")
   
-  
+  attr(season, "FIRST_type") <- "Season"
+  return(season)
 }
 
 
@@ -145,6 +148,7 @@ GetSeason <- function(session) {
 #'      code: character
 #'      name: character
 #'      districtCount: integer
+#'    Attribute "FIRST_type": "Districts"
 #' @exp
 #' 
 #' @examples
@@ -160,6 +164,7 @@ GetDistricts <- function(session) {
   # Shorten the column names to reduce amount of typing required.
   names(districts) <- .TrimColNames(names(districts))
   
+  attr(districts, "FIRST_type") <- "Districts"
   return(districts)
 }
 
@@ -216,6 +221,8 @@ GetDistricts <- function(session) {
 #'      dateStart: character
 #'      dateEnd', character
 #'      eventCount: integer
+#'    Attribute "FIRST_type": "Events"
+#'    
 #' @export
 #' 
 #' @examples
@@ -250,6 +257,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
   events <- .FactorColumns(events, c("type", "districtCode", "stateprov",
                                      "country", "timezone"))
   
+  attr(events, "FIRST_type") <- "Events"
   return(events)
 }
 
@@ -302,6 +310,8 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'      teamCountPage: integer
 #'      pageCurrent: integer
 #'      pageTotal: integer
+#'    Attribute "FIRST_type": "Teams"
+#'    
 #' @export
 #'
 #' @examples
@@ -364,6 +374,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   # Convert categorical coluns to factor data types.
   teams <- .FactorColumns(teams, c("districtCode", "stateProv", "country"))
   
+  attr(teams, "FIRST_type") <- "Teams"
   return(teams)
 }
 
@@ -406,6 +417,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'        alliance: factor (Red, Blue)
 #'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'        surrogate: logical
+#'      Attribute "FIRST_type": "Schedule"
 #'      
 #' @export
 #'
@@ -501,7 +513,8 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
     sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team", 
                                      "Blue1.team", "Blue2.team", "Blue3.team",
                                      "field", "tournamentLevel"))
-    }
+  }
+  attr(sched, "FIRST_type") <- "Schedule"
   return(sched)
 }
 
@@ -549,6 +562,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #'        scoreFinal, scoreAuto, scoreFoul: integer
 #'        surrogate: logical
 #'        dq: logical
+#'      Attribute "FIRST_type": "HybridSchedule"
 #'        
 #' @export
 #' 
@@ -668,6 +682,7 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
                                      "Blue1.team", "Blue2.team", "Blue3.team",
                                      "tournamentLevel"))
   }
+  attr(sched, "FIRST_type") <- "HybridSchedule"
   return(sched)
   
 }
@@ -720,6 +735,7 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'        surrogate: logical
 #'        scoreFinal, scoreAuto, scoreFoul: integer
+#'      Attribute "FIRST_type": "MatchResults"
 #'        
 #' @export
 #'
@@ -839,6 +855,7 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
   # Convert categorical data into factors
   matches$tournamentLevel <- factor(matches$tournamentLevel)
   
+  attr(matches, "FIRST_type") <- "MatchResults"
   return(matches)
 }
 
@@ -893,6 +910,7 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
 #'        teleopChallengePoints, teleopScalePoints: integer
 #'      breachPoints, capturePoints: integer
 #'      adustPoints, foulPoints, totalPoints: integer
+#'    Attribute "FIRST_type": "Scores"
 #'      
 #' @export
 #' 
@@ -957,6 +975,7 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
   # Set row names to be integers.
   row.names(scores) <- 1:nrow(scores)
   
+  attr(scores, "FIRST_type") <- "Scores"
   return(scores)
 }
 
@@ -981,6 +1000,7 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 #'      captain, round1, round2, round3: integer
 #'      backup, backupReplaced: integer
 #'      count: integer
+#'    Attribute "FIRST_type": "Alliances"
 #'    
 #' @export
 #'
@@ -1000,6 +1020,7 @@ GetAlliances <- function (session, event) {
   # Remove prefix from column names.
   names(alliances) <- .TrimColNames(names(alliances))
   
+  attr(alliances, "FIRST_type") <- "Alliances"
   return(alliances)
 }
 
@@ -1034,6 +1055,7 @@ GetAlliances <- function (session, event) {
 #'      qualAverage: numeric
 #'      dq: integer
 #'      matchesPlayed: integer
+#'    Attribute "FIRST_type": "Rankings"
 #' 
 #' @export
 #'
@@ -1057,6 +1079,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
   # Delete 'Rankings.' from the beginning of column names.
   names(rankings) <- .TrimColNames(names(rankings))
   
+  attr(rankings, "FIRST_type") <- "Rankings"
   return(rankings)
   
 }
@@ -1085,6 +1108,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 #'      teamNumber: integer
 #'      fullTeamName: character
 #'      person: character
+#'    Attribute "FIRST_type": "Awards"
 #'
 #' @export
 #'
@@ -1111,6 +1135,7 @@ GetAwards <- function(session, event = NULL, team = NULL) {
   # Remove column name prefix
   names(awards) <- .TrimColNames(names(awards))
   
+  attr(awards, "FIRST_type") <- "Awards"
   return(awards)
 }
 
@@ -1130,6 +1155,7 @@ GetAwards <- function(session, event = NULL, team = NULL) {
 #'      eventType: character
 #'      description: character
 #'      forPerson: logical
+#'    Attribute "FIRST_type": "AwardsList"
 #'      
 #' @export
 #'
@@ -1146,6 +1172,7 @@ GetAwardsList <- function(session) {
   # Remove column name prefix
   names(alist) <- .TrimColNames(names(alist))
   
+  attr(alist, "FIRST_type") <- "AwardsList"
   return(alist)
 }
 
