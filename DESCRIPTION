@@ -1,9 +1,10 @@
 Package: firstapi
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Tools to Download and Convert FIRST API Data to R Data Frames
 Version: 0.1.0
-Author: Who wrote it
+Author: Stacy Irwin
 Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Description: Downloads First Robotics Competition (FRC) performance data from
+    the FIRST API server as XML, JSON, or converts the data to R data frames.
 License: What license is it under?
 LazyData: TRUE
