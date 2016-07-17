@@ -10,27 +10,30 @@ test_that("GetMatchResults() returns a data frame", {
   expect_equal(class(mr), "data.frame")
   expect_equal(attr(mr, "FIRST_type"), "MatchResults")
   expect_equal(attr(mr, "url"),
-               "https://frc-api.firstinspires.org/v2.0/2016/matches/WAELL")
-  expect_equal(nrow(mr), 94)
-  expect_equal(length(mr), 23)
-})
-
-test_that("For GetMatchResults, expand_rows returns an expanded data frame", {
-  mr <- GetMatchResults(sess, event = "ORPHI", expand_rows = TRUE)
-  
-  expect_equal(nrow(mr), 462)
+            paste("https://frc-api.firstinspires.org/v2.0/2016/matches/WAELL",
+                  "?tournamentLevel=qual", sep = ""))
+  expect_equal(nrow(mr), 468)
+  expect_equal(length(mr), 11)
   expect_equal(names(mr), c("actualStartTime", "description", "tournamentLevel",
                             "matchNumber", "postResultTime", "teamNumber",
                             "station", "disqualified", "scoreFinal",
                             "scoreFoul", "scoreAuto"))
 })
 
+test_that("For GetMatchResults, expand_cols returns an expanded data frame", {
+  mr <- GetMatchResults(sess, event = "ORPHI", expand_cols = TRUE)
+  
+  expect_equal(nrow(mr), 60)
+  expect_equal(length(mr), 23)
+})
+
 test_that("For GetMatchResults, start, end, and match args are correct", {
   mr <- GetMatchResults(sess, event = "PNCMP", level = "playoff", start = 2,
-                        end = 5)
+                        end = 5, expand_cols = TRUE)
   expect_equal(nrow(mr), 4)
   
-  mr <- GetMatchResults(sess, event = "WAAMV", level = "qual", match = 10)
+  mr <- GetMatchResults(sess, event = "WAAMV", level = "qual", match = 10,
+                        expand_cols = TRUE)
   expect_equal(nrow(mr), 1)
 })
 

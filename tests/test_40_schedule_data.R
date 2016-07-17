@@ -10,22 +10,24 @@ test_that("GetSchedule() returns a data frame", {
   expect_equal(attr(sched, "FIRST_type"), "Schedule")
   expect_equal(attr(sched, "url"), paste("https://frc-api.firstinspires.org",
       "/v2.0/2016/schedule/PNCMP?tournamentLevel=qual", sep = ""))
-  expect_equal(nrow(sched), 128)
-  expect_equal(length(sched), 17)
-})
-
-test_that("GetSchedule() expand_rows arg returns expanded data frame.", {
-  sched <- GetSchedule(sess, event = "PNCMP", expand_rows = TRUE)
-  expect_equal(class(sched), "data.frame")
   expect_equal(nrow(sched), 768)
   expect_equal(length(sched), 9)
 })
 
+test_that("GetSchedule() expand_cols arg returns expanded data frame.", {
+  sched <- GetSchedule(sess, event = "PNCMP", expand_cols = TRUE)
+  expect_equal(class(sched), "data.frame")
+  expect_equal(nrow(sched), 128)
+  expect_equal(length(sched), 17)
+})
+
 test_that("GetSchedule() start, end, and level arguments work.", {
-  sched <- GetSchedule(sess, event = "WAAMV", start = 10, end = 30)
+  sched <- GetSchedule(sess, event = "WAAMV", start = 10, end = 30,
+                       expand_cols = TRUE)
   expect_equal(nrow(sched), 21)
   
-  sched <- GetSchedule(sess, event = "WAAMV", level = "playoff")
+  sched <- GetSchedule(sess, event = "WAAMV", level = "playoff",
+                       expand_cols = TRUE)
   expect_equal(nrow(sched), 16)
   expect_equal(levels(sched$tournamentLevel[1]), "Playoff")
 })

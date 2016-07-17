@@ -1,8 +1,9 @@
-#  OVERVIEW: FRC 1318'S FIRST API R KIT ========================================
-#' FRC 1318'S FIRST API R KIT, VERSION 0.9A
+#  OVERVIEW: FRC 1318'S FIRST API R Toolbox ====================================
+#' HTTP Module, Version 1.0
 #' 
-#' The R Kit functions will connect to the FIRST API server and download data on 
-#' FIRST Robotics Competition (FRC) teams, events, match results, and awards.
+#' The R Toolbox functions will connect to the FIRST API server and download
+#' data on FIRST Robotics Competition (FRC) teams, events, match results, and
+#' awards.
 #' 
 #' The FIRST API accepts formatted hypertext transfer protocol (HTTP) GET 
 #' requests for FRC data and provides results in either javascript object 
@@ -399,9 +400,9 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' @param team Integer team number. Optional
 #' @param start Integer Earliest match to reuturn
 #' @param end Integer Latest match to return
-#' @param expand_rows A logical value. Optional, defaults to FALSE. If FALSE, the
+#' @param expand_cols A logical value. Optional, defaults to FALSE. If TRUE, the
 #'   dataframe will include one row for each scheduled match, with a different
-#'   column for each team. If TRUE, there will be six rows for each match, with
+#'   column for each team. If FALSE, there will be six rows for each match, with
 #'   each row listing one assigned team and their station.
 #'
 #' @return A data.frame, json list, or xml list.
@@ -434,7 +435,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' GetSchedule(sn, 'WAAMV', level='playoff')
 #' GetSchedule(sn, 'PNCMP', team=4911, end=25)
 GetSchedule <- function (session, event, level = 'qual', team = NULL,
-                         start = NULL, end = NULL, expand_rows = FALSE) {
+                         start = NULL, end = NULL, expand_cols = FALSE) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
   
@@ -455,7 +456,40 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
   # this function is necessary to either extract the nested data into new
   # columns or to add rows so that the scheule data can be saved as csv data.
   
-  if(expand_rows) {
+  if(expand_cols) {
+    # Add columns for each operating station
+    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")  
+    for(col in cols) {
+      cname.team <- paste(col, "team", sep = ".")
+      sched[cname.team] <- vector(mode = "character",
+                                  length = length(sched$matchNumber))
+      cname.surr <- paste(col, "surrogate", sep = ".")
+      sched[cname.surr] <- vector(mode = "logical",
+                                  length = length(sched$matchNumber))
+    }
+    
+    # Extract data from nested Teams column and insert into new operating station
+    # columns
+    for(mtch in 1:length(sched$matchNumber)){
+      for(tm in 1:6){
+        station <- sched$Teams[[mtch]][["station"]][[tm]]
+        team <- sched$Teams[[mtch]][["teamNumber"]][[tm]]
+        surrogate <- sched$Teams[[mtch]][["surrogate"]][[tm]]
+        
+        cname.team <- paste(station, "team", sep = ".")
+        cname.surrogate <- paste(station, "surrogate", sep = ".")
+        
+        sched[mtch, cname.team] <- team
+        sched[mtch, cname.surrogate] <- surrogate
+      }
+    }
+    sched$Teams <- NULL
+    
+    # Convert categorical data to factors
+    sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team", 
+                                     "Blue1.team", "Blue2.team", "Blue3.team",
+                                     "field", "tournamentLevel"))
+  } else {
     # Add columns for team number, station, and surrogate
     sched['teamNumber'] <- vector(mode = "integer", length = nrow(sched))
     sched['alliance'] <- vector(mode = "character", length = nrow(sched))    
@@ -485,40 +519,6 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
     # Transform categorical columns into factors.
     sched <- .FactorColumns(sched, c("teamNumber", "station", "field",
                                      "tournamentLevel", "alliance"))
-    
-  } else {
-    # Add columns for each operating station
-    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")  
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      sched[cname.team] <- vector(mode = "character",
-                                 length = length(sched$matchNumber))
-      cname.surr <- paste(col, "surrogate", sep = ".")
-      sched[cname.surr] <- vector(mode = "logical",
-                                length = length(sched$matchNumber))
-    }
-  
-    # Extract data from nested Teams column and insert into new operating station
-    # columns
-    for(mtch in 1:length(sched$matchNumber)){
-      for(tm in 1:6){
-        station <- sched$Teams[[mtch]][["station"]][[tm]]
-        team <- sched$Teams[[mtch]][["teamNumber"]][[tm]]
-        surrogate <- sched$Teams[[mtch]][["surrogate"]][[tm]]
-  
-        cname.team <- paste(station, "team", sep = ".")
-        cname.surrogate <- paste(station, "surrogate", sep = ".")
-  
-        sched[mtch, cname.team] <- team
-        sched[mtch, cname.surrogate] <- surrogate
-      }
-    }
-    sched$Teams <- NULL
-    
-    # Convert categorical data to factors
-    sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team", 
-                                     "Blue1.team", "Blue2.team", "Blue3.team",
-                                     "field", "tournamentLevel"))
   }
   attr(sched, "FIRST_type") <- "Schedule"
   return(sched)
@@ -717,9 +717,9 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #'   when \code{start} is specified.
 #' @param end Integer Latest match to return. Optional. Must specify level when
 #'   \code{end} is specified.
-#' @param expand_rows A logical value. Optional, defaults to FALSE. If FALSE, the
+#' @param expand_cols A logical value. Optional, defaults to FALSE. If TRUE, the
 #'   dataframe will include one row for each completed match, with a different
-#'   column for each team. If TRUE, there will be six rows for each match, with
+#'   column for each team. If FALSE, there will be six rows for each match, with
 #'   each row listing one assigned team and their station.
 #'
 #' @return A data.frame, json list, or xml list.
@@ -753,9 +753,9 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #' GetMatchResults(sn, 'PNCMP', team='2990')
 #' GetMatchResults(sn, 'WAAMV', match=2, level='playoff')
 #' GetMatchResults(sn, 'CMP-ARCHIMEDES', level='qual', start=10, end=20)
-GetMatchResults <- function(session, event, level = NULL, team = NULL,
+GetMatchResults <- function(session, event, level = "qual", team = NULL,
                             match = NULL, start = NULL, end = NULL,
-                            expand_rows = FALSE) {
+                            expand_cols = FALSE) {
   # Check for unallowed combinations of arguments.
   if((!is.null(match) || !is.null(start) || !is.null(end)) && is.null(level))
     stop("You must specify the level when you specify match, start, or end.")
@@ -780,7 +780,39 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
   # The FIRST API returns nested schedule data. The remainder of this function
   # is necessary to extract the nested data into new rows so that the scheule
   # data can be saved as csv data.
-  if(expand_rows) {
+  if(expand_cols) {
+    # Add columns for each operating station
+    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")  
+    for(col in cols) {
+      cname.team <- paste(col, "team", sep = ".")
+      matches[cname.team] <- vector(mode = "integer", length = nrow(matches))
+      cname.dq <- paste(col, "dq", sep = ".")
+      matches[cname.dq] <- vector(mode = "logical", length = nrow(matches))
+    }
+    
+    # Extract data from nested Teams column and insert into new operating
+    # station columns
+    for(mtch in 1:nrow(matches)){
+      for(tm in 1:6){
+        station <- matches$Teams[[mtch]][["station"]][[tm]]
+        team <- matches$Teams[[mtch]][["teamNumber"]][[tm]]
+        dq <- matches$Teams[[mtch]][["dq"]][[tm]]
+        
+        cname.team <- paste(station, "team", sep = ".")
+        cname.dq <- paste(station, "dq", sep = ".")
+        
+        matches[mtch, cname.team] <- team
+        matches[mtch, cname.dq] <- dq
+      }
+    }
+    matches$Teams <- NULL
+    
+    # Convert categorical data to factors
+    for(col in cols) {
+      cname.team <- paste(col, "team", sep = ".")
+      matches[[cname.team]] <- factor(matches[[cname.team]])
+    }
+  } else {
     # Add columns for each operating station
     matches['teamNumber'] <- vector(mode = "integer", length = nrow(matches))
     matches['station'] <- vector(mode = "character", length = nrow(matches))
@@ -814,7 +846,7 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
         xMatches$scoreFinal[[mrow]] <- xMatches[[paste(score, 'Final', sep="")]][[mrow]]
         xMatches$scoreFoul[[mrow]] <- xMatches[[paste(score, 'Foul', sep = "")]][[mrow]]
         xMatches$scoreAuto[[mrow]] <- xMatches[[paste(score, 'Auto', sep = "")]][[mrow]]
-        }
+      }
     }
     
     # Remove redundent score columns
@@ -826,38 +858,6 @@ GetMatchResults <- function(session, event, level = NULL, team = NULL,
     xMatches$scoreBlueAuto <- NULL
     
     matches <- xMatches
-  } else {
-    # Add columns for each operating station
-    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")  
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      matches[cname.team] <- vector(mode = "integer", length = nrow(matches))
-      cname.dq <- paste(col, "dq", sep = ".")
-      matches[cname.dq] <- vector(mode = "logical", length = nrow(matches))
-    }
-    
-    # Extract data from nested Teams column and insert into new operating
-    # station columns
-    for(mtch in 1:nrow(matches)){
-      for(tm in 1:6){
-        station <- matches$Teams[[mtch]][["station"]][[tm]]
-        team <- matches$Teams[[mtch]][["teamNumber"]][[tm]]
-        dq <- matches$Teams[[mtch]][["dq"]][[tm]]
-        
-        cname.team <- paste(station, "team", sep = ".")
-        cname.dq <- paste(station, "dq", sep = ".")
-        
-        matches[mtch, cname.team] <- team
-        matches[mtch, cname.dq] <- dq
-      }
-    }
-    matches$Teams <- NULL
-    
-    # Convert categorical data to factors
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      matches[[cname.team]] <- factor(matches[[cname.team]])
-    }
   }
   
   # Convert categorical data into factors
