@@ -1,10 +1,17 @@
 Package: firstapi
 Type: Package
 Title: Tools to Download and Convert FIRST API Data to R Data Frames
-Version: 0.1.0
-Author: Stacy Irwin
+Version: 0.0.0.9000
+Authors@R: person("Irwin", "Stacy", email = "ski165@outook.com",
+                  role = c("aut", "cre"))
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: Downloads First Robotics Competition (FRC) performance data from
-    the FIRST API server as XML, JSON, or converts the data to R data frames.
-License: What license is it under?
-LazyData: TRUE
+    the FIRST API server and converts the data to R data frames. The performance
+    data can also be provided as JSON or XML text.
+License: MIT + file LICENSE
+Imports:
+    base64enc (>= 0.1-3),
+    httr (>= 1.2.0),
+    jsonlite (>= 0.9.21),
+    XML (>= 3.98-1.4)
+RoxygenNote: 5.0.1
