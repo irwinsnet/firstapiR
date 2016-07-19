@@ -1,9 +1,8 @@
-Package: firstapi
+Package: firstapiR
 Type: Package
 Title: Tools to Download and Convert FIRST API Data to R Data Frames
 Version: 0.0.0.9000
-Authors@R: person("Irwin", "Stacy", email = "ski165@outook.com",
-                  role = c("aut", "cre"))
+Author: Stacy Irwin
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: Downloads First Robotics Competition (FRC) performance data from
     the FIRST API server and converts the data to R data frames. The performance
@@ -15,3 +14,4 @@ Imports:
     jsonlite (>= 0.9.21),
     XML (>= 3.98-1.4)
 RoxygenNote: 5.0.1
+Suggests: testthat
