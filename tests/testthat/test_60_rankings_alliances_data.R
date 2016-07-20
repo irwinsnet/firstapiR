@@ -1,12 +1,15 @@
 library("testthat")
 
+# Define username and key variables
+source("user.R")
+
 context("FIRST_R Rankings and Alliances")
 
 sess <- GetSession(username, key)
 
 test_that("GetAlliances() returns a data frame", {
   al <- GetAlliances(sess, event = "WAELL")
-  
+
   expect_equal(class(al), "data.frame")
   expect_equal(attr(al, "FIRST_type"), "Alliances")
   expect_equal(attr(al, "url"),
@@ -34,7 +37,7 @@ test_that("GetRankings() team and top arguments work", {
   rks <- GetRankings(sess, "PNCMP", team = 5803)
   expect_equal(nrow(rks), 1)
   expect_equal(rks$teamNumber[[1]], 5803)
-  
+
   rks <- GetRankings(sess, "PNCMP", top = 5)
   expect_equal(nrow(rks), 5)
   expect_equal(rks$rank, 1:5)

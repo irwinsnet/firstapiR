@@ -241,7 +241,7 @@ GetDistricts <- function(session) {
 #' sn <- GetSession(username, key)
 #' frc_data <- GetEvents(sn, team = 5803))
 #' frc_data <- GetEvents(sn, team = 360, district = 'PNW')
-#' frc_data <- GetEvents(sn, district = FALSE))
+#' frc_data <- GetEvents(sn, district = FALSE)
 GetEvents <- function(session, event = NULL, team = NULL,
                       district = NULL, exclude_district = NULL) {
   # Check for unallowed combinations of arguments.
@@ -548,6 +548,10 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #' @param event Character The FIRST API event code.
 #' @param level Character Either \code{qual} or \code{playoff}. Defaults to
 #'   \code{qual}.
+#' @param start An integer that is the earliest match number that will be
+#'   returned.
+#' @param end An integer that is the latest match number that will be
+#'   returned.
 #' @param expand_rows Logical Defaults to FALSE. If FALSE, the dataframe will
 #'   include one row for each scheduled match, with a different column for each
 #'   team. If TRUE, there will be six rows for each match, with each row listing
@@ -1032,7 +1036,7 @@ GetAlliances <- function (session, event) {
   alliances <- .GetHTTP(session, url)
 
   # Skip further processing if result is not a data frame.
-  if(session$format != 'data.frame') return(sched)
+  if(session$format != 'data.frame') return(alliances)
 
   # Remove prefix from column names.
   names(alliances) <- .TrimColNames(names(alliances))
@@ -1057,9 +1061,6 @@ GetAlliances <- function (session, event) {
 #' @param session Session A session list created with \code{GetSession()}.
 #' @param event Character, Case insensitive event code (see \code{GetEvents()}).
 #' @param team Team number. Optional.
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character Case insensitive event code (see \code{GetEvents()}).
-#' @param team Integer team number. Optional
 #' @param top Integer Number of teams to return.
 #'
 #' @return A data.frame, json list, or xml list.

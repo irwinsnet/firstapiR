@@ -1,12 +1,15 @@
 library("testthat")
 
+# Define username and key variables
+source("user.R")
+
 context("FIRST_R Awards")
 
 sess <- GetSession(username, key)
 
 test_that("GetAwards() returns a data frame", {
   awards <- GetAwards(sess, event = "PNCMP")
-  
+
   expect_equal(class(awards), "data.frame")
   expect_equal(attr(awards, "FIRST_type"), "Awards")
   expect_equal(attr(awards, "url"),

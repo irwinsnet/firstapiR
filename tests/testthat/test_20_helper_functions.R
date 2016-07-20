@@ -1,5 +1,8 @@
 library("testthat")
 
+# Define username and key variables
+source("user.R")
+
 context("FIRST_R HTTP and Helper Functions")
 
 test_that(".AddHTTPArgs constructs valid URL strings.", {
