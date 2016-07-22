@@ -14,12 +14,6 @@ GetRankings(session, event, team = NULL, top = NULL)
 \item{team}{Team number. Optional.}
 
 \item{top}{Integer Number of teams to return.}
-
-\item{session}{Session A session list created with \code{GetSession()}.}
-
-\item{event}{Character Case insensitive event code (see \code{GetEvents()}).}
-
-\item{team}{Integer team number. Optional}
 }
 \value{
 A data.frame, json list, or xml list.

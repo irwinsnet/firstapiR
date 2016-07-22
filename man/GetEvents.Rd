@@ -71,6 +71,6 @@ and \code{exclude_district} events may not be specified at the same time.
 sn <- GetSession(username, key)
 frc_data <- GetEvents(sn, team = 5803))
 frc_data <- GetEvents(sn, team = 360, district = 'PNW')
-frc_data <- GetEvents(sn, district = FALSE))
+frc_data <- GetEvents(sn, district = FALSE)
 }
 

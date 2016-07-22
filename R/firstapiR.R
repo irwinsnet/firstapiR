@@ -1,0 +1,28 @@
+#' firstapiR: FIRST API R Toolbox
+#'
+#' The R Toolbox functions will connect to the FIRST API server and download
+#' data on FIRST Robotics Competition (FRC) teams, events, match results, and
+#' awards.
+#'
+#' The FIRST API accepts formatted hypertext transfer protocol (HTTP) GET
+#' requests for FRC data and provides results in either javascript object
+#' notation (json) or extensible markup language (xml) format. Detailed
+#' documentation for the FIRST API, including precise rules for constructing the
+#' HTTP requests, is available at \url{http://docs.frcevents2.apiary.io/#}
+#'
+#' A username and authorization key are required for connecting to the FIRST
+#' API and for using the R Kit. To obtain a username and key, join the FIRST
+#' Community Developers project on TeamForge at
+#' \url{https://usfirst.collab.net/sf/projects/first_community_developers/}
+#'
+#' These functions return R dataframes by default. Optionally, the functions
+#' can also return the raw JSON or XML that is provided by the FIRST API. See
+#' the apiary documentation (\url{http://docs.frcevents2.apiary.io/#}) for a
+#' detailed description of all response data fields.
+#'
+#' These functions use version 2.0 of the FIRST API. They have not been tested
+#' with version 1.0.
+#'
+#' @docType package
+#' @name firstapiR
+NULL

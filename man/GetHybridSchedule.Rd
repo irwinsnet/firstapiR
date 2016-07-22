@@ -15,6 +15,12 @@ GetHybridSchedule(session, event, level = "qual", start = NULL,
 \item{level}{Character Either \code{qual} or \code{playoff}. Defaults to
 \code{qual}.}
 
+\item{start}{An integer that is the earliest match number that will be
+returned.}
+
+\item{end}{An integer that is the latest match number that will be
+returned.}
+
 \item{expand_rows}{Logical Defaults to FALSE. If FALSE, the dataframe will
 include one row for each scheduled match, with a different column for each
 team. If TRUE, there will be six rows for each match, with each row listing

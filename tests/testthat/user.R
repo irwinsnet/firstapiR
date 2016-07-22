@@ -3,5 +3,5 @@
 # to the username and authorization key provided by FIRST. Remember -- Don't
 # post your authorization key in any publicly accessible place!
 
-username <- 'your_username'
-key <- 'your_authorization_key'
+# username <- 'your_username'
+# key <- 'your_authrorization_key'
