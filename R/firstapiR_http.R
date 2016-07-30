@@ -1,4 +1,32 @@
 #  firstapiR_http.R FIRST API R Toolbox ========================================
+#' firstapiR: FIRST API R Toolbox
+#'
+#' The R Toolbox functions will connect to the FIRST API server and download
+#' data on FIRST Robotics Competition (FRC) teams, events, match results, and
+#' awards.
+#'
+#' The FIRST API accepts formatted hypertext transfer protocol (HTTP) GET
+#' requests for FRC data and provides results in either javascript object
+#' notation (json) or extensible markup language (xml) format. Detailed
+#' documentation for the FIRST API, including precise rules for constructing the
+#' HTTP requests, is available at \url{http://docs.frcevents2.apiary.io/#}
+#'
+#' A username and authorization key are required for connecting to the FIRST
+#' API and for using the R Kit. To obtain a username and key, join the FIRST
+#' Community Developers project on TeamForge at
+#' \url{https://usfirst.collab.net/sf/projects/first_community_developers/}
+#'
+#' These functions return R dataframes by default. Optionally, the functions
+#' can also return the raw JSON or XML that is provided by the FIRST API. See
+#' the apiary documentation (\url{http://docs.frcevents2.apiary.io/#}) for a
+#' detailed description of all response data fields.
+#'
+#' These functions use version 2.0 of the FIRST API. They have not been tested
+#' with version 1.0.
+#'
+#' @docType package
+#' @name firstapiR
+NULL
 
 # TODO:
 # Modify @param tags to put type in parenthesis.
@@ -6,9 +34,10 @@
 # Title case for first line of each comment
 # URL format strings in their own paragraph, and use @section tag.
 # Figure out how to format field list in return section.
+# Assign inherited class to each function result data.frame using append()
 
-# The FIRST API R Kit requires the following R packages. Install these
-# packages before using the R Kit.
+# The FIRST API R Toolbox requires the following R packages. Install these
+# packages before using the R Toolbox.
 # base64enc
 # httr
 # jsonlite
@@ -30,30 +59,29 @@
 #' key, season, format, and a boolean value that specifies whether to use
 #' the staging server instead of the production server.
 #'
-#' @param username Character The username assigned by FIRST.
-#' @param key Character The authorization key assigned by FIRST.
-#' @param season Integer The 4-digit year. Defaults to the year specified in the
-#' .default_season variable at the top if this file. Must be a 4-digit number
-#'   that is equal to or less than the current year and greater than or equal to
-#'   the current year plus one.
-#' @param format Character The data format that will be returned by the
-#'   functions. Can be "json", "data.frame", or "xml". Defaults to "data.frame".
-#'   Case insensitive.
-#' @param staging Logical Set to TRUE to use the staging URL. Defaults to
-#'   \code{FALSE}.
+#' @param username A character vector containing the username assigned by FIRST.
+#' @param key A character vector containing the authorization key assigned by
+#'   FIRST.
+#' @param season An integer vector containing the 4-digit year. Defaults to the
+#'   current year. Must be equal to or less than the current season and greater
+#'   than or equal to 2015.
+#' @param format A character vector that specifies the data format that will be
+#'   returned by firstapiR functions. Can be "json", "data.frame", or "xml".
+#'   Defaults to "data.frame". Case insensitive.
+#' @param staging A logical vector. If set to \code{TRUE}, firstapiR uses the
+#'   staging URL. Defaults to \code{FALSE}.
 #'
-#' Throws an error if season, format, or staging arguments are not allowed
-#' values.
+#' Throws an error if season, format, or staging arguments are incorrect.
 #'
-#' @return A list containing all GetSession parameters. The list has an
-#'   attribute, "FIRST_type", that is set to "Session".
+#' @return A list containing all GetSession parameters. The class attribute is
+#'   set to c("list", "Session")
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession('myUserName', 'myAuthorizationKey')
-#' sn <- GetSession('myUserName', 'myAuthorizationKey', season = 2015)
-#' sn$format <- 'xml'
+#' sn <- GetSession("myUserName", "myAuthorizationKey")
+#' sn <- GetSession("myUserName", "myAuthorizationKey", season = 2015)
+#' sn$format <- "xml"
 GetSession <- function(username, key,
                   season = .default_season,
                   format = "data.frame",
@@ -72,7 +100,7 @@ GetSession <- function(username, key,
                   staging = staging,
                   season = season,
                   format = format)
-  attr(session, "FIRST_type") <- "Session"
+  class(session) <- append(class(session), "Session")
 
   return(session)
 }
@@ -91,27 +119,28 @@ GetSession <- function(username, key,
 #' @param session List A list created with \code{GetSession()}.
 #'
 #' @return JSON or XML formatted text, or an R data frame.
-#'  data.frame column names and classes:
-#'    eventCount: integer
-#'    gameName: factor
-#'    kickoff: factor
-#'    rookieStart: integer
-#'    teamCount: integer
-#'    FRCChampionships.name: character
-#'    FRCChampionships.startDate: character
-#'    FRCChampionships.location: character
-#'  Attribute "FIRST_type": "Season"
-#'  Attribute "url": URL submitted to FIRST API
+#'    data.frame column names and classes:
+#'      eventCount: integer
+#'      gameName: factor
+#'      kickoff: factor
+#'      rookieStart: integer
+#'      teamCount: integer
+#'      FRCChampionships.name: character
+#'      FRCChampionships.startDate: character
+#'      FRCChampionships.location: character
+#'    Attribute "FIRST_type": "Season"
+#'    Attribute "url": URL submitted to FIRST API
 #'
-#'  @export
+#' @export
 #'
-#'  @examples
-#'  sn <- GetSession(username, key, season = 2015)
-#'  summary <- GetSeason(sn)
+#' @examples
+#' # staging arg set to TRUE so examples will run without username and key
+#' #   assigned by FIRST.
+#' sn <- GetSession("username", "key", season = 2015, staging = TRUE)
+#' summary <- GetSeason(sn)
 GetSeason <- function(session) {
   season <- .GetHTTP(session, "")
-
-  attr(season, "FIRST_type") <- "Season"
+  class(season) <- append(class(season), "Season")
   return(season)
 }
 
@@ -215,7 +244,7 @@ GetDistricts <- function(session) {
 #'
 #' @examples
 #' sn <- GetSession(username, key)
-#' frc_data <- GetEvents(sn, team = 5803))
+#' frc_data <- GetEvents(sn, team = 5803)
 #' frc_data <- GetEvents(sn, team = 360, district = 'PNW')
 #' frc_data <- GetEvents(sn, district = FALSE)
 GetEvents <- function(session, event = NULL, team = NULL,
@@ -1255,7 +1284,7 @@ GetAwardsList <- function(session) {
 #' .GetHTTP(sn, "events?teamNumber=2557&districtCode=PNW")
 .GetHTTP <- function (session, url) {
   # Build Full URL
-  url <- paste(if(session$staging) .staging_url else .production_url,
+  full_url <- paste(if(session$staging) .staging_url else .production_url,
                     .version, session$season, url, sep="/")
 
   # Create authorization and format headers
@@ -1266,29 +1295,57 @@ GetAwardsList <- function(session) {
                           'application/json')
   headers <- c(Authorization = auth_header, Accept = format_header)
 
-  # Send GET request
-  user_agent <- "FRC1318's FIRST_API R Functions, v0.9"
-  r <- httr::GET(url, httr::add_headers(.headers = headers),
-                 httr::user_agent(user_agent))
 
-  # Check HTTP Response Status Code
-  if(httr::status_code(r) != 200) stop(paste(httr::status_code(r),
-                                             httr::content(r, "text"),
-                                             sep=": "))
+  if(session$key == "key") {
+    # Use local data from R/sysdata.rda if user specifies dummy key.
+    # See data-raw/data.R for more info.
+    if(tolower(session$format) == "xml") {
+      local_data <- paste(.GetUrlType(url), "xml", sep = "_")
+    } else {
+      local_data <- paste(.GetUrlType(url), "json", sep = "_")
+    }
+    print(local_data) #DEBUG:
+
+    if(exists(local_data)){
+      eval(parse(text = paste("content <- ", local_data)))
+    } else
+      stop("Local data is unavailable.")
+  } else {
+    # Send GET request to FIRST API server
+    user_agent <- "firstapiR: Version 0.0.0.9000"
+    r <- httr::GET(full_url, httr::add_headers(.headers = headers),
+                   httr::user_agent(user_agent))
+
+    # Check HTTP Response Status Code
+    if(httr::status_code(r) != 200) stop(paste(httr::status_code(r),
+                                               httr::content(r, "text"),
+                                               sep=": "))
+    content <- httr::content(r, "text")
+  }
 
   # Format results based on session$format setting.
   result <- switch(tolower(session$format),
-                   'json' = jsonlite::prettify(httr::content(r, "text")),
+                   'json' = jsonlite::prettify(content),
                    'xml' = {
-                     raw_xml <- (httr::content(r, "text"))
+                     raw_xml <- content
                     XML::xmlRoot(XML::xmlTreeParse(raw_xml, asText = TRUE))
                    },
-                   data.frame(jsonlite::fromJSON(httr::content(r, "text"))))
+                   data.frame(jsonlite::fromJSON(content)))
 
+  # Throw error if no records are returned.
   if(session$format == "data.frame" && length(result) == 0)
     stop("No records returned.")
 
-  attr(result, "url") <- url
+  # Set descriptive attributes.
+  attr(result, "url") <- full_url
+  if(session$key == "key") {
+    attr(result, "local_test_data") <- TRUE
+    attr(result, "time_data_downloaded") <- data_time
+  } else {
+    attr(result, "local_test_data") <- FALSE
+    attr(result, "time_data_downloaded") <- Sys.time()
+  }
+
   return(result)
 }
 
@@ -1334,4 +1391,17 @@ GetAwardsList <- function(session) {
   for(fc in cols)
     df[[fc]] <- factor(df[[fc]])
   return(df)
+}
+
+.GetUrlType <- function(url) {
+  api_cmd_ptn <- "(\\w+)(?:[/?]|$)"
+  api_mod_ptn <- "/(\\w+\\)?"
+
+  # Check for season data URL
+  if(url == "")
+    return("season")
+  else {
+    cmd_mtch <- regexec(api_cmd_ptn, url, perl = TRUE)
+    return(regmatches(url, cmd_mtch)[[1]][[2]])
+  }
 }

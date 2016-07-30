@@ -1,9 +1,10 @@
 library("testthat")
+library("firstapiR")
 
 # Define username and key variables
 source("user.R")
 
-context("FIRST R Sessions and Variables.")
+context("FIRST R Sessions and Variables")
 
 test_username <- "username"
 test_key <- "key"
@@ -16,7 +17,7 @@ test_that("username and key defined", {
 test_that("GetSession returns correct list", {
   sess<- GetSession(username, key)
 
-  expect_equal(attr(sess, "FIRST_type"), "Session")
+  expect_is(sess, "Session")
   expect_equal(sess$username, username)
   expect_equal(sess$key, key)
   expect_equal(sess$season, 2016)

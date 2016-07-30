@@ -1,4 +1,5 @@
 library("testthat")
+library("firstapiR")
 
 # Define username and key variables
 source("user.R")
@@ -10,8 +11,7 @@ sess <- GetSession(username, key, staging = TRUE)
 test_that("GetSeason() returns a data frame", {
   season <- GetSeason(sess)
 
-  expect_equal(class(season), "data.frame")
-  expect_equal(attr(season, "FIRST_type"), "Season")
+  expect_is(season, "Season")
   # expect_equal(attr(season, "url"),
   #              "https://frc-staging-api.firstinspires.org/v2.0/2016/")
   expect_equal(nrow(season), 1)

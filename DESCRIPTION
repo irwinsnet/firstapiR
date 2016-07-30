@@ -15,3 +15,4 @@ Imports:
     XML (>= 3.98-1.4)
 RoxygenNote: 5.0.1
 Suggests: testthat
+LazyData: true
