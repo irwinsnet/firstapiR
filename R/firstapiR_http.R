@@ -29,12 +29,11 @@
 NULL
 
 # TODO:
-# Modify @param tags to put type in parenthesis.
 # Switch single quotes (') to double quotes (")
-# Title case for first line of each comment
 # URL format strings in their own paragraph, and use @section tag.
 # Figure out how to format field list in return section.
 # Assign inherited class to each function result data.frame using append()
+# Continue working through functions starting at GetEvents().
 
 # The FIRST API R Toolbox requires the following R packages. Install these
 # packages before using the R Toolbox.
@@ -59,9 +58,18 @@ NULL
 #' key, season, format, and a boolean value that specifies whether to use
 #' the staging server instead of the production server.
 #'
+#' The key field of the Session object may be set to the value "key". If this is
+#' done, the firstapiR functions will skip the HTTP request and will extract
+#' example data from the R/sysdata.rda file. This function is for testing and
+#' demonstrations when no internet connection or valid authorization key is
+#' available. Example data frames returned by firstapiR functions will have
+#' their "local_test_data" attribute set to TRUE and the "time_downloaded"
+#' attribute will be set to the date and time that the example data was
+#' downloaded from the server and stored in the R/sysdata.rda file.
+#'
 #' @param username A character vector containing the username assigned by FIRST.
 #' @param key A character vector containing the authorization key assigned by
-#'   FIRST.
+#'   FIRST, or the value "key".
 #' @param season An integer vector containing the 4-digit year. Defaults to the
 #'   current year. Must be equal to or less than the current season and greater
 #'   than or equal to 2015.
@@ -73,8 +81,8 @@ NULL
 #'
 #' Throws an error if season, format, or staging arguments are incorrect.
 #'
-#' @return A list containing all GetSession parameters. The class attribute is
-#'   set to c("list", "Session")
+#' @return A Session object containing all GetSession parameters.
+#'   The class attribute is set to c("list", "Session")
 #'
 #' @export
 #'
@@ -107,35 +115,46 @@ GetSession <- function(username, key,
 
 
 #  GetSeason() =================================================================
-#' Get high-level information on a particular FRC season.
+#' Get high-level information for an FRC season.
 #'
 #' Returns information for the season specified in the session list (see
 #' documentation for the GetSession function for additional details.)
 #'
 #' See the \emph{Season Summary} section of the FIRST API documentation for
-#' additional details. The URL format is:
+#' additional details.
+#'
+#' The FIRST API URL format is:
+#'
 #' \code{https://frc-api.firstinspires.org/v2.0/season}
 #'
-#' @param session List A list created with \code{GetSession()}.
+#' @param session A Session object created with \code{GetSession()}.
 #'
-#' @return JSON or XML formatted text, or an R data frame.
-#'    data.frame column names and classes:
-#'      eventCount: integer
-#'      gameName: factor
-#'      kickoff: factor
-#'      rookieStart: integer
-#'      teamCount: integer
-#'      FRCChampionships.name: character
-#'      FRCChampionships.startDate: character
-#'      FRCChampionships.location: character
-#'    Attribute "FIRST_type": "Season"
-#'    Attribute "url": URL submitted to FIRST API
+#' @return Depending on the session$format value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame, "Season").
+#'
+#'   The data frame has the following data.frame columns:
+#'   \enumerate{
+#'     \item eventCount: integer
+#'     \item gameName: factor
+#'     \item kickoff: factor
+#'     \item rookieStart: integer
+#'     \item teamCount: integer
+#'     \item FRCChampionships.name: character
+#'     \item FRCChampionships.startDate: character
+#'     \item FRCChampionships.location: character}
+#'
+#'   Data frame attributes:
+#'   \itemize{
+#'     \item url: URL submitted to FIRST API
+#'     \item time_downloaded: Local System time that the object was downladed
+#'       from the FIRST API server.
+#'     \item local_test_data: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' # staging arg set to TRUE so examples will run without username and key
-#' #   assigned by FIRST.
 #' sn <- GetSession("username", "key", season = 2015, staging = TRUE)
 #' summary <- GetSeason(sn)
 GetSeason <- function(session) {
@@ -152,18 +171,31 @@ GetSeason <- function(session) {
 #' and codes. District codes are used as parameters for several other FIRST API
 #' functions.
 #'
-#' See the \emph{District Listings} section of the FIRST API documentation. The
-#' URL format is: \code{https://frc-api.firstinspires.org/v2.0/season/districts}
+#' See the \emph{District Listings} section of the FIRST API documentation.
 #'
-#' @param session Session A session list created with \code{GetSession()}.
+#' The FIRST API URL format is:
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      code: character
-#'      name: character
-#'      districtCount: integer
-#'    Attribute "FIRST_type": "Districts"
-#'    Attribute "url": URL submitted to FIRST API
+#' \code{https://frc-api.firstinspires.org/v2.0/season/districts}
+#'
+#' @param session A Session object created with \code{GetSession()}.
+#'
+#' @return Depending on the session$format value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame, "Districts").
+#'
+#'   The data frame has the following data.frame columns:
+#'   \enumerate{
+#'     \item code: character
+#'     \item name: character
+#'     \item districtCount: integer}
+#'
+#'   Data frame attributes:
+#'   \itemize{
+#'     \item url: URL submitted to FIRST API
+#'     \item time_downloaded: Local System time that the object was downladed
+#'       from the FIRST API server.
+#'     \item local_test_data: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
@@ -180,7 +212,7 @@ GetDistricts <- function(session) {
   # Shorten the column names to reduce amount of typing required.
   names(districts) <- .TrimColNames(names(districts))
 
-  attr(districts, "FIRST_type") <- "Districts"
+  class(districts) <- append(class(districts), "Districts")
   return(districts)
 }
 
@@ -1294,25 +1326,14 @@ GetAwardsList <- function(session) {
   format_header <- switch(tolower(session$format), 'xml' = 'application/xml',
                           'application/json')
   headers <- c(Authorization = auth_header, Accept = format_header)
-
+  user_agent <- "firstapiR: Version 0.0.0.9000"
 
   if(session$key == "key") {
     # Use local data from R/sysdata.rda if user specifies dummy key.
     # See data-raw/data.R for more info.
-    if(tolower(session$format) == "xml") {
-      local_data <- paste(.GetUrlType(url), "xml", sep = "_")
-    } else {
-      local_data <- paste(.GetUrlType(url), "json", sep = "_")
-    }
-    print(local_data) #DEBUG:
-
-    if(exists(local_data)){
-      eval(parse(text = paste("content <- ", local_data)))
-    } else
-      stop("Local data is unavailable.")
+    content <- .GetLocalData(url, session$format)
   } else {
     # Send GET request to FIRST API server
-    user_agent <- "firstapiR: Version 0.0.0.9000"
     r <- httr::GET(full_url, httr::add_headers(.headers = headers),
                    httr::user_agent(user_agent))
 
@@ -1340,10 +1361,10 @@ GetAwardsList <- function(session) {
   attr(result, "url") <- full_url
   if(session$key == "key") {
     attr(result, "local_test_data") <- TRUE
-    attr(result, "time_data_downloaded") <- data_time
+    attr(result, "time_downloaded") <- attr(content, "time_downloaded")
   } else {
     attr(result, "local_test_data") <- FALSE
-    attr(result, "time_data_downloaded") <- Sys.time()
+    attr(result, "time_downloaded") <- Sys.time()
   }
 
   return(result)
@@ -1393,15 +1414,31 @@ GetAwardsList <- function(session) {
   return(df)
 }
 
-.GetUrlType <- function(url) {
+.GetLocalData <- function(url, data_format) {
+  # Verify R/sysdata.rda file has been installed and is available.
+  if(!exists("data_time"))
+    stop("Local data is not available. Check for R/sysdata.rda file.")
+
+  # Determine API command from URL
   api_cmd_ptn <- "(\\w+)(?:[/?]|$)"
   api_mod_ptn <- "/(\\w+\\)?"
 
-  # Check for season data URL
   if(url == "")
-    return("season")
+    cmd_type <- "season"
   else {
     cmd_mtch <- regexec(api_cmd_ptn, url, perl = TRUE)
-    return(regmatches(url, cmd_mtch)[[1]][[2]])
+    cmd_type <- regmatches(url, cmd_mtch)[[1]][[2]]
   }
+
+  # Build varialbe name based on command type and format.
+  if(tolower(data_format) == "xml") {
+    local_data <- paste(cmd_type, "xml", sep = "_")
+  } else {
+    local_data <- paste(cmd_type, "json", sep = "_")
+  }
+
+  # Extract and return local data.
+  eval(parse(text = paste("content <-", local_data)))
+  attr(content, "time_downloaded") <- data_time
+  return(content)
 }

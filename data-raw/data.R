@@ -1,7 +1,7 @@
 data_time <- Sys.time()
 
-sn_j <- GetSession(username, key, format = "json")
-sn_x <- GetSession(username, key, format = "xml")
+sn_j <- GetSession(username, key, format = "json", season = 2016)
+sn_x <- GetSession(username, key, format = "xml", season = 2016)
 
 season_json <- GetSeason(sn_j)
 season_xml <- toString(GetSeason(sn_x))

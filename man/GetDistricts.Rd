@@ -7,16 +7,26 @@
 GetDistricts(session)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 }
 \value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes:
-     code: character
-     name: character
-     districtCount: integer
-   Attribute "FIRST_type": "Districts"
-   Attribute "url": URL submitted to FIRST API
+Depending on the session$format value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame, "Districts").
+
+  The data frame has the following data.frame columns:
+  \enumerate{
+    \item code: character
+    \item name: character
+    \item districtCount: integer}
+
+  Data frame attributes:
+  \itemize{
+    \item url: URL submitted to FIRST API
+    \item time_downloaded: Local System time that the object was downladed
+      from the FIRST API server.
+    \item local_test_data: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
 This function returns a list of all current districs, including their titles
@@ -24,8 +34,11 @@ and codes. District codes are used as parameters for several other FIRST API
 functions.
 }
 \details{
-See the \emph{District Listings} section of the FIRST API documentation. The
-URL format is: \code{https://frc-api.firstinspires.org/v2.0/season/districts}
+See the \emph{District Listings} section of the FIRST API documentation.
+
+The URL format is:
+
+\code{https://frc-api.firstinspires.org/v2.0/season/districts}
 }
 \examples{
 sn <- GetSession(username, key)

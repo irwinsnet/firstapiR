@@ -2,26 +2,36 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetSeason}
 \alias{GetSeason}
-\title{Get high-level information on a particular FRC season.}
+\title{Get high-level information for an FRC season.}
 \usage{
 GetSeason(session)
 }
 \arguments{
-\item{session}{List A list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 }
 \value{
-JSON or XML formatted text, or an R data frame.
-   data.frame column names and classes:
-     eventCount: integer
-     gameName: factor
-     kickoff: factor
-     rookieStart: integer
-     teamCount: integer
-     FRCChampionships.name: character
-     FRCChampionships.startDate: character
-     FRCChampionships.location: character
-   Attribute "FIRST_type": "Season"
-   Attribute "url": URL submitted to FIRST API
+Depending on the session$format value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame, "Season").
+
+  The data frame has the following data.frame columns:
+  \enumerate{
+    \item eventCount: integer
+    \item gameName: factor
+    \item kickoff: factor
+    \item rookieStart: integer
+    \item teamCount: integer
+    \item FRCChampionships.name: character
+    \item FRCChampionships.startDate: character
+    \item FRCChampionships.location: character}
+
+  Data frame attributes:
+  \itemize{
+    \item url: URL submitted to FIRST API
+    \item time_downloaded: Local System time that the object was downladed
+      from the FIRST API server.
+    \item local_test_data: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
 Returns information for the season specified in the session list (see
@@ -29,12 +39,13 @@ documentation for the GetSession function for additional details.)
 }
 \details{
 See the \emph{Season Summary} section of the FIRST API documentation for
-additional details. The URL format is:
+additional details.
+
+The URL format of this command is:
+
 \code{https://frc-api.firstinspires.org/v2.0/season}
 }
 \examples{
-# staging arg set to TRUE so examples will run without username and key
-#   assigned by FIRST.
 sn <- GetSession("username", "key", season = 2015, staging = TRUE)
 summary <- GetSeason(sn)
 }
