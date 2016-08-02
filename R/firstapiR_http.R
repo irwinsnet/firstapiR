@@ -50,7 +50,7 @@ NULL
 
 
 #  GetSession() ================================================================
-#' Create a FIRST API session.
+#' Create a FIRST API session
 #'
 #' Every FIRST API function requires a session as its first parameter.
 #'
@@ -115,7 +115,7 @@ GetSession <- function(username, key,
 
 
 #  GetSeason() =================================================================
-#' Get high-level information for an FRC season.
+#' Get high-level information for an FRC season
 #'
 #' Returns information for the season specified in the session list (see
 #' documentation for the GetSession function for additional details.)
@@ -129,7 +129,7 @@ GetSession <- function(username, key,
 #'
 #' @param session A Session object created with \code{GetSession()}.
 #'
-#' @return Depending on the session$format value, returns JSON text, an
+#' @return Depending on the \code{session$format} value, returns JSON text, an
 #'   XML::XMLDocument object, or a data.frame with class set to
 #'   c("data.frame, "Season").
 #'
@@ -146,10 +146,10 @@ GetSession <- function(username, key,
 #'
 #'   Data frame attributes:
 #'   \itemize{
-#'     \item url: URL submitted to FIRST API
-#'     \item time_downloaded: Local System time that the object was downladed
-#'       from the FIRST API server.
-#'     \item local_test_data: \code{TRUE} if data was extracted from
+#'     \item \strong{url:} URL submitted to FIRST API
+#'     \item \strong{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
+#'     \item \strong{local_test_data:} \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
 #' @export
@@ -165,7 +165,7 @@ GetSeason <- function(session) {
 
 
 #  GetDistricts() ==============================================================
-#' Get a list of FIRST districts.
+#' Get a list of FIRST districts
 #'
 #' This function returns a list of all current districs, including their titles
 #' and codes. District codes are used as parameters for several other FIRST API
@@ -179,7 +179,7 @@ GetSeason <- function(session) {
 #'
 #' @param session A Session object created with \code{GetSession()}.
 #'
-#' @return Depending on the session$format value, returns JSON text, an
+#' @return Depending on the \code{session$format} value, returns JSON text, an
 #'   XML::XMLDocument object, or a data.frame with class set to
 #'   c("data.frame, "Districts").
 #'
@@ -218,16 +218,17 @@ GetDistricts <- function(session) {
 
 
 #  GetEvents() =================================================================
-#' Get details for multiple events.
+#' Get information about FRC events
 #'
-#' Returns details for multiple FRC events.
+#' See the \emph{Event Listings} section of the FIRST API documentation.
 #'
-#' See the \emph{Event Listings} section of the FIRST API documentation. The URL
-#' format is: \code{https://frc-api.firstinspires.org/v2.0/season/events?
-#' teamNumber=team&districtCode=district&excludeDistrict=district}
+#' The URL format is:
 #'
-#' GetEvents will accept either the \code{team} or \code{district} parameters,
-#' neither parameter, or both parameters. If neither \code{team} nor
+#'   \code{https://frc-api.firstinspires.org/v2.0/season/events?
+#'   teamNumber=team&districtCode=district&excludeDistrict=district}
+#'
+#' \code{GetEvents} will accept either the \code{team} or \code{district}
+#' parameters, neither parameter, or both parameters. If neither \code{team} nor
 #' \code{district} are specified, \code{GetEvents} returns all FRC events for
 #' the competition season. If \code{team} is specified, the results are filtered
 #' to only the events in which the FRC team participated. Similarly, if
@@ -236,46 +237,57 @@ GetDistricts <- function(session) {
 #' set to TRUE, then only non-district events are returned. The \code{district}
 #' and \code{exclude_district} events may not be specified at the same time.
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character A FIRST API event code. If event is
-#'   specified, \code{GetEvents()} will return results only for the specified
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event A character vector containing a FIRST API event code. If event
+#'   is specified, \code{GetEvents()} will return results only for the specified
 #'   event. Optional.
-#' @param team Integer Team number. Optional
-#' @param district Characger The FIRST API district code (see
-#'   \code{GetDistricts()}). If disctrict is specified, \code{GetTeams()} will
-#'   filter results to all teams in the specified district.
-#' @param exclude_district Logical If set to \code{TRUE}, district events are
-#'   excluded from results. Optional.
+#' @param team An integer vector containing a team number. Optional
+#' @param district A character vector containing the FIRST API district code
+#'   (see \code{GetDistricts()}). If \code{district} is specified,
+#'   \code{GetTeams()} will filter results to only the events in the specified
+#'   district.
+#' @param exclude_district A logical vector. If set to \code{TRUE}, district
+#'   events are excluded from results. Optional.
 #'
-#' Throws an error if team argument is specified and any other arguments are
-#' specified, or if both the district and exclude_district arguments are
-#' specified.
+#' Throws an error if \code{team} is specified and any other arguments are
+#' specified, or if both the \code{district} and \code{exclude_district}
+#' arguments are specified.
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      code: character
-#'      divisionCode: character
-#'      name: character
-#'      type: factor ('Regional', 'DistrictEvent',
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame, "Events").
+#'
+#'   The data frame has the following data.frame columns:
+#'   \enumerate{
+#'     \item code: character
+#'     \item divisionCode: character
+#'     \item name: character
+#'     \item type: factor ('Regional', 'DistrictEvent',
 #'        'DistrictChampionship', 'ChampionshipSubdivision',
 #'        'ChampionshipDivision', 'Championship', 'Offseason')
-#'      districtCode: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
+#'     \item districtCode: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
 #'        'PNW')
-#'      venue: character
-#'      city: character
-#'      stateprov: factor
-#'      country: factor
-#'      timezone: factor
-#'      dateStart: character
-#'      dateEnd', character
-#'      eventCount: integer
-#'    Attribute "FIRST_type": "Events"
-#'    Attribute "url": URL submitted to FIRST API
+#'     \item venue: character
+#'     \item city: character
+#'     \item stateprov: factor
+#'     \item country: factor
+#'     \item timezone: factor
+#'     \item dateStart: character
+#'     \item dateEnd', character
+#'     \item eventCount: integer}
+#'
+#'   Data frame attributes:
+#'   \itemize{
+#'     \item url: URL submitted to FIRST API
+#'     \item time_downloaded: Local System time that the object was downladed
+#'       from the FIRST API server.
+#'     \item local_test_data: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
+#' sn <- GetSession("username", "key")
 #' frc_data <- GetEvents(sn, team = 5803)
 #' frc_data <- GetEvents(sn, team = 360, district = 'PNW')
 #' frc_data <- GetEvents(sn, district = FALSE)
@@ -306,7 +318,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
   events <- .FactorColumns(events, c("type", "districtCode", "stateprov",
                                      "country", "timezone"))
 
-  attr(events, "FIRST_type") <- "Events"
+  class(events) <- append(class(events), "Events")
   return(events)
 }
 

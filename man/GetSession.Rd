@@ -2,7 +2,7 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetSession}
 \alias{GetSession}
-\title{Create a FIRST API session.}
+\title{Create a FIRST API session}
 \usage{
 GetSession(username, key, season = .default_season, format = "data.frame",
   staging = FALSE)

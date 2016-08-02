@@ -2,7 +2,7 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetDistricts}
 \alias{GetDistricts}
-\title{Get a list of FIRST districts.}
+\title{Get a list of FIRST districts}
 \usage{
 GetDistricts(session)
 }
@@ -10,7 +10,7 @@ GetDistricts(session)
 \item{session}{A Session object created with \code{GetSession()}.}
 }
 \value{
-Depending on the session$format value, returns JSON text, an
+Depending on the \code{session$format} value, returns JSON text, an
   XML::XMLDocument object, or a data.frame with class set to
   c("data.frame, "Districts").
 
@@ -36,7 +36,7 @@ functions.
 \details{
 See the \emph{District Listings} section of the FIRST API documentation.
 
-The URL format is:
+The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season/districts}
 }

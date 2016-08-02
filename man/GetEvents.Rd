@@ -2,63 +2,75 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetEvents}
 \alias{GetEvents}
-\title{Get details for multiple events.}
+\title{Get information about FRC events}
 \usage{
 GetEvents(session, event = NULL, team = NULL, district = NULL,
   exclude_district = NULL)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 
-\item{event}{Character A FIRST API event code. If event is
-specified, \code{GetEvents()} will return results only for the specified
+\item{event}{A character vector containing a FIRST API event code. If event
+is specified, \code{GetEvents()} will return results only for the specified
 event. Optional.}
 
-\item{team}{Integer Team number. Optional}
+\item{team}{An integer vector containing a team number. Optional}
 
-\item{district}{Characger The FIRST API district code (see
-\code{GetDistricts()}). If disctrict is specified, \code{GetTeams()} will
-filter results to all teams in the specified district.}
+\item{district}{A character vector containing the FIRST API district code
+(see \code{GetDistricts()}). If \code{district} is specified,
+\code{GetTeams()} will filter results to only the events in the specified
+district.}
 
-\item{exclude_district}{Logical If set to \code{TRUE}, district events are
-  excluded from results. Optional.
+\item{exclude_district}{A logical vector. If set to \code{TRUE}, district
+  events are excluded from results. Optional.
 
-Throws an error if team argument is specified and any other arguments are
-specified, or if both the district and exclude_district arguments are
-specified.}
+Throws an error if \code{team} is specified and any other arguments are
+specified, or if both the \code{district} and \code{exclude_district}
+arguments are specified.}
 }
 \value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes:
-     code: character
-     divisionCode: character
-     name: character
-     type: factor ('Regional', 'DistrictEvent',
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame, "Events").
+
+  The data frame has the following data.frame columns:
+  \enumerate{
+    \item code: character
+    \item divisionCode: character
+    \item name: character
+    \item type: factor ('Regional', 'DistrictEvent',
        'DistrictChampionship', 'ChampionshipSubdivision',
        'ChampionshipDivision', 'Championship', 'Offseason')
-     districtCode: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
+    \item districtCode: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
        'PNW')
-     venue: character
-     city: character
-     stateprov: factor
-     country: factor
-     timezone: factor
-     dateStart: character
-     dateEnd', character
-     eventCount: integer
-   Attribute "FIRST_type": "Events"
-   Attribute "url": URL submitted to FIRST API
+    \item venue: character
+    \item city: character
+    \item stateprov: factor
+    \item country: factor
+    \item timezone: factor
+    \item dateStart: character
+    \item dateEnd', character
+    \item eventCount: integer}
+
+  Data frame attributes:
+  \itemize{
+    \item url: URL submitted to FIRST API
+    \item time_downloaded: Local System time that the object was downladed
+      from the FIRST API server.
+    \item local_test_data: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
-Returns details for multiple FRC events.
+See the \emph{Event Listings} section of the FIRST API documentation.
 }
 \details{
-See the \emph{Event Listings} section of the FIRST API documentation. The URL
-format is: \code{https://frc-api.firstinspires.org/v2.0/season/events?
-teamNumber=team&districtCode=district&excludeDistrict=district}
+The URL format is:
 
-GetEvents will accept either the \code{team} or \code{district} parameters,
-neither parameter, or both parameters. If neither \code{team} nor
+\code{https://frc-api.firstinspires.org/v2.0/season/events?
+  teamNumber=team&districtCode=district&excludeDistrict=district}
+
+\code{GetEvents} will accept either the \code{team} or \code{district}
+parameters, neither parameter, or both parameters. If neither \code{team} nor
 \code{district} are specified, \code{GetEvents} returns all FRC events for
 the competition season. If \code{team} is specified, the results are filtered
 to only the events in which the FRC team participated. Similarly, if
@@ -68,7 +80,7 @@ set to TRUE, then only non-district events are returned. The \code{district}
 and \code{exclude_district} events may not be specified at the same time.
 }
 \examples{
-sn <- GetSession(username, key)
+sn <- GetSession("username", "key")
 frc_data <- GetEvents(sn, team = 5803)
 frc_data <- GetEvents(sn, team = 360, district = 'PNW')
 frc_data <- GetEvents(sn, district = FALSE)

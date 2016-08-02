@@ -2,7 +2,7 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetSeason}
 \alias{GetSeason}
-\title{Get high-level information for an FRC season.}
+\title{Get high-level information for an FRC season}
 \usage{
 GetSeason(session)
 }
@@ -10,7 +10,7 @@ GetSeason(session)
 \item{session}{A Session object created with \code{GetSession()}.}
 }
 \value{
-Depending on the session$format value, returns JSON text, an
+Depending on the \code{session$format} value, returns JSON text, an
   XML::XMLDocument object, or a data.frame with class set to
   c("data.frame, "Season").
 
@@ -27,10 +27,10 @@ Depending on the session$format value, returns JSON text, an
 
   Data frame attributes:
   \itemize{
-    \item url: URL submitted to FIRST API
-    \item time_downloaded: Local System time that the object was downladed
-      from the FIRST API server.
-    \item local_test_data: \code{TRUE} if data was extracted from
+    \item \strong{url:} URL submitted to FIRST API
+    \item \strong{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
+    \item \strong{local_test_data:} \code{TRUE} if data was extracted from
       R/sysdata.rda file.}
 }
 \description{
@@ -41,7 +41,7 @@ documentation for the GetSession function for additional details.)
 See the \emph{Season Summary} section of the FIRST API documentation for
 additional details.
 
-The URL format of this command is:
+The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season}
 }
