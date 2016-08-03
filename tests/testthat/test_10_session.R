@@ -1,5 +1,5 @@
-library("testthat")
-library("firstapiR")
+library(testthat)
+library(firstapiR)
 
 # Define username and key variables
 source("user.R")

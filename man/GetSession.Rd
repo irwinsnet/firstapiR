@@ -22,9 +22,7 @@ returned by firstapiR functions. Can be "json", "data.frame", or "xml".
 Defaults to "data.frame". Case insensitive.}
 
 \item{staging}{A logical vector. If set to \code{TRUE}, firstapiR uses the
-  staging URL. Defaults to \code{FALSE}.
-
-Throws an error if season, format, or staging arguments are incorrect.}
+staging URL. Defaults to \code{FALSE}.}
 }
 \value{
 A Session object containing all GetSession parameters.
@@ -46,6 +44,9 @@ available. Example data frames returned by firstapiR functions will have
 their "local_test_data" attribute set to TRUE and the "time_downloaded"
 attribute will be set to the date and time that the example data was
 downloaded from the server and stored in the R/sysdata.rda file.
+
+Throws an error if \code{season}, \code{format}, or \code{staging} arguments
+are incorrect.
 }
 \examples{
 sn <- GetSession("myUserName", "myAuthorizationKey")

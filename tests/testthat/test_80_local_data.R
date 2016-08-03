@@ -1,7 +1,7 @@
-library("testthat")
-library("firstapiR")
+library(testthat)
+library(firstapiR)
 
-context("Test local value functionality")
+context("FIRST_R Local Data")
 
 sess <- GetSession("username", "key")
 
@@ -15,6 +15,12 @@ test_that("GetDistricts() returns a local data frame", {
   dst <- GetDistricts(sess)
   expect_is(dst, "Districts")
   expect_true(attr(dst, "local_test_data"))
+})
+
+test_that("GetEvents() returns a local data frame", {
+  events <- GetEvents(sess, district = "PNW")
+  expect_is(events, "Events")
+  expect_true(attr(events, "local_test_data"))
 })
 
 rm(sess)

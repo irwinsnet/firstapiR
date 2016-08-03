@@ -14,23 +14,23 @@ Depending on the \code{session$format} value, returns JSON text, an
   XML::XMLDocument object, or a data.frame with class set to
   c("data.frame, "Season").
 
-  The data frame has the following data.frame columns:
+  \strong{Data Frame Columns}
   \enumerate{
-    \item eventCount: integer
-    \item gameName: factor
-    \item kickoff: factor
-    \item rookieStart: integer
-    \item teamCount: integer
-    \item FRCChampionships.name: character
-    \item FRCChampionships.startDate: character
-    \item FRCChampionships.location: character}
+    \item \emph{eventCount}: integer
+    \item \emph{gameName}: factor
+    \item \emph{kickoff}: factor
+    \item \emph{rookieStart}: integer
+    \item \emph{teamCount}: integer
+    \item \emph{FRCChampionships.name}: character
+    \item \emph{FRCChampionships.startDate}: character
+    \item \emph{FRCChampionships.location}: character}
 
-  Data frame attributes:
+  \strong{Data Frame Attributes}
   \itemize{
-    \item \strong{url:} URL submitted to FIRST API
-    \item \strong{time_downloaded}: Local System time that the object was
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was
     downladed from the FIRST API server.
-    \item \strong{local_test_data:} \code{TRUE} if data was extracted from
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
       R/sysdata.rda file.}
 }
 \description{

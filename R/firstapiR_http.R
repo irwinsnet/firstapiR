@@ -67,6 +67,9 @@ NULL
 #' attribute will be set to the date and time that the example data was
 #' downloaded from the server and stored in the R/sysdata.rda file.
 #'
+#' Throws an error if \code{season}, \code{format}, or \code{staging} arguments
+#' are incorrect.
+#'
 #' @param username A character vector containing the username assigned by FIRST.
 #' @param key A character vector containing the authorization key assigned by
 #'   FIRST, or the value "key".
@@ -78,8 +81,6 @@ NULL
 #'   Defaults to "data.frame". Case insensitive.
 #' @param staging A logical vector. If set to \code{TRUE}, firstapiR uses the
 #'   staging URL. Defaults to \code{FALSE}.
-#'
-#' Throws an error if season, format, or staging arguments are incorrect.
 #'
 #' @return A Session object containing all GetSession parameters.
 #'   The class attribute is set to c("list", "Session")
@@ -133,23 +134,23 @@ GetSession <- function(username, key,
 #'   XML::XMLDocument object, or a data.frame with class set to
 #'   c("data.frame, "Season").
 #'
-#'   The data frame has the following data.frame columns:
+#'   \strong{Data Frame Columns}
 #'   \enumerate{
-#'     \item eventCount: integer
-#'     \item gameName: factor
-#'     \item kickoff: factor
-#'     \item rookieStart: integer
-#'     \item teamCount: integer
-#'     \item FRCChampionships.name: character
-#'     \item FRCChampionships.startDate: character
-#'     \item FRCChampionships.location: character}
+#'     \item \emph{eventCount}: integer
+#'     \item \emph{gameName}: factor
+#'     \item \emph{kickoff}: factor
+#'     \item \emph{rookieStart}: integer
+#'     \item \emph{teamCount}: integer
+#'     \item \emph{FRCChampionships.name}: character
+#'     \item \emph{FRCChampionships.startDate}: character
+#'     \item \emph{FRCChampionships.location}: character}
 #'
-#'   Data frame attributes:
+#'   \strong{Data Frame Attributes}
 #'   \itemize{
-#'     \item \strong{url:} URL submitted to FIRST API
-#'     \item \strong{time_downloaded}: Local System time that the object was
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was
 #'     downladed from the FIRST API server.
-#'     \item \strong{local_test_data:} \code{TRUE} if data was extracted from
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
 #' @export
@@ -183,24 +184,24 @@ GetSeason <- function(session) {
 #'   XML::XMLDocument object, or a data.frame with class set to
 #'   c("data.frame, "Districts").
 #'
-#'   The data frame has the following data.frame columns:
+#'   \strong{Data Frame Columns}
 #'   \enumerate{
-#'     \item code: character
-#'     \item name: character
-#'     \item districtCount: integer}
+#'     \item \emph{code}: character
+#'     \item \emph{name}: character
+#'     \item \emph{districtCount}: integer}
 #'
-#'   Data frame attributes:
+#'   \strong{Data Frame Attributes}
 #'   \itemize{
-#'     \item url: URL submitted to FIRST API
-#'     \item time_downloaded: Local System time that the object was downladed
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was downladed
 #'       from the FIRST API server.
-#'     \item local_test_data: \code{TRUE} if data was extracted from
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
+#' sn <- GetSession(username, "key")
 #' districts <- GetDistricts(sn)
 GetDistricts <- function(session) {
   url <- "districts"
@@ -222,11 +223,6 @@ GetDistricts <- function(session) {
 #'
 #' See the \emph{Event Listings} section of the FIRST API documentation.
 #'
-#' The URL format is:
-#'
-#'   \code{https://frc-api.firstinspires.org/v2.0/season/events?
-#'   teamNumber=team&districtCode=district&excludeDistrict=district}
-#'
 #' \code{GetEvents} will accept either the \code{team} or \code{district}
 #' parameters, neither parameter, or both parameters. If neither \code{team} nor
 #' \code{district} are specified, \code{GetEvents} returns all FRC events for
@@ -236,6 +232,15 @@ GetDistricts <- function(session) {
 #' that occurred within the specified district. If \code{exclude_district} is
 #' set to TRUE, then only non-district events are returned. The \code{district}
 #' and \code{exclude_district} events may not be specified at the same time.
+#'
+#' Throws an error if \code{team} is specified and any other arguments are
+#' specified, or if both the \code{district} and \code{exclude_district}
+#' arguments are specified.
+#'
+#' The URL format is:
+#'
+#'   \code{https://frc-api.firstinspires.org/v2.0/season/events?
+#'   teamNumber=team&districtCode=district&excludeDistrict=district}
 #'
 #' @param session A Session object created with \code{GetSession()}.
 #' @param event A character vector containing a FIRST API event code. If event
@@ -249,39 +254,35 @@ GetDistricts <- function(session) {
 #' @param exclude_district A logical vector. If set to \code{TRUE}, district
 #'   events are excluded from results. Optional.
 #'
-#' Throws an error if \code{team} is specified and any other arguments are
-#' specified, or if both the \code{district} and \code{exclude_district}
-#' arguments are specified.
-#'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
 #'   XML::XMLDocument object, or a data.frame with class set to
 #'   c("data.frame, "Events").
 #'
-#'   The data frame has the following data.frame columns:
+#'   \strong{Data Frame Columns}
 #'   \enumerate{
-#'     \item code: character
-#'     \item divisionCode: character
-#'     \item name: character
-#'     \item type: factor ('Regional', 'DistrictEvent',
+#'     \item \emph{code}: character
+#'     \item \emph{divisionCode}: character
+#'     \item \emph{name}: character
+#'     \item \emph{type}: factor ('Regional', 'DistrictEvent',
 #'        'DistrictChampionship', 'ChampionshipSubdivision',
 #'        'ChampionshipDivision', 'Championship', 'Offseason')
-#'     \item districtCode: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
+#'     \item \emph{districtCode}: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
 #'        'PNW')
-#'     \item venue: character
-#'     \item city: character
-#'     \item stateprov: factor
-#'     \item country: factor
-#'     \item timezone: factor
-#'     \item dateStart: character
-#'     \item dateEnd', character
-#'     \item eventCount: integer}
+#'     \item \emph{venue}: character
+#'     \item \emph{city}: character
+#'     \item \emph{stateprov}: factor
+#'     \item \emph{country}: factor
+#'     \item \emph{timezone}: factor
+#'     \item \emph{dateStart}: character
+#'     \item \emph{dateEnd}: character
+#'     \item \emph{eventCount}: integer}
 #'
-#'   Data frame attributes:
+#'   \strong{Data Frame Attributes}
 #'   \itemize{
-#'     \item url: URL submitted to FIRST API
-#'     \item time_downloaded: Local System time that the object was downladed
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was downladed
 #'       from the FIRST API server.
-#'     \item local_test_data: \code{TRUE} if data was extracted from
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
 #' @export
@@ -289,8 +290,8 @@ GetDistricts <- function(session) {
 #' @examples
 #' sn <- GetSession("username", "key")
 #' frc_data <- GetEvents(sn, team = 5803)
-#' frc_data <- GetEvents(sn, team = 360, district = 'PNW')
-#' frc_data <- GetEvents(sn, district = FALSE)
+#' frc_data <- GetEvents(sn, district = 'PNW')
+#' frc_data <- GetEvents(sn, team = 360, exclude_district = TRUE)
 GetEvents <- function(session, event = NULL, team = NULL,
                       district = NULL, exclude_district = NULL) {
   # Check for unallowed combinations of arguments.

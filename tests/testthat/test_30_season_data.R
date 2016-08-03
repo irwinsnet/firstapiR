@@ -1,5 +1,5 @@
-library("testthat")
-library("firstapiR")
+library(testthat)
+library(firstapiR)
 
 # Define username and key variables
 source("user.R")
@@ -25,8 +25,7 @@ test_that("GetSeason() returns a data frame", {
 test_that("GetDistricts() returns a data frame", {
   dst <- GetDistricts(sess)
 
-  expect_equal(class(dst), "data.frame")
-  expect_equal(attr(dst, "FIRST_type"), "Districts")
+  expect_is(dst, "Districts")
   # expect_equal(attr(dst, "url"),
   #              "https://frc-staging-api.firstinspires.org/v2.0/2016/districts")
   expect_equal(nrow(dst), 8)
@@ -36,8 +35,7 @@ test_that("GetDistricts() returns a data frame", {
 
 test_that("GetEvents() returns data frame", {
   evt <- GetEvents(sess, team = 1318)
-  expect_equal(class(evt), "data.frame")
-  expect_equal(attr(evt, "FIRST_type"), "Events")
+  expect_is(evt, "Events")
   # expect_equal(attr(evt, "url"),
   #     paste("https://frc-staging-api.firstinspires.org/v2.0/2016/",
   #           "events?teamNumber=1318", sep = ""))

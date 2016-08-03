@@ -14,18 +14,18 @@ Depending on the \code{session$format} value, returns JSON text, an
   XML::XMLDocument object, or a data.frame with class set to
   c("data.frame, "Districts").
 
-  The data frame has the following data.frame columns:
+  \strong{Data Frame Columns}
   \enumerate{
-    \item code: character
-    \item name: character
-    \item districtCount: integer}
+    \item \emph{code}: character
+    \item \emph{name}: character
+    \item \emph{districtCount}: integer}
 
-  Data frame attributes:
+  \strong{Data Frame Attributes}
   \itemize{
-    \item url: URL submitted to FIRST API
-    \item time_downloaded: Local System time that the object was downladed
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was downladed
       from the FIRST API server.
-    \item local_test_data: \code{TRUE} if data was extracted from
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
       R/sysdata.rda file.}
 }
 \description{
@@ -41,7 +41,7 @@ The FIRST API URL format is:
 \code{https://frc-api.firstinspires.org/v2.0/season/districts}
 }
 \examples{
-sn <- GetSession(username, key)
+sn <- GetSession(username, "key")
 districts <- GetDistricts(sn)
 }
 
