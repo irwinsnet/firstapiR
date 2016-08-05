@@ -2,72 +2,88 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetTeams}
 \alias{GetTeams}
-\title{Get details for many teams.}
+\title{Get details on FRC teams}
 \usage{
 GetTeams(session, team = NULL, event = NULL, district = NULL,
   state = NULL, page = NULL)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 
-\item{team}{Integer Team number. Optional}
+\item{team}{An integer vector containing a team number. Optional}
 
 \item{event}{Character A FIRST API event code (see \code{GetEvents()}). If
 event is specified, \code{GetTeams()} will filter results to all teams
 particpating in the specified event. Optional.}
 
-\item{district}{Character The FIRST API district code (see
-\code{GetDistricts()}). If disctrict is specified, \code{GetTeams()} will
-filter results to all teams in the specified district.}
+\item{district}{A character vector containing a FIRST API district code
+(see \code{GetDistricts()}). If specified, the FIRST API server will filter
+the response to only the teams in the specified district. Optional.}
 
-\item{state}{Character A state name, spelled out entirely (i.e., 'Idaho',
-\emph{not} 'ID'). If state is specified, \code{GetTeams()} will filter
-results to all teams in the specified state.}
+\item{state}{A character vector containing a state name, spelled out entirely
+(i.e., 'Idaho', \emph{not} 'ID'). If state is specified, \code{GetTeams()}
+will filter results to all teams in the specified state. Optional}
 
-\item{page}{Integer Page number specifying which page of results should be
+\item{page}{An integer vector that specifyies which page of results should be
 returned. Optional. Use only for xml or json formats.}
 }
 \value{
-If the data.frame format is specified (i.e., \code{session$format ==
-  'data.frame'}), returns all teams in a single data frame. If the json or
-  xml formates are specified, returns a single page of json or xml responses.
-   data.frame column names and classes:
-     teamNumber: character
-     nameFull: character
-     nameShort: character
-     city: character
-     stateProv: factor
-     country: factor
-     website: character
-     rookieYear: integer
-     robotName: character
-     districtCode: factor
-     teamCountTotal: integer
-     teamCountPage: integer
-     pageCurrent: integer
-     pageTotal: integer
-   Attribute "FIRST_type": "Teams"
-   Attribute "url": URL submitted to FIRST API
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame, "Teams").
+
+  \strong{Data Frame Columns}
+  \enumerate{
+    \item \emph{teamNumber}: character
+    \item \emph{nameFull}: character
+    \item \emph{nameShort}: character
+    \item \emph{city}: character
+    \item \emph{stateProv}: factor
+    \item \emph{country}: factor
+    \item \emph{website}: character
+    \item \emph{rookieYear}: integer
+    \item \emph{robotName}: character
+    \item \emph{districtCode}: factor
+    \item \emph{eamCountTotal}: integer
+    \item \emph{teamCountPage}: integer
+    \item \emph{pageCurrent}: integer
+    \item \emph{pageTotal}: integer}
+
+  \strong{Data Frame Attributes}
+    \itemize{
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was downladed
+      from the FIRST API server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
-The FIRST team listing API response will be broken up into several pages if
-the number of teams in the response exceeds 65, with a separate HTTP request
-required for each page. If the dataframe format is specified, then
-\code{GetTeams()} makes this transparent to the user. \code{GetTeams()} will
-determine the number of pages in the response, conduct an HTTP request to
-obtain each page, and merge all pages into a single dataframe. For the xml
-and json formats, \code{GetTeams()} will return a single page of teams.
+Provides lists of FRC teams for specified events, districts, and states. With
+no parameters (except for \code{session}), \code{GetTeams} will provide a
+list of all FRC teams.
 }
 \details{
-See the \emph{Team Listings} section of the FIRST API documentation. The
-URL format is:
+Because the length of the \code{GetTeams} response can be several thousand
+lines long, the FIRST API server will break up its response into several
+pages when the number of teams in the response exceeds 65. For the data frame
+format, \code{GetTeams} will send a request to the FIRST API server and
+determine from the first response whether additional HTTP requests are
+necessary to retrieve all requested data. \code{GetTeams} will then merge all
+responses into a single data frame. For xml and json formats, the user will
+have to call \code{GetTeams} for each page of data, specifying the page with
+the \code{page} argument.
+
+See the \emph{Team Listings} section of the FIRST API documentation.
+
+The URL format is:
+
 \code{https://frc-api.firstinspires.org/v2.0/season/teams&eventCode=event
 ?districtCode=district?state=state?page=2}
 }
 \examples{
-sn <- GetSession(username, key)
-GetTeams(state = 'California')
-GetTeams(district = 'FIM')
-GetTeams(event = 'CMP-CARVER')
+sn <- GetSession("username", "key")
+GetTeams(state = "California")
+GetTeams(district = "FIM")
+GetTeams(event = "CMP-CARVER")
 }
 

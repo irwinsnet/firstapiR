@@ -2,63 +2,88 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetSchedule}
 \alias{GetSchedule}
-\title{Get the match schedule for a specific event.}
+\title{Get the match schedule for a specific event}
 \usage{
 GetSchedule(session, event, level = "qual", team = NULL, start = NULL,
   end = NULL, expand_cols = FALSE)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 
-\item{event}{Character The FIRST API event code.}
+\item{event}{Character A FIRST API event code (see \code{GetEvents}). If
+event is specified, \code{GetTeams()} will filter results to all teams
+particpating in the specified event. Optional.}
 
-\item{level}{Character Either \code{qual} or \code{playoff}. Defaults to
-\code{qual}.}
+\item{level}{A character vector containing either \emph{"qual"} or
+\emph{"playoff"}. Defaults to \emph{"qual"}. Optional.}
 
-\item{team}{Integer team number. Optional}
+\item{team}{An integer vector containing a team number. Optional.}
 
-\item{start}{Integer Earliest match to reuturn}
+\item{start}{An integer vector containing the earliest match to return.
+Optional.}
 
-\item{end}{Integer Latest match to return}
+\item{end}{An integer vector containing the latest match to return. Optional.}
 
-\item{expand_cols}{A logical value. Optional, defaults to FALSE. If TRUE, the
-dataframe will include one row for each scheduled match, with a different
-column for each team. If FALSE, there will be six rows for each match, with
-each row listing one assigned team and their station.}
+\item{expand_cols}{A logical value that defaults to \code{FALSE}. If
+\code{TRUE}, the dataframe will include one row for each scheduled match,
+with a different column for each team. If \code{FALSE}, there will be six
+rows for each match, with each row listing one assigned team and their
+station. Optional.}
 }
 \value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes:
-     description: character
-     field: character
-     tournamentLevel: factor
-     matchNumber: integer
-     startTime: character
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame, "Schedule").
 
-     If expand.rows == FALSE
-       Red1.team, Red2.team, Red3.team: factor
-       Blue1.team, Blue2.team, Blue3.team: factor
-       Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
-       Blue1.surrogate, Blue2.surrogate, Blue3.surrogate: logical
+  \strong{Data Frame Columns}
+  \enumerate{
+    \item \emph{description}: character
+    \item \emph{field}: character
+    \item \emph{tournamentLevel}: factor
+    \item \emph{matchNumber}: integer
+    \item \emph{startTime}: character}
+
+    If expand.rows == FALSE
+      \enumerate{
+        \item \emph{Red1.team, Red2.team, Red3.team}: factor
+        \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
+        \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
+        \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
+          logical}
+
      If expand.rows == TRUE
-       teamNumber: factor
-       alliance: factor (Red, Blue)
-       station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-       surrogate: logical
-     Attribute "FIRST_type": "Schedule"
-     Attribute "url": URL submitted to FIRST API
+       \enumerate{
+         \item \emph{teamNumber}: factor
+         \item \emph{alliance}: factor (Red, Blue)
+         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+         \item \emph{surrogate}: logical}
+
+  \strong{Data Frame Attributes}
+    \itemize{
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was downladed
+      from the FIRST API server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
-See the \emph{Event Schedule} section of the FIRST API documentation. The
-URL format is:
+Returns either the qualification schedule or the playoff schedule, based on
+the value of the \code{level} argument. The \code{start} and \code{end}
+arguments allow filtering of results to specific matches.
+}
+\details{
+See the \emph{Event Schedule} section of the FIRST API documentation.
+
+The URL format is:
+
 \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event?
 tournamentLevel=level&teamNumber=team&start=start&end=end}
 }
 \examples{
-sn <- GetSession(username, key)
-GetSchedule(sn, 'PNCMP')
-GetSchedule(sn, 'PNCMP', start=5, end=10)
-GetSchedule(sn, 'WAAMV', level='playoff')
-GetSchedule(sn, 'PNCMP', team=4911, end=25)
+sn <- GetSession("username", "key")
+GetSchedule(sn, "PNCMP")
+GetSchedule(sn, "PNCMP", start=5, end=10)
+GetSchedule(sn, "WAAMV", level='playoff')
+GetSchedule(sn, "PNCMP", team=4911, end=25)
 }
 

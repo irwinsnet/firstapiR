@@ -60,11 +60,7 @@ test_that("GetEvents() returns data frame", {
 
 test_that("GetTeams() returns a data frame", {
   tms <- GetTeams(sess, team = 1318)
-  expect_equal(class(tms), "data.frame")
-  expect_equal(attr(tms, "FIRST_type"), "Teams")
-  # expect_equal(attr(tms, "url"),
-  #             paste("https://frc-staging-api.firstinspires.org/v2.0/2016/",
-  #                   "teams?teamNumber=1318", sep = ""))
+  expect_is(tms, "Teams")
   expect_equal(length(tms), 14)
   expect_equal(nrow(tms), 1)
   expect_true(is.factor(tms$stateProv))
@@ -72,7 +68,6 @@ test_that("GetTeams() returns a data frame", {
   expect_true(is.factor(tms$districtCode))
 
   tms <- GetTeams(sess, district = "PNW")
-  expect_equal(class(tms), "data.frame")
   expect_equal(nrow(tms), 158)
 })
 

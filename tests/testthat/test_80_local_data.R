@@ -23,4 +23,10 @@ test_that("GetEvents() returns a local data frame", {
   expect_true(attr(events, "local_test_data"))
 })
 
+test_that("GetTeams() returns a local data frame", {
+  events <- GetEvents(sess, district = "PNW")
+  expect_is(events, "Events")
+  expect_true(attr(events, "local_test_data"))
+})
+
 rm(sess)

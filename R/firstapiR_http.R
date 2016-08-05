@@ -325,63 +325,79 @@ GetEvents <- function(session, event = NULL, team = NULL,
 
 
 #  GetTeams() ==================================================================
-#' Get details for many teams.
+#' Get details on FRC teams
 #'
-#' The FIRST team listing API response will be broken up into several pages if
-#' the number of teams in the response exceeds 65, with a separate HTTP request
-#' required for each page. If the dataframe format is specified, then
-#' \code{GetTeams()} makes this transparent to the user. \code{GetTeams()} will
-#' determine the number of pages in the response, conduct an HTTP request to
-#' obtain each page, and merge all pages into a single dataframe. For the xml
-#' and json formats, \code{GetTeams()} will return a single page of teams.
+#' Provides lists of FRC teams for specified events, districts, and states. With
+#' no parameters (except for \code{session}), \code{GetTeams} will provide a
+#' list of all FRC teams.
 #'
-#' See the \emph{Team Listings} section of the FIRST API documentation. The
-#' URL format is:
+#' Because the length of the \code{GetTeams} response can be several thousand
+#' lines long, the FIRST API server will break up its response into several
+#' pages when the number of teams in the response exceeds 65. For the data frame
+#' format, \code{GetTeams} will send a request to the FIRST API server and
+#' determine from the first response whether additional HTTP requests are
+#' necessary to retrieve all requested data. \code{GetTeams} will then merge all
+#' responses into a single data frame. For xml and json formats, the user will
+#' have to call \code{GetTeams} for each page of data, specifying the page with
+#' the \code{page} argument.
+#'
+#' See the \emph{Team Listings} section of the FIRST API documentation.
+#'
+#' The URL format is:
+#'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/teams&eventCode=event
 #' ?districtCode=district?state=state?page=2}
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param team Integer Team number. Optional
+#' @param session A Session object created with \code{GetSession()}.
+#' @param team An integer vector containing a team number. Optional
 #' @param event Character A FIRST API event code (see \code{GetEvents()}). If
 #'   event is specified, \code{GetTeams()} will filter results to all teams
 #'   particpating in the specified event. Optional.
-#' @param district Character The FIRST API district code (see
-#'   \code{GetDistricts()}). If disctrict is specified, \code{GetTeams()} will
-#'   filter results to all teams in the specified district.
-#' @param state Character A state name, spelled out entirely (i.e., 'Idaho',
-#'   \emph{not} 'ID'). If state is specified, \code{GetTeams()} will filter
-#'   results to all teams in the specified state.
-#' @param page Integer Page number specifying which page of results should be
+#' @param district A character vector containing a FIRST API district code
+#'   (see \code{GetDistricts()}). If specified, the FIRST API server will filter
+#'   the response to only the teams in the specified district. Optional.
+#' @param state A character vector containing a state name, spelled out entirely
+#'   (i.e., 'Idaho', \emph{not} 'ID'). If state is specified, \code{GetTeams()}
+#'   will filter results to all teams in the specified state. Optional
+#' @param page An integer vector that specifyies which page of results should be
 #'   returned. Optional. Use only for xml or json formats.
 #'
-#' @return If the data.frame format is specified (i.e., \code{session$format ==
-#'   'data.frame'}), returns all teams in a single data frame. If the json or
-#'   xml formates are specified, returns a single page of json or xml responses.
-#'    data.frame column names and classes:
-#'      teamNumber: character
-#'      nameFull: character
-#'      nameShort: character
-#'      city: character
-#'      stateProv: factor
-#'      country: factor
-#'      website: character
-#'      rookieYear: integer
-#'      robotName: character
-#'      districtCode: factor
-#'      teamCountTotal: integer
-#'      teamCountPage: integer
-#'      pageCurrent: integer
-#'      pageTotal: integer
-#'    Attribute "FIRST_type": "Teams"
-#'    Attribute "url": URL submitted to FIRST API
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame, "Teams").
+#'
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'     \item \emph{teamNumber}: character
+#'     \item \emph{nameFull}: character
+#'     \item \emph{nameShort}: character
+#'     \item \emph{city}: character
+#'     \item \emph{stateProv}: factor
+#'     \item \emph{country}: factor
+#'     \item \emph{website}: character
+#'     \item \emph{rookieYear}: integer
+#'     \item \emph{robotName}: character
+#'     \item \emph{districtCode}: factor
+#'     \item \emph{eamCountTotal}: integer
+#'     \item \emph{teamCountPage}: integer
+#'     \item \emph{pageCurrent}: integer
+#'     \item \emph{pageTotal}: integer}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was downladed
+#'       from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
-#' GetTeams(state = 'California')
-#' GetTeams(district = 'FIM')
-#' GetTeams(event = 'CMP-CARVER')
+#' sn <- GetSession("username", "key")
+#' GetTeams(state = "California")
+#' GetTeams(district = "FIM")
+#' GetTeams(event = "CMP-CARVER")
 GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
                       state = NULL, page = NULL) {
   # Check for unallowed combinations of arguments.
@@ -415,6 +431,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   # If results consist of more than one page, send an HTTP request to get each
   # page, storing each page of results in the list.
   if(pages > 1) {
+    team_attr <- attributes(teams[[1]])
     for(page in 2:pages) {
       team_args$page <- page
       url <- .AddHTTPArgs("teams", team_args)
@@ -428,8 +445,14 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
         teams_df <- merge(teams_df, teams[[page]], all = TRUE)
       }
       teams <- teams_df
+
+      # Replace attributes that were stripped due to merging
+      attr(teams, "url") <- team_attr$url
+      attr(teams, "local_test_data") <- team_attr$local_test_data
+      attr(teams, "time_downloaded") <- team_attr$time_downloaded
     }
-  } else teams <- teams[[1]] # For xml and json, return the list of pages.
+  } else
+    teams <- teams[[1]]
 
   # Shorten the column names to reduce amount of typing required.
   names(teams) <- .TrimColNames(names(teams))
@@ -437,60 +460,84 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   # Convert categorical coluns to factor data types.
   teams <- .FactorColumns(teams, c("districtCode", "stateProv", "country"))
 
-  attr(teams, "FIRST_type") <- "Teams"
+  class(teams) <- append(class(teams), "Teams")
   return(teams)
 }
 
 
 #  GetSchedule() ===============================================================
-#' Get the match schedule for a specific event.
+#' Get the match schedule for a specific event
 #'
-#' See the \emph{Event Schedule} section of the FIRST API documentation. The
-#' URL format is:
+#' Returns either the qualification schedule or the playoff schedule, based on
+#' the value of the \code{level} argument. The \code{start} and \code{end}
+#' arguments allow filtering of results to specific matches.
+#'
+#' See the \emph{Event Schedule} section of the FIRST API documentation.
+#'
+#' The URL format is:
+#'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event?
 #' tournamentLevel=level&teamNumber=team&start=start&end=end}
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character The FIRST API event code.
-#' @param level Character Either \code{qual} or \code{playoff}. Defaults to
-#'   \code{qual}.
-#' @param team Integer team number. Optional
-#' @param start Integer Earliest match to reuturn
-#' @param end Integer Latest match to return
-#' @param expand_cols A logical value. Optional, defaults to FALSE. If TRUE, the
-#'   dataframe will include one row for each scheduled match, with a different
-#'   column for each team. If FALSE, there will be six rows for each match, with
-#'   each row listing one assigned team and their station.
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event Character A FIRST API event code (see \code{GetEvents}). If
+#'   event is specified, \code{GetTeams()} will filter results to all teams
+#'   particpating in the specified event. Optional.
+#' @param level A character vector containing either \emph{"qual"} or
+#'   \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.
+#' @param team An integer vector containing a team number. Optional.
+#' @param start An integer vector containing the earliest match to return.
+#'   Optional.
+#' @param end An integer vector containing the latest match to return. Optional.
+#' @param expand_cols A logical value that defaults to \code{FALSE}. If
+#'   \code{TRUE}, the dataframe will include one row for each scheduled match,
+#'   with a different column for each team. If \code{FALSE}, there will be six
+#'   rows for each match, with each row listing one assigned team and their
+#'   station. Optional.
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      description: character
-#'      field: character
-#'      tournamentLevel: factor
-#'      matchNumber: integer
-#'      startTime: character
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame, "Schedule").
 #'
-#'      If expand.rows == FALSE
-#'        Red1.team, Red2.team, Red3.team: factor
-#'        Blue1.team, Blue2.team, Blue3.team: factor
-#'        Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
-#'        Blue1.surrogate, Blue2.surrogate, Blue3.surrogate: logical
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'     \item \emph{description}: character
+#'     \item \emph{field}: character
+#'     \item \emph{tournamentLevel}: factor
+#'     \item \emph{matchNumber}: integer
+#'     \item \emph{startTime}: character}
+#'
+#'     If expand.rows == FALSE
+#'       \enumerate{
+#'         \item \emph{Red1.team, Red2.team, Red3.team}: factor
+#'         \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
+#'         \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
+#'         \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
+#'           logical}
+#'
 #'      If expand.rows == TRUE
-#'        teamNumber: factor
-#'        alliance: factor (Red, Blue)
-#'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-#'        surrogate: logical
-#'      Attribute "FIRST_type": "Schedule"
-#'      Attribute "url": URL submitted to FIRST API
+#'        \enumerate{
+#'          \item \emph{teamNumber}: factor
+#'          \item \emph{alliance}: factor (Red, Blue)
+#'          \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+#'          \item \emph{surrogate}: logical}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was downladed
+#'       from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
-#' GetSchedule(sn, 'PNCMP')
-#' GetSchedule(sn, 'PNCMP', start=5, end=10)
-#' GetSchedule(sn, 'WAAMV', level='playoff')
-#' GetSchedule(sn, 'PNCMP', team=4911, end=25)
+#' sn <- GetSession("username", "key")
+#' GetSchedule(sn, "PNCMP")
+#' GetSchedule(sn, "PNCMP", start=5, end=10)
+#' GetSchedule(sn, "WAAMV", level='playoff')
+#' GetSchedule(sn, "PNCMP", team=4911, end=25)
 GetSchedule <- function (session, event, level = 'qual', team = NULL,
                          start = NULL, end = NULL, expand_cols = FALSE) {
   # Check for prohibited combinations of arguments
