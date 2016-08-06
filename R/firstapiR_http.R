@@ -624,7 +624,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
     sched <- .FactorColumns(sched, c("teamNumber", "station", "field",
                                      "tournamentLevel", "alliance"))
   }
-  attr(sched, "FIRST_type") <- "Schedule"
+  class(sched) <- append(class(sched), "Schedule")
   return(sched)
 }
 

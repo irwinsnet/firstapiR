@@ -16,9 +16,14 @@ events_xml <- toString(firstapiR::GetEvents(sn_x, team = 360,
 teams_json <- firstapiR::GetTeams(sn_j, district = "PNW", page = 1)
 teams_xml <- firstapiR::GetTeams(sn_x, state = "Idaho", page = 1)
 
+schedule_json <- firstapiR::GetSchedule(sn_j, event = "ORPHI")
+schedule_xml <- firstapiR::GetSchedule(sn_x, event = "PNCMP",
+                                        level = "playoff")
+
 devtools::use_data(season_json, season_xml,
                    districts_json, districts_xml,
                    events_json, events_xml,
                    teams_json, teams_xml,
+                   schedule_json, schedule_xml,
                    data_time,
                    internal = TRUE, overwrite = TRUE)

@@ -10,8 +10,7 @@ sess <- GetSession(username, key)
 
 test_that("GetSchedule() returns a data frame", {
   sched <- GetSchedule(sess, event = "PNCMP")
-  expect_equal(class(sched), "data.frame")
-  expect_equal(attr(sched, "FIRST_type"), "Schedule")
+  expect_is(sched, "Schedule")
   expect_equal(attr(sched, "url"), paste("https://frc-api.firstinspires.org",
       "/v2.0/2016/schedule/PNCMP?tournamentLevel=qual", sep = ""))
   expect_equal(nrow(sched), 768)
@@ -20,7 +19,7 @@ test_that("GetSchedule() returns a data frame", {
 
 test_that("GetSchedule() expand_cols arg returns expanded data frame.", {
   sched <- GetSchedule(sess, event = "PNCMP", expand_cols = TRUE)
-  expect_equal(class(sched), "data.frame")
+  expect_is(sched, "Schedule")
   expect_equal(nrow(sched), 128)
   expect_equal(length(sched), 17)
 })

@@ -29,4 +29,10 @@ test_that("GetTeams() returns a local data frame", {
   expect_true(attr(events, "local_test_data"))
 })
 
+test_that("GetSchedule() returns a local data frame", {
+  sched <- GetSchedule(sess, event = "PNCMP", level = "playoff")
+  expect_is(sched, "Schedule")
+  expect_true(attr(sched, "local_test_data"))
+})
+
 rm(sess)
