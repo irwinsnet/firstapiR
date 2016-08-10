@@ -8,63 +8,53 @@ GetHybridSchedule(session, event, level = "qual", start = NULL,
   end = NULL, expand_rows = FALSE)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 
-\item{event}{Character The FIRST API event code.}
+\item{event}{A character vector containing a FIRST API event code
+(see \code{GetEvents}).}
 
 \item{level}{Character Either \code{qual} or \code{playoff}. Defaults to
-\code{qual}.}
+\code{qual}.A character vector containing either \emph{"qual"} or
+\emph{"playoff"}. Defaults to \emph{"qual"}. Optional.}
 
-\item{start}{An integer that is the earliest match number that will be
-returned.}
+\item{start}{An integer vector containing the earliest match to
+Optional.}
 
-\item{end}{An integer that is the latest match number that will be
-returned.}
+\item{end}{An integer vector containing the latest match to return. Optional.}
 
-\item{expand_rows}{Logical Defaults to FALSE. If FALSE, the dataframe will
-include one row for each scheduled match, with a different column for each
-team. If TRUE, there will be six rows for each match, with each row listing
-one assigned team and their station. Optional}
-}
-\value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes:
-     description: character
-     tournamentLevel: factor
-     matchNumber: integer
-     startTime: character
-     actualStartTime: character
-
-     If expand.rows == FALSE
-       scoreRedFoul, scoreRedAuto, scoreRedFinal: integer
-       scoreBlueFoul, scoreBlueAuto, scoreBlueFinal: integer
-       Red1.team, Red2.team, Red3.team: factor
-       Blue1.team, Blue2.team, Blue3.team: factor
-       Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
-       Blue1.surrogate, Blue2.surrogate, Blue3.surrogate: logical
-       Red1.dq, Red2.dq, Red3.dq, Blue1.dq, Blue2.dq, Blue3.dq: logical
-     If expand.rows == TRUE
-       teamNumber: factor
-       station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-       scoreFinal, scoreAuto, scoreFoul: integer
-       surrogate: logical
-       dq: logical
-     Attribute "FIRST_type": "HybridSchedule"
-     Attribute "url": URL submitted to FIRST API
+\item{expand_cols}{A logical value that defaults to \code{FALSE}. If
+\code{TRUE}, the dataframe will include one row for each scheduled match,
+with a different column for each team. If \code{FALSE}, there will be six
+rows for each match, with each row listing one assigned team and their
+station. Optional.}
 }
 \description{
-For matches that have been played, returns the teams assigned to the match
-and the match results. If the mtach has not yet been played, the assigned
-teams and schedule data is returned, but the resutls fields are blank.
+For matches that have been played, \code{GetHybridSchedule} returns the teams
+assigned to the match and the match results. If the mtach has not yet been
+played, the assigned teams and schedule data are returned, but the result
+fields are blank.
 }
 \details{
-See the \emph{Hybrid Schedule} section of the FIRST API documentation. The
-URL format is:
+Depending on the \code{expand_cols} argument, \code{GetHybridSchedule} can
+structure the resulting data frame two diferent ways. When \code{expand_cols}
+is set to \emph{FALSE} the data frame will contain six rows for every match
+returned. Each row will include data on one team that participates in the
+match. This narrow (i.e., fewer columns) structure is useful when filtering
+results to specific teams, because only one column, \emph(teamNumber), must
+be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
+will have one row per match, with all six participating teams listed in one
+row. This wide format is useful for displaying the schedule in a table.
+
+See the \emph{Hybrid Schedule} section of the FIRST API documentation for
+more details.
+
+The URL format is:
+
 \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event/level/
 hybrid?start=start&end=end}
 }
 \examples{
-sn <- GetSession(username, key)
+sn <- GetSession("username", "key")
 GetHybridSchedule(sn, event = "ORPHI")
 GetHybridSchedule(sn, level = "playoff", start = 3, end = 6)
 }

@@ -472,6 +472,16 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' the value of the \code{level} argument. The \code{start} and \code{end}
 #' arguments allow filtering of results to specific matches.
 #'
+#' Depending on the \code{expand_cols} argument, \code{GetSchedule} can
+#' structure the resulting data frame two diferent ways. When \code{expand_cols}
+#' is set to \emph{FALSE} the data frame will contain six rows for every match
+#' returned. Each row will include data on one team that participates in the
+#' match. This narrow (i.e., fewer columns) structure is useful when filtering
+#' results to specific teams, because only one column, \emph(teamNumber), must
+#' be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
+#' will have one row per match, with all six participating teams listed in one
+#' row. This wide format is useful for displaying the schedule in a table.
+#'
 #' See the \emph{Event Schedule} section of the FIRST API documentation.
 #'
 #' The URL format is:
@@ -480,13 +490,12 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' tournamentLevel=level&teamNumber=team&start=start&end=end}
 #'
 #' @param session A Session object created with \code{GetSession()}.
-#' @param event Character A FIRST API event code (see \code{GetEvents}). If
-#'   event is specified, \code{GetTeams()} will filter results to all teams
-#'   particpating in the specified event. Optional.
+#' @param event A character vector containing a FIRST API event code
+#'   (see \code{GetEvents}).
 #' @param level A character vector containing either \emph{"qual"} or
 #'   \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.
 #' @param team An integer vector containing a team number. Optional.
-#' @param start An integer vector containing the earliest match to return.
+#' @param start An integer vector containing the earliest match to
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
 #' @param expand_cols A logical value that defaults to \code{FALSE}. If
@@ -507,20 +516,20 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'     \item \emph{matchNumber}: integer
 #'     \item \emph{startTime}: character}
 #'
-#'     If expand.rows == FALSE
+#'      If expand_cols == \emph{FALSE}
+#'        \enumerate{
+#'          \item \emph{teamNumber}: factor
+#'          \item \emph{alliance}: factor (Red, Blue)
+#'          \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+#'          \item \emph{surrogate}: logical}
+#'
+#'     If expand_cols == \emph{TRUE}
 #'       \enumerate{
 #'         \item \emph{Red1.team, Red2.team, Red3.team}: factor
 #'         \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
 #'         \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
 #'         \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
 #'           logical}
-#'
-#'      If expand.rows == TRUE
-#'        \enumerate{
-#'          \item \emph{teamNumber}: factor
-#'          \item \emph{alliance}: factor (Red, Blue)
-#'          \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-#'          \item \emph{surrogate}: logical}
 #'
 #'   \strong{Data Frame Attributes}
 #'     \itemize{
@@ -632,57 +641,87 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #  GetHybridSchedule() =========================================================
 #' Get the match schedule and results.
 #'
-#' For matches that have been played, returns the teams assigned to the match
-#' and the match results. If the mtach has not yet been played, the assigned
-#' teams and schedule data is returned, but the resutls fields are blank.
+#' For matches that have been played, \code{GetHybridSchedule} returns the teams
+#' assigned to the match and the match results. If the mtach has not yet been
+#' played, the assigned teams and schedule data are returned, but the result
+#' fields are blank.
 #'
-#' See the \emph{Hybrid Schedule} section of the FIRST API documentation. The
-#' URL format is:
+#' Depending on the \code{expand_cols} argument, \code{GetHybridSchedule} can
+#' structure the resulting data frame two diferent ways. When \code{expand_cols}
+#' is set to \emph{FALSE} the data frame will contain six rows for every match
+#' returned. Each row will include data on one team that participates in the
+#' match. This narrow (i.e., fewer columns) structure is useful when filtering
+#' results to specific teams, because only one column, \emph(teamNumber), must
+#' be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
+#' will have one row per match, with all six participating teams listed in one
+#' row. This wide format is useful for displaying the schedule in a table.
+#'
+#' See the \emph{Hybrid Schedule} section of the FIRST API documentation for
+#' more details.
+#'
+#' The URL format is:
+#'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event/level/
 #' hybrid?start=start&end=end}
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character The FIRST API event code.
-#' @param level Character Either \code{qual} or \code{playoff}. Defaults to
-#'   \code{qual}.
-#' @param start An integer that is the earliest match number that will be
-#'   returned.
-#' @param end An integer that is the latest match number that will be
-#'   returned.
-#' @param expand_rows Logical Defaults to FALSE. If FALSE, the dataframe will
-#'   include one row for each scheduled match, with a different column for each
-#'   team. If TRUE, there will be six rows for each match, with each row listing
-#'   one assigned team and their station. Optional
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event A character vector containing a FIRST API event code
+#'   (see \code{GetEvents}).
+#' @param level A character vector containing either \emph{"qual"} or
+#'   \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.
+#' @param start An integer vector containing the earliest match to
+#'   Optional.
+#' @param end An integer vector containing the latest match to return. Optional.
+#' @param expand_cols A logical value that defaults to \code{FALSE}. If
+#'   \code{TRUE}, the dataframe will include one row for each scheduled match,
+#'   with a different column for each team. If \code{FALSE}, there will be six
+#'   rows for each match, with each row listing one assigned team and their
+#'   station. Optional.
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      description: character
-#'      tournamentLevel: factor
-#'      matchNumber: integer
-#'      startTime: character
-#'      actualStartTime: character
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame, "Schedule").
 #'
-#'      If expand.rows == FALSE
-#'        scoreRedFoul, scoreRedAuto, scoreRedFinal: integer
-#'        scoreBlueFoul, scoreBlueAuto, scoreBlueFinal: integer
-#'        Red1.team, Red2.team, Red3.team: factor
-#'        Blue1.team, Blue2.team, Blue3.team: factor
-#'        Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
-#'        Blue1.surrogate, Blue2.surrogate, Blue3.surrogate: logical
-#'        Red1.dq, Red2.dq, Red3.dq, Blue1.dq, Blue2.dq, Blue3.dq: logical
-#'      If expand.rows == TRUE
-#'        teamNumber: factor
-#'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-#'        scoreFinal, scoreAuto, scoreFoul: integer
-#'        surrogate: logical
-#'        dq: logical
-#'      Attribute "FIRST_type": "HybridSchedule"
-#'      Attribute "url": URL submitted to FIRST API
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'      \item \emph{description}: character
+#'      \item \emph{tournamentLevel}: factor
+#'      \item \emph{matchNumber}: integer
+#'      \item \emph{startTime}: character
+#'      \item \emph{actualStartTime}: character}
+#'
+#'      If expand_cols == \emph{FALSE}
+#'        \enumerate{
+#'          \item \emph{teamNumber}: factor
+#'          \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+#'          \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer
+#'          \item \emph{surrogate}: logical
+#'          \item \emph{dq}: logical}
+#'
+#'      If expand_cols == \emph{TRUE}
+#'        \enumerate{
+#'          \item \emph{scoreRedFoul, scoreRedAuto, scoreRedFinal}: integer
+#'          \item \emph{scoreBlueFoul, scoreBlueAuto, scoreBlueFinal}: integer
+#'          \item \emph{Red1.team, Red2.team, Red3.team}: factor
+#'          \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
+#'          \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
+#'          \item \emph{Blue1.surrogate, Blue2.surrogate,
+#'            Blue3.surrogate}: logical
+#'          \item \emph{Red1.dq, Red2.dq, Red3.dq}: logical
+#'          \item \emphBlue1.dq, Blue2.dq, Blue3.dq}: logical}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was downladed
+#'       from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
+#' sn <- GetSession("username", "key")
 #' GetHybridSchedule(sn, event = "ORPHI")
 #' GetHybridSchedule(sn, level = "playoff", start = 3, end = 6)
 GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,

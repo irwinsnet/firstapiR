@@ -10,16 +10,15 @@ GetSchedule(session, event, level = "qual", team = NULL, start = NULL,
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
 
-\item{event}{Character A FIRST API event code (see \code{GetEvents}). If
-event is specified, \code{GetTeams()} will filter results to all teams
-particpating in the specified event. Optional.}
+\item{event}{A character vector containing a FIRST API event code
+(see \code{GetEvents}).}
 
 \item{level}{A character vector containing either \emph{"qual"} or
 \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.}
 
 \item{team}{An integer vector containing a team number. Optional.}
 
-\item{start}{An integer vector containing the earliest match to return.
+\item{start}{An integer vector containing the earliest match to
 Optional.}
 
 \item{end}{An integer vector containing the latest match to return. Optional.}
@@ -43,20 +42,20 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{matchNumber}: integer
     \item \emph{startTime}: character}
 
-    If expand.rows == FALSE
+     If expand_cols == \emph{FALSE}
+       \enumerate{
+         \item \emph{teamNumber}: factor
+         \item \emph{alliance}: factor (Red, Blue)
+         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+         \item \emph{surrogate}: logical}
+
+    If expand_cols == \emph{TRUE}
       \enumerate{
         \item \emph{Red1.team, Red2.team, Red3.team}: factor
         \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
         \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
         \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
           logical}
-
-     If expand.rows == TRUE
-       \enumerate{
-         \item \emph{teamNumber}: factor
-         \item \emph{alliance}: factor (Red, Blue)
-         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-         \item \emph{surrogate}: logical}
 
   \strong{Data Frame Attributes}
     \itemize{
@@ -72,6 +71,16 @@ the value of the \code{level} argument. The \code{start} and \code{end}
 arguments allow filtering of results to specific matches.
 }
 \details{
+Depending on the \code{expand_cols} argument, \code{GetSchedule} can
+structure the resulting data frame two diferent ways. When \code{expand_cols}
+is set to \emph{FALSE} the data frame will contain six rows for every match
+returned. Each row will include data on one team that participates in the
+match. This narrow (i.e., fewer columns) structure is useful when filtering
+results to specific teams, because only one column, \emph(teamNumber), must
+be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
+will have one row per match, with all six participating teams listed in one
+row. This wide format is useful for displaying the schedule in a table.
+
 See the \emph{Event Schedule} section of the FIRST API documentation.
 
 The URL format is:
