@@ -34,6 +34,7 @@ NULL
 # Figure out how to format field list in return section.
 # Assign inherited class to each function result data.frame using append()
 # Continue working through functions starting at GetEvents().
+# Add url attribute to local data showing url used to create local data.
 
 # The FIRST API R Toolbox requires the following R packages. Install these
 # packages before using the R Toolbox.
@@ -836,7 +837,7 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
                                      "Blue1.team", "Blue2.team", "Blue3.team",
                                      "tournamentLevel"))
   }
-  attr(sched, "FIRST_type") <- "HybridSchedule"
+  class(sched) <- append(class(sched), "HybridSchedule")
   return(sched)
 
 }
@@ -1520,13 +1521,20 @@ GetAwardsList <- function(session) {
 
   # Determine API command from URL
   api_cmd_ptn <- "(\\w+)(?:[/?]|$)"
-  api_mod_ptn <- "/(\\w+\\)?"
+  api_mod_ptn <- "/(\\w+)(?:$|\\?)"
 
   if(url == "")
     cmd_type <- "season"
   else {
     cmd_mtch <- regexec(api_cmd_ptn, url, perl = TRUE)
     cmd_type <- regmatches(url, cmd_mtch)[[1]][[2]]
+  }
+
+  if(cmd_type == "schedule"){
+    mod_mtch <- regexec(api_mod_ptn, url, perl = TRUE)
+    mod_type <- regmatches(url, mod_mtch)[[1]][[2]]
+    if(mod_type == "hybrid")
+      cmd_type = "hybrid"
   }
 
   # Build varialbe name based on command type and format.

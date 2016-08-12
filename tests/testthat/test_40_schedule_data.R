@@ -38,8 +38,7 @@ test_that("GetSchedule() start, end, and level arguments work.", {
 test_that("GetHybridSchedule() returns a data frame.", {
   hyb <- GetHybridSchedule(sess, event = "WAELL")
 
-  expect_equal(class(hyb), "data.frame")
-  expect_equal(attr(hyb, "FIRST_type"), "HybridSchedule")
+  expect_is(hyb, "HybridSchedule")
   expect_equal(attr(hyb, "url"),
       "https://frc-api.firstinspires.org/v2.0/2016/schedule/WAELL/qual/hybrid")
   expect_equal(nrow(hyb), 78)
@@ -59,7 +58,7 @@ test_that("GetHybridSchedule() returns a data frame.", {
 test_that("GetHybridSchedule() expand_rows arg returns expanded data frame.", {
   hyb <- GetHybridSchedule(sess, event = "ORPHI", expand_rows = TRUE)
 
-  expect_equal(class(hyb), "data.frame")
+  expect_is(hyb, "HybridSchedule")
   expect_equal(nrow(hyb), 360)
   expect_equal(length(hyb), 12)
 

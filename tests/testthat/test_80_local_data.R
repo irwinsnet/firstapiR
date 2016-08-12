@@ -35,4 +35,11 @@ test_that("GetSchedule() returns a local data frame", {
   expect_true(attr(sched, "local_test_data"))
 })
 
+test_that("GetHybridSchedule() returns a local data frame", {
+  hybrid <- GetHybridSchedule(sess, event = "ORPHI")
+  expect_is(hybrid, "HybridSchedule")
+  expect_true(attr(hybrid, "local_test_data"))
+
+})
+
 rm(sess)

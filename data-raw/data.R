@@ -20,10 +20,14 @@ schedule_json <- firstapiR::GetSchedule(sn_j, event = "ORPHI")
 schedule_xml <- firstapiR::GetSchedule(sn_x, event = "PNCMP",
                                         level = "playoff")
 
+hybrid_json <- firstapiR::GetHybridSchedule(sn_j, event = "ORPHI")
+hybrid_xml <- firstapiR::GetHybridSchedule(sn_x, event = "ORPHI")
+
 devtools::use_data(season_json, season_xml,
                    districts_json, districts_xml,
                    events_json, events_xml,
                    teams_json, teams_xml,
                    schedule_json, schedule_xml,
+                   hybrid_json, hybrid_xml,
                    data_time,
                    internal = TRUE, overwrite = TRUE)
