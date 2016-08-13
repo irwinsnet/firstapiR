@@ -23,8 +23,8 @@ Depending on the \code{session$format} value, returns JSON text, an
   \strong{Data Frame Attributes}
   \itemize{
     \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was downladed
-      from the FIRST API server.
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
       R/sysdata.rda file.}
 }

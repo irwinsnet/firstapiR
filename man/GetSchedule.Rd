@@ -60,8 +60,8 @@ Depending on the \code{session$format} value, returns JSON text, an
   \strong{Data Frame Attributes}
     \itemize{
     \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was downladed
-      from the FIRST API server.
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
       R/sysdata.rda file.}
 }
@@ -76,7 +76,7 @@ structure the resulting data frame two diferent ways. When \code{expand_cols}
 is set to \emph{FALSE} the data frame will contain six rows for every match
 returned. Each row will include data on one team that participates in the
 match. This narrow (i.e., fewer columns) structure is useful when filtering
-results to specific teams, because only one column, \emph(teamNumber), must
+results to specific teams, because only one column, \emph{teamNumber}, must
 be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
 will have one row per match, with all six participating teams listed in one
 row. This wide format is useful for displaying the schedule in a table.

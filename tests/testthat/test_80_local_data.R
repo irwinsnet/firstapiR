@@ -39,7 +39,18 @@ test_that("GetHybridSchedule() returns a local data frame", {
   hybrid <- GetHybridSchedule(sess, event = "ORPHI")
   expect_is(hybrid, "HybridSchedule")
   expect_true(attr(hybrid, "local_test_data"))
+})
 
+test_that("GetMatchResults() returns a local data frame", {
+  matches <- GetMatchResults(sess, event = "PNCMP")
+  expect_is(matches, "MatchResults")
+  expect_true(attr(matches, "local_test_data"))
+})
+
+test_that("GetScores() returns a local data frame", {
+  scores <- GetScores(sess, event = "ARCHIMEDES")
+  expect_is(scores, "Scores")
+  expect_true(attr(scores, "local_test_data"))
 })
 
 rm(sess)

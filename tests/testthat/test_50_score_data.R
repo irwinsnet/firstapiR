@@ -11,8 +11,7 @@ sess <- GetSession(username, key)
 test_that("GetMatchResults() returns a data frame", {
   mr <- GetMatchResults(sess, event = "WAELL")
 
-  expect_equal(class(mr), "data.frame")
-  expect_equal(attr(mr, "FIRST_type"), "MatchResults")
+  expect_is(mr, "MatchResults")
   expect_equal(attr(mr, "url"),
             paste("https://frc-api.firstinspires.org/v2.0/2016/matches/WAELL",
                   "?tournamentLevel=qual", sep = ""))
@@ -44,8 +43,7 @@ test_that("For GetMatchResults, start, end, and match args are correct", {
 test_that("GetScores() returns a data frame", {
   sc <- GetScores(sess, event = "WAAMV")
 
-  expect_equal(class(sc), "data.frame")
-  expect_equal(attr(sc, "FIRST_type"), "Scores")
+  expect_is(sc, "Scores")
   expect_equal(attr(sc, "url"),
                "https://frc-api.firstinspires.org/v2.0/2016/scores/WAAMV/qual")
   expect_equal(nrow(sc), 156)

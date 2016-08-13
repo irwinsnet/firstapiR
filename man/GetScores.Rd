@@ -8,67 +8,84 @@ GetScores(session, event, level = "qual", team = NULL, match = NULL,
   start = NULL, end = NULL)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 
-\item{event}{Character A FIRST API event code (see \code{GetEvents()}).}
+\item{event}{A character vector containing a FIRST API event code
+(see \code{GetEvents}).}
 
-\item{level}{Character Either \code{qual} or \code{playoff}. Defaults to
-\code{qual}.}
+\item{level}{A character vector containing either \emph{"qual"} or
+\emph{"playoff"}. Defaults to \emph{"qual"}. Optional.}
 
-\item{team}{Integer Team number. Optional. Returns only results for
-matches in wich the team participated. Cannot specify \code{match} when
-\code{team} is specified.}
+\item{team}{An integer vector containing a team number. Optional. Cannot
+specify \code{match} when \code{team} is specified.}
 
-\item{match}{Integer Returns results for only the specified match. Must
-specify level when \code{match} is specified. Cannot specify \code{team}
-when \code{match} is specified.}
+\item{match}{An integer vector containing a match number. Optional. If
+specified, \code{GetMatchResults} returns results for only the specified
+match. If \code{level} is not specified, returns the results for the
+qualification match. To get playoff match results, set \code{level} to
+\emph{"playoff"}. Cannot specify \code{team} when \code{match} is
+specified.}
 
-\item{start}{Integer Eearliest match to return. Optional. Must specify level
-when \code{start} is specified.}
+\item{start}{An integer vector containing the earliest match to
+Optional.}
 
-\item{end}{Integer Latest match to return. Optional. Must specify level when
-\code{end} is specified.}
+\item{end}{An integer vector containing the latest match to return. Optional.}
 }
 \value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes (2016):
-     matchLevel: character
-     matchNumber: integer
-     audienceGroup: character
-     alliance: character
-     robot1Auto, robot2Auto, robot3Auto: character
-     autoBouldersLow, autoBouldersHigh: integer
-     teleopBouldersLow, teleopBouldersHigh: integer
-     towerFaceA, towerFaceB, towerFaceC: character
-     towerEndStrength: integer
-     teleopTowerCaptured, teleopDefensesBreached: logical
-     position1, position2, position3, position4, position5: character
-     position1Crossings, position2Crossings, position3Crossings,
-       position4Crossings, position5Crossings: integer
-     foulCount, techFoulCount: integer
-     autoPoints, autoReachPoints, autoCrossingPoints,
-       autoBoulderPoints: integer
-     teleopPoints, teleopCrossingPoints, teleopBoulderPoints,
-       teleopChallengePoints, teleopScalePoints: integer
-     breachPoints, capturePoints: integer
-     adustPoints, foulPoints, totalPoints: integer
-   Attribute "FIRST_type": "Scores"
-   Attribute "url": URL submitted to FIRST API
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame", "Schedule").
+
+  \strong{Data Frame Columns}
+  \enumerate{
+     \item \emph{matchLevel}: character
+     \item \emph{matchNumber}: integer
+     \item \emph{audienceGroup}: character
+     \item \emph{alliance}: character
+     \item \emph{robot1Auto, robot2Auto, robot3Auto}: character
+     \item \emph{autoBouldersLow, autoBouldersHigh}: integer
+     \item \emph{teleopBouldersLow, teleopBouldersHigh}: integer
+     \item \emph{towerFaceA, towerFaceB, towerFaceC}: character
+     \item \emph{towerEndStrength}: integer
+     \item \emph{teleopTowerCaptured, teleopDefensesBreached}: logical
+     \item \emph{position1, position2, position3, position4,
+       position5}: character
+     \item \emph{position1Crossings, position2Crossings, position3Crossings,
+       position4Crossings, position5Crossings}: integer
+     \item \emph{foulCount, techFoulCount}: integer
+     \item \emph{autoPoints, autoReachPoints, autoCrossingPoints,
+       autoBoulderPoints}: integer
+     \item \emph{teleopPoints, teleopCrossingPoints, teleopBoulderPoints,
+       teleopChallengePoints, teleopScalePoints}: integer
+     \item \emph{breachPoints, capturePoints}: integer
+     \item \emph{adustPoints, foulPoints, totalPoints}: integer}
+
+  \strong{Data Frame Attributes}
+    \itemize{
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
 The results vary depending on the season requested. The 2016 data fields are
-listed here. See the FIRST API documentation for data fields for prior
-seasons. The data frame contains two rows for each match, one for blue
-and the other for red.
+listed here. See the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for data fields for prior seasons.
+The data frame contains two rows for each match, one for blue and the other
+for red.
 }
 \details{
-See the \emph{Detailed Scores} section of the FIRST API documentation. The
-URL format is:
+See the \emph{Detailed Scores} section of the FIRST API documentation for
+more details.
+
+The URL format is:
+
 \code{https://frc-api.firstinspires.org/v2.0/season/matches/event/level?
 teamNumber=team&matchNumber=match&start=start&end=end}
 }
 \examples{
-sn <- GetSession(username, key)
+sn <- GetSession("username", "key")
 GetScores(sn, event = "ARCHIMEDES")
 GetScores(sn, event = "WAELL", start = 1, end = 10)
 GetScores(sn, event = "WAELL", match = 15)

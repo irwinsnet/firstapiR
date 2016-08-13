@@ -23,11 +23,19 @@ schedule_xml <- firstapiR::GetSchedule(sn_x, event = "PNCMP",
 hybrid_json <- firstapiR::GetHybridSchedule(sn_j, event = "ORPHI")
 hybrid_xml <- firstapiR::GetHybridSchedule(sn_x, event = "ORPHI")
 
+matches_json <- firstapiR::GetMatchResults(sn_j, event = "PNCMP")
+matches_xml <- firstapiR::GetMatchResults(sn_x, event = "PNCMP")
+
+scores_json <- firstapiR::GetScores(sn_j, event = "ARCHIMEDES")
+scores_xml <- firstapiR::GetScores(sn_x, event = "ARCHIMEDES")
+
 devtools::use_data(season_json, season_xml,
                    districts_json, districts_xml,
                    events_json, events_xml,
                    teams_json, teams_xml,
                    schedule_json, schedule_xml,
                    hybrid_json, hybrid_xml,
+                   matches_json, matches_xml,
+                   scores_json, scores_xml,
                    data_time,
                    internal = TRUE, overwrite = TRUE)

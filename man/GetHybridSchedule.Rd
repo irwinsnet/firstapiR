@@ -13,8 +13,7 @@ GetHybridSchedule(session, event, level = "qual", start = NULL,
 \item{event}{A character vector containing a FIRST API event code
 (see \code{GetEvents}).}
 
-\item{level}{Character Either \code{qual} or \code{playoff}. Defaults to
-\code{qual}.A character vector containing either \emph{"qual"} or
+\item{level}{A character vector containing either \emph{"qual"} or
 \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.}
 
 \item{start}{An integer vector containing the earliest match to
@@ -28,6 +27,47 @@ with a different column for each team. If \code{FALSE}, there will be six
 rows for each match, with each row listing one assigned team and their
 station. Optional.}
 }
+\value{
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame", "Schedule").
+
+  \strong{Data Frame Columns}
+  \enumerate{
+     \item \emph{description}: character
+     \item \emph{tournamentLevel}: factor
+     \item \emph{matchNumber}: integer
+     \item \emph{startTime}: character
+     \item \emph{actualStartTime}: character}
+
+     If expand_cols == \emph{FALSE}
+       \enumerate{
+         \item \emph{teamNumber}: factor
+         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+         \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer
+         \item \emph{surrogate}: logical
+         \item \emph{dq}: logical}
+
+     If expand_cols == \emph{TRUE}
+       \enumerate{
+         \item \emph{scoreRedFoul, scoreRedAuto, scoreRedFinal}: integer
+         \item \emph{scoreBlueFoul, scoreBlueAuto, scoreBlueFinal}: integer
+         \item \emph{Red1.team, Red2.team, Red3.team}: factor
+         \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
+         \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
+         \item \emph{Blue1.surrogate, Blue2.surrogate,
+           Blue3.surrogate}: logical
+         \item \emph{Red1.dq, Red2.dq, Red3.dq}: logical
+         \item \emph{Blue1.dq, Blue2.dq, Blue3.dq}: logical}
+
+  \strong{Data Frame Attributes}
+    \itemize{
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
+}
 \description{
 For matches that have been played, \code{GetHybridSchedule} returns the teams
 assigned to the match and the match results. If the mtach has not yet been
@@ -40,7 +80,7 @@ structure the resulting data frame two diferent ways. When \code{expand_cols}
 is set to \emph{FALSE} the data frame will contain six rows for every match
 returned. Each row will include data on one team that participates in the
 match. This narrow (i.e., fewer columns) structure is useful when filtering
-results to specific teams, because only one column, \emph(teamNumber), must
+results to specific teams, because only one column, \emph{teamNumber}, must
 be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
 will have one row per match, with all six participating teams listed in one
 row. This wide format is useful for displaying the schedule in a table.

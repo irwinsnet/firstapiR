@@ -35,6 +35,8 @@ NULL
 # Assign inherited class to each function result data.frame using append()
 # Continue working through functions starting at GetEvents().
 # Add url attribute to local data showing url used to create local data.
+# Provide both expanded and non-expanded versions of tables from local data.
+# Add error checking on 'level' argument.
 
 # The FIRST API R Toolbox requires the following R packages. Install these
 # packages before using the R Toolbox.
@@ -194,8 +196,8 @@ GetSeason <- function(session) {
 #'   \strong{Data Frame Attributes}
 #'   \itemize{
 #'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was downladed
-#'       from the FIRST API server.
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
@@ -267,8 +269,8 @@ GetDistricts <- function(session) {
 #'     \item \emph{type}: factor ('Regional', 'DistrictEvent',
 #'        'DistrictChampionship', 'ChampionshipSubdivision',
 #'        'ChampionshipDivision', 'Championship', 'Offseason')
-#'     \item \emph{districtCode}: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
-#'        'PNW')
+#'     \item \emph{districtCode}: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC',
+#'       'PCH', 'PNW')
 #'     \item \emph{venue}: character
 #'     \item \emph{city}: character
 #'     \item \emph{stateprov}: factor
@@ -281,8 +283,8 @@ GetDistricts <- function(session) {
 #'   \strong{Data Frame Attributes}
 #'   \itemize{
 #'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was downladed
-#'       from the FIRST API server.
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
@@ -350,7 +352,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' ?districtCode=district?state=state?page=2}
 #'
 #' @param session A Session object created with \code{GetSession()}.
-#' @param team An integer vector containing a team number. Optional
+#' @param team An integer vector containing a team number. Optional.
 #' @param event Character A FIRST API event code (see \code{GetEvents()}). If
 #'   event is specified, \code{GetTeams()} will filter results to all teams
 #'   particpating in the specified event. Optional.
@@ -359,7 +361,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'   the response to only the teams in the specified district. Optional.
 #' @param state A character vector containing a state name, spelled out entirely
 #'   (i.e., 'Idaho', \emph{not} 'ID'). If state is specified, \code{GetTeams()}
-#'   will filter results to all teams in the specified state. Optional
+#'   will filter results to all teams in the specified state. Optional.
 #' @param page An integer vector that specifyies which page of results should be
 #'   returned. Optional. Use only for xml or json formats.
 #'
@@ -387,8 +389,8 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'   \strong{Data Frame Attributes}
 #'     \itemize{
 #'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was downladed
-#'       from the FIRST API server.
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
@@ -478,7 +480,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' is set to \emph{FALSE} the data frame will contain six rows for every match
 #' returned. Each row will include data on one team that participates in the
 #' match. This narrow (i.e., fewer columns) structure is useful when filtering
-#' results to specific teams, because only one column, \emph(teamNumber), must
+#' results to specific teams, because only one column, \emph{teamNumber}, must
 #' be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
 #' will have one row per match, with all six participating teams listed in one
 #' row. This wide format is useful for displaying the schedule in a table.
@@ -535,8 +537,8 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'   \strong{Data Frame Attributes}
 #'     \itemize{
 #'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was downladed
-#'       from the FIRST API server.
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
@@ -652,7 +654,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #' is set to \emph{FALSE} the data frame will contain six rows for every match
 #' returned. Each row will include data on one team that participates in the
 #' match. This narrow (i.e., fewer columns) structure is useful when filtering
-#' results to specific teams, because only one column, \emph(teamNumber), must
+#' results to specific teams, because only one column, \emph{teamNumber}, must
 #' be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
 #' will have one row per match, with all six participating teams listed in one
 #' row. This wide format is useful for displaying the schedule in a table.
@@ -681,7 +683,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
 #'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame, "Schedule").
+#'   c("data.frame", "Schedule").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -709,13 +711,13 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #'          \item \emph{Blue1.surrogate, Blue2.surrogate,
 #'            Blue3.surrogate}: logical
 #'          \item \emph{Red1.dq, Red2.dq, Red3.dq}: logical
-#'          \item \emphBlue1.dq, Blue2.dq, Blue3.dq}: logical}
+#'          \item \emph{Blue1.dq, Blue2.dq, Blue3.dq}: logical}
 #'
 #'   \strong{Data Frame Attributes}
 #'     \itemize{
 #'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was downladed
-#'       from the FIRST API server.
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
 #'       R/sysdata.rda file.}
 #'
@@ -843,64 +845,84 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 }
 
 
-#  GetMatchResults() ============================================================
-#' Get Match results
+#  GetMatchResults() ===========================================================
+#' Get match scores and participating teams
 #'
-#' See the \emph{Match Results} section of the FIRST API documentation. The
-#' URL format is:
+#' See the \emph{Match Results} section of the FIRST API documentation for more
+#' details.
+#'
+#' The URL format is:
+#'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/matches/event
 #' ?tournamentLevel=level&teamNumber=team&matchNumber=match&start=start&end=end}
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character A FIRST API event code (see \code{GetEvents()}).
-#' @param level Character Either \code{qual} or \code{playoff}. Defaults to
-#'   \code{qual}.
-#' @param team Integer Team number. Optional. Returns only results for
-#'   matches in wich the team participated. Cannot specify \code{match} when
-#'   \code{team} is specified.
-#' @param match Integer Returns results for only the specified match. Must
-#'   specify level when \code{match} is specified. Cannot specify \code{team}
-#'   when \code{match} is specified.
-#' @param start Integer Eearliest match to return. Optional. Must specify level
-#'   when \code{start} is specified.
-#' @param end Integer Latest match to return. Optional. Must specify level when
-#'   \code{end} is specified.
-#' @param expand_cols A logical value. Optional, defaults to FALSE. If TRUE, the
-#'   dataframe will include one row for each completed match, with a different
-#'   column for each team. If FALSE, there will be six rows for each match, with
-#'   each row listing one assigned team and their station.
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event A character vector containing a FIRST API event code
+#'   (see \code{GetEvents}).
+#' @param level A character vector containing either \emph{"qual"} or
+#'   \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.
+#' @param team An integer vector containing a team number. Optional. Cannot
+#'   specify \code{match} when \code{team} is specified.
+#' @param match An integer vector containing a match number. Optional. If
+#'   specified, \code{GetMatchResults} returns results for only the specified
+#'   match. If \code{level} is not specified, returns the results for the
+#'   qualification match. To get playoff match results, set \code{level} to
+#'   \emph{"playoff"}. Cannot specify \code{team} when \code{match} is
+#'   specified.
+#' @param start An integer vector containing the earliest match to
+#'   Optional.
+#' @param end An integer vector containing the latest match to return. Optional.
+#' @param expand_cols A logical value that defaults to \code{FALSE}. If
+#'   \code{TRUE}, the dataframe will include one row for each scheduled match,
+#'   with a different column for each team. If \code{FALSE}, there will be six
+#'   rows for each match, with each row listing one assigned team and their
+#'   station. Optional.
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      actualStartTime: character
-#'      description: character
-#'      tournamentLevel: factor
-#'      matchNumber: integer
-#'      postResultTime: character
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame", "Schedule").
 #'
-#'      If expand_rows == FALSE
-#'        scoreRedFinal, scoreRedAuto, scoreRedFoul: integer
-#'        scoreBlueFinal, scoreBlueAuto, scoreBlueFoul: integer
-#'        Red1.team, Red2.team, Red3.team: factor
-#'        Blue1.team, Blue2.team, Blue3.team: factor
-#'        Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
-#'        Blue1.surrogate, Blue2.surrogate, Blue3.surrogate: logical
-#'      If expand.rows == TRUE
-#'        teamNumber: factor
-#'        station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-#'        surrogate: logical
-#'        scoreFinal, scoreAuto, scoreFoul: integer
-#'      Attribute "FIRST_type": "MatchResults"
-#'      Attribute "url": URL submitted to FIRST API
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'      \item \emph{actualStartTime}: character
+#'      \item \emph{description}: character
+#'      \item \emph{tournamentLevel}: factor
+#'      \item \emph{matchNumber}: integer
+#'      \item \emph{postResultTime}: character}
+#'
+#'      If expand_cols == \emph{FALSE}
+#'        \enumerate{
+#'          \item \emph{teamNumber}: factor
+#'          \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+#'          \item \emph{surrogate}: logical
+#'          \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
+#'
+#'      If expand_cols == \emph{TRUE}
+#'        \enumerate{
+#'          \item \emph{scoreRedFinal, scoreRedAuto, scoreRedFoul}: integer
+#'          \item \emph{scoreBlueFinal, scoreBlueAuto, scoreBlueFoul}: integer
+#'          \item \emph{Red1.team, Red2.team, Red3.team}: factor
+#'          \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
+#'          \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
+#'          \item \emph{Blue1.surrogate, Blue2.surrogate,
+#'            Blue3.surrogate}: logical}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
-#' GetMatchResults(sn, 'PNCMP', level='qual')
-#' GetMatchResults(sn, 'PNCMP', team='2990')
-#' GetMatchResults(sn, 'WAAMV', match=2, level='playoff')
-#' GetMatchResults(sn, 'CMP-ARCHIMEDES', level='qual', start=10, end=20)
+#' sn <- GetSession("username", "key")
+#' GetMatchResults(sn, "PNCMP", level="qual")
+#' GetMatchResults(sn, "PNCMP", team="2990")
+#' GetMatchResults(sn, "WAAMV", match=2, level="playoff")
+#' GetMatchResults(sn, "CMP-ARCHIMEDES", level="qual", start=10, end=20)
 GetMatchResults <- function(session, event, level = "qual", team = NULL,
                             match = NULL, start = NULL, end = NULL,
                             expand_cols = FALSE) {
@@ -1011,7 +1033,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   # Convert categorical data into factors
   matches$tournamentLevel <- factor(matches$tournamentLevel)
 
-  attr(matches, "FIRST_type") <- "MatchResults"
+  class(matches) <- append(class(matches), "MatchResults")
   return(matches)
 }
 
@@ -1020,59 +1042,76 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' Get detailed match scores.
 #'
 #' The results vary depending on the season requested. The 2016 data fields are
-#' listed here. See the FIRST API documentation for data fields for prior
-#' seasons. The data frame contains two rows for each match, one for blue
-#' and the other for red.
+#' listed here. See the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for data fields for prior seasons.
+#' The data frame contains two rows for each match, one for blue and the other
+#' for red.
 #'
-#' See the \emph{Detailed Scores} section of the FIRST API documentation. The
-#' URL format is:
+#' See the \emph{Detailed Scores} section of the FIRST API documentation for
+#' more details.
+#'
+#'The URL format is:
+#'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/matches/event/level?
 #' teamNumber=team&matchNumber=match&start=start&end=end}
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character A FIRST API event code (see \code{GetEvents()}).
-#' @param level Character Either \code{qual} or \code{playoff}. Defaults to
-#'   \code{qual}.
-#' @param team Integer Team number. Optional. Returns only results for
-#'   matches in wich the team participated. Cannot specify \code{match} when
-#'   \code{team} is specified.
-#' @param match Integer Returns results for only the specified match. Must
-#'   specify level when \code{match} is specified. Cannot specify \code{team}
-#'   when \code{match} is specified.
-#' @param start Integer Eearliest match to return. Optional. Must specify level
-#'   when \code{start} is specified.
-#' @param end Integer Latest match to return. Optional. Must specify level when
-#'   \code{end} is specified.
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event A character vector containing a FIRST API event code
+#'   (see \code{GetEvents}).
+#' @param level A character vector containing either \emph{"qual"} or
+#'   \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.
+#' @param team An integer vector containing a team number. Optional. Cannot
+#'   specify \code{match} when \code{team} is specified.
+#' @param match An integer vector containing a match number. Optional. If
+#'   specified, \code{GetMatchResults} returns results for only the specified
+#'   match. If \code{level} is not specified, returns the results for the
+#'   qualification match. To get playoff match results, set \code{level} to
+#'   \emph{"playoff"}. Cannot specify \code{team} when \code{match} is
+#'   specified.
+#' @param start An integer vector containing the earliest match to
+#'   Optional.
+#' @param end An integer vector containing the latest match to return. Optional.
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes (2016):
-#'      matchLevel: character
-#'      matchNumber: integer
-#'      audienceGroup: character
-#'      alliance: character
-#'      robot1Auto, robot2Auto, robot3Auto: character
-#'      autoBouldersLow, autoBouldersHigh: integer
-#'      teleopBouldersLow, teleopBouldersHigh: integer
-#'      towerFaceA, towerFaceB, towerFaceC: character
-#'      towerEndStrength: integer
-#'      teleopTowerCaptured, teleopDefensesBreached: logical
-#'      position1, position2, position3, position4, position5: character
-#'      position1Crossings, position2Crossings, position3Crossings,
-#'        position4Crossings, position5Crossings: integer
-#'      foulCount, techFoulCount: integer
-#'      autoPoints, autoReachPoints, autoCrossingPoints,
-#'        autoBoulderPoints: integer
-#'      teleopPoints, teleopCrossingPoints, teleopBoulderPoints,
-#'        teleopChallengePoints, teleopScalePoints: integer
-#'      breachPoints, capturePoints: integer
-#'      adustPoints, foulPoints, totalPoints: integer
-#'    Attribute "FIRST_type": "Scores"
-#'    Attribute "url": URL submitted to FIRST API
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame", "Schedule").
+#'
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'      \item \emph{matchLevel}: character
+#'      \item \emph{matchNumber}: integer
+#'      \item \emph{audienceGroup}: character
+#'      \item \emph{alliance}: character
+#'      \item \emph{robot1Auto, robot2Auto, robot3Auto}: character
+#'      \item \emph{autoBouldersLow, autoBouldersHigh}: integer
+#'      \item \emph{teleopBouldersLow, teleopBouldersHigh}: integer
+#'      \item \emph{towerFaceA, towerFaceB, towerFaceC}: character
+#'      \item \emph{towerEndStrength}: integer
+#'      \item \emph{teleopTowerCaptured, teleopDefensesBreached}: logical
+#'      \item \emph{position1, position2, position3, position4,
+#'        position5}: character
+#'      \item \emph{position1Crossings, position2Crossings, position3Crossings,
+#'        position4Crossings, position5Crossings}: integer
+#'      \item \emph{foulCount, techFoulCount}: integer
+#'      \item \emph{autoPoints, autoReachPoints, autoCrossingPoints,
+#'        autoBoulderPoints}: integer
+#'      \item \emph{teleopPoints, teleopCrossingPoints, teleopBoulderPoints,
+#'        teleopChallengePoints, teleopScalePoints}: integer
+#'      \item \emph{breachPoints, capturePoints}: integer
+#'      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
+#' sn <- GetSession("username", "key")
 #' GetScores(sn, event = "ARCHIMEDES")
 #' GetScores(sn, event = "WAELL", start = 1, end = 10)
 #' GetScores(sn, event = "WAELL", match = 15)
@@ -1132,7 +1171,7 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
   # Set row names to be integers.
   row.names(scores) <- 1:nrow(scores)
 
-  attr(scores, "FIRST_type") <- "Scores"
+  class(scores) <- append(class(scores), "Scores")
   return(scores)
 }
 

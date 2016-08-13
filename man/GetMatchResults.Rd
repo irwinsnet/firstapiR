@@ -2,73 +2,94 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetMatchResults}
 \alias{GetMatchResults}
-\title{Get Match results}
+\title{Get match scores and participating teams}
 \usage{
 GetMatchResults(session, event, level = "qual", team = NULL, match = NULL,
   start = NULL, end = NULL, expand_cols = FALSE)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 
-\item{event}{Character A FIRST API event code (see \code{GetEvents()}).}
+\item{event}{A character vector containing a FIRST API event code
+(see \code{GetEvents}).}
 
-\item{level}{Character Either \code{qual} or \code{playoff}. Defaults to
-\code{qual}.}
+\item{level}{A character vector containing either \emph{"qual"} or
+\emph{"playoff"}. Defaults to \emph{"qual"}. Optional.}
 
-\item{team}{Integer Team number. Optional. Returns only results for
-matches in wich the team participated. Cannot specify \code{match} when
-\code{team} is specified.}
+\item{team}{An integer vector containing a team number. Optional. Cannot
+specify \code{match} when \code{team} is specified.}
 
-\item{match}{Integer Returns results for only the specified match. Must
-specify level when \code{match} is specified. Cannot specify \code{team}
-when \code{match} is specified.}
+\item{match}{An integer vector containing a match number. Optional. If
+specified, \code{GetMatchResults} returns results for only the specified
+match. If \code{level} is not specified, returns the results for the
+qualification match. To get playoff match results, set \code{level} to
+\emph{"playoff"}. Cannot specify \code{team} when \code{match} is
+specified.}
 
-\item{start}{Integer Eearliest match to return. Optional. Must specify level
-when \code{start} is specified.}
+\item{start}{An integer vector containing the earliest match to
+Optional.}
 
-\item{end}{Integer Latest match to return. Optional. Must specify level when
-\code{end} is specified.}
+\item{end}{An integer vector containing the latest match to return. Optional.}
 
-\item{expand_cols}{A logical value. Optional, defaults to FALSE. If TRUE, the
-dataframe will include one row for each completed match, with a different
-column for each team. If FALSE, there will be six rows for each match, with
-each row listing one assigned team and their station.}
+\item{expand_cols}{A logical value that defaults to \code{FALSE}. If
+\code{TRUE}, the dataframe will include one row for each scheduled match,
+with a different column for each team. If \code{FALSE}, there will be six
+rows for each match, with each row listing one assigned team and their
+station. Optional.}
 }
 \value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes:
-     actualStartTime: character
-     description: character
-     tournamentLevel: factor
-     matchNumber: integer
-     postResultTime: character
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame", "Schedule").
 
-     If expand_rows == FALSE
-       scoreRedFinal, scoreRedAuto, scoreRedFoul: integer
-       scoreBlueFinal, scoreBlueAuto, scoreBlueFoul: integer
-       Red1.team, Red2.team, Red3.team: factor
-       Blue1.team, Blue2.team, Blue3.team: factor
-       Red1.surrogate, Red2.surrogate, Red3.surrogate: logical
-       Blue1.surrogate, Blue2.surrogate, Blue3.surrogate: logical
-     If expand.rows == TRUE
-       teamNumber: factor
-       station: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-       surrogate: logical
-       scoreFinal, scoreAuto, scoreFoul: integer
-     Attribute "FIRST_type": "MatchResults"
-     Attribute "url": URL submitted to FIRST API
+  \strong{Data Frame Columns}
+  \enumerate{
+     \item \emph{actualStartTime}: character
+     \item \emph{description}: character
+     \item \emph{tournamentLevel}: factor
+     \item \emph{matchNumber}: integer
+     \item \emph{postResultTime}: character}
+
+     If expand_cols == \emph{FALSE}
+       \enumerate{
+         \item \emph{teamNumber}: factor
+         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+         \item \emph{surrogate}: logical
+         \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
+
+     If expand_cols == \emph{TRUE}
+       \enumerate{
+         \item \emph{scoreRedFinal, scoreRedAuto, scoreRedFoul}: integer
+         \item \emph{scoreBlueFinal, scoreBlueAuto, scoreBlueFoul}: integer
+         \item \emph{Red1.team, Red2.team, Red3.team}: factor
+         \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
+         \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
+         \item \emph{Blue1.surrogate, Blue2.surrogate,
+           Blue3.surrogate}: logical}
+
+  \strong{Data Frame Attributes}
+    \itemize{
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
-See the \emph{Match Results} section of the FIRST API documentation. The
-URL format is:
+See the \emph{Match Results} section of the FIRST API documentation for more
+details.
+}
+\details{
+The URL format is:
+
 \code{https://frc-api.firstinspires.org/v2.0/season/matches/event
 ?tournamentLevel=level&teamNumber=team&matchNumber=match&start=start&end=end}
 }
 \examples{
-sn <- GetSession(username, key)
-GetMatchResults(sn, 'PNCMP', level='qual')
-GetMatchResults(sn, 'PNCMP', team='2990')
-GetMatchResults(sn, 'WAAMV', match=2, level='playoff')
-GetMatchResults(sn, 'CMP-ARCHIMEDES', level='qual', start=10, end=20)
+sn <- GetSession("username", "key")
+GetMatchResults(sn, "PNCMP", level="qual")
+GetMatchResults(sn, "PNCMP", team="2990")
+GetMatchResults(sn, "WAAMV", match=2, level="playoff")
+GetMatchResults(sn, "CMP-ARCHIMEDES", level="qual", start=10, end=20)
 }
 

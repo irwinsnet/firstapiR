@@ -10,7 +10,7 @@ GetTeams(session, team = NULL, event = NULL, district = NULL,
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
 
-\item{team}{An integer vector containing a team number. Optional}
+\item{team}{An integer vector containing a team number. Optional.}
 
 \item{event}{Character A FIRST API event code (see \code{GetEvents()}). If
 event is specified, \code{GetTeams()} will filter results to all teams
@@ -22,7 +22,7 @@ the response to only the teams in the specified district. Optional.}
 
 \item{state}{A character vector containing a state name, spelled out entirely
 (i.e., 'Idaho', \emph{not} 'ID'). If state is specified, \code{GetTeams()}
-will filter results to all teams in the specified state. Optional}
+will filter results to all teams in the specified state. Optional.}
 
 \item{page}{An integer vector that specifyies which page of results should be
 returned. Optional. Use only for xml or json formats.}
@@ -52,8 +52,8 @@ Depending on the \code{session$format} value, returns JSON text, an
   \strong{Data Frame Attributes}
     \itemize{
     \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was downladed
-      from the FIRST API server.
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
       R/sysdata.rda file.}
 }

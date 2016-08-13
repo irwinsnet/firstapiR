@@ -37,8 +37,8 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{type}: factor ('Regional', 'DistrictEvent',
        'DistrictChampionship', 'ChampionshipSubdivision',
        'ChampionshipDivision', 'Championship', 'Offseason')
-    \item \emph{districtCode}: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC', 'PCH',
-       'PNW')
+    \item \emph{districtCode}: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC',
+      'PCH', 'PNW')
     \item \emph{venue}: character
     \item \emph{city}: character
     \item \emph{stateprov}: factor
@@ -51,8 +51,8 @@ Depending on the \code{session$format} value, returns JSON text, an
   \strong{Data Frame Attributes}
   \itemize{
     \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was downladed
-      from the FIRST API server.
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
       R/sysdata.rda file.}
 }
