@@ -5,7 +5,7 @@
 \title{Get the match schedule and results.}
 \usage{
 GetHybridSchedule(session, event, level = "qual", start = NULL,
-  end = NULL, expand_rows = FALSE)
+  end = NULL, expand_cols = FALSE)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}

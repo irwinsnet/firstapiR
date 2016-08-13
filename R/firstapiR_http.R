@@ -728,7 +728,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #' GetHybridSchedule(sn, event = "ORPHI")
 #' GetHybridSchedule(sn, level = "playoff", start = 3, end = 6)
 GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
-                              end = NULL, expand_rows = FALSE) {
+                              end = NULL, expand_cols = FALSE) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
 
@@ -749,7 +749,45 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
   # this function is necessary to either extract the nested data into new
   # columns or to add rows so that the scheule data can be saved as csv data.
 
-  if(expand_rows) {
+  if(expand_cols) {
+    # Add columns for each operating station
+    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")
+    for(col in cols) {
+      cname.team <- paste(col, "team", sep = ".")
+      sched[cname.team] <- vector(mode = "character",
+                                  length = length(sched$matchNumber))
+      cname.surr <- paste(col, "surrogate", sep = ".")
+      sched[cname.surr] <- vector(mode = "logical",
+                                  length = length(sched$matchNumber))
+      cname.dq <- paste(col, "dq", sep = ".")
+      sched[cname.dq] <- vector(mode = "logical", length = nrow(sched))
+    }
+
+    # Extract data from nested Teams column and insert into new operating station
+    # columns
+    for(mtch in 1:length(sched$matchNumber)){
+      for(tm in 1:6){
+        station <- sched$Teams[[mtch]][["station"]][[tm]]
+        team <- sched$Teams[[mtch]][["teamNumber"]][[tm]]
+        surrogate <- sched$Teams[[mtch]][["surrogate"]][[tm]]
+        dq <- sched$Teams[[mtch]][["dq"]][[tm]]
+
+        cname.team <- paste(station, "team", sep = ".")
+        cname.surrogate <- paste(station, "surrogate", sep = ".")
+        cname.dq <- paste(station, "dq", sep = ".")
+
+        sched[mtch, cname.team] <- team
+        sched[mtch, cname.surrogate] <- surrogate
+        sched[mtch, cname.dq] <- dq
+      }
+    }
+    sched$Teams <- NULL
+
+    # Convert categorical data to factors
+    sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team",
+                                     "Blue1.team", "Blue2.team", "Blue3.team",
+                                     "tournamentLevel"))
+  } else {
     # Add columns for team number, station, and surrogate
     sched['teamNumber'] <- vector(mode = "integer", length = nrow(sched))
     sched['station'] <- vector(mode = "character", length = nrow(sched))
@@ -799,49 +837,9 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
     # Transform categorical columns into factors.
     sched <- .FactorColumns(sched, c("teamNumber", "station",
                                      "tournamentLevel"))
-
-  } else {
-    # Add columns for each operating station
-    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      sched[cname.team] <- vector(mode = "character",
-                                  length = length(sched$matchNumber))
-      cname.surr <- paste(col, "surrogate", sep = ".")
-      sched[cname.surr] <- vector(mode = "logical",
-                                  length = length(sched$matchNumber))
-      cname.dq <- paste(col, "dq", sep = ".")
-      sched[cname.dq] <- vector(mode = "logical", length = nrow(sched))
-    }
-
-    # Extract data from nested Teams column and insert into new operating station
-    # columns
-    for(mtch in 1:length(sched$matchNumber)){
-      for(tm in 1:6){
-        station <- sched$Teams[[mtch]][["station"]][[tm]]
-        team <- sched$Teams[[mtch]][["teamNumber"]][[tm]]
-        surrogate <- sched$Teams[[mtch]][["surrogate"]][[tm]]
-        dq <- sched$Teams[[mtch]][["dq"]][[tm]]
-
-        cname.team <- paste(station, "team", sep = ".")
-        cname.surrogate <- paste(station, "surrogate", sep = ".")
-        cname.dq <- paste(station, "dq", sep = ".")
-
-        sched[mtch, cname.team] <- team
-        sched[mtch, cname.surrogate] <- surrogate
-        sched[mtch, cname.dq] <- dq
-      }
-    }
-    sched$Teams <- NULL
-
-    # Convert categorical data to factors
-    sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team",
-                                     "Blue1.team", "Blue2.team", "Blue3.team",
-                                     "tournamentLevel"))
   }
   class(sched) <- append(class(sched), "HybridSchedule")
   return(sched)
-
 }
 
 
@@ -1039,7 +1037,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 
 
 #  GetScores ====================================================================
-#' Get detailed match scores.
+#' Get detailed match scores
 #'
 #' The results vary depending on the season requested. The 2016 data fields are
 #' listed here. See the FIRST API documentation at
@@ -1182,27 +1180,41 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 #' Returns a list of playoff alliances, including the alliance captains and
 #' teams that were selected for the each alliance.
 #'
-#' See the \emph{Event Alliances} section of the FIRST API documentation. The
-#' URL format is:
+#' See the \emph{Event Alliances} section of the FIRST API documentation
+#' for more details.
+#'
+#' The URL format is:
+#'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/alliances/event}
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character Case insensitive event code (see \code{GetEvents()}).
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event A character vector containing a FIRST API event code
+#'   (see \code{GetEvents}).
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      number: integer
-#'      name: character
-#'      captain, round1, round2, round3: integer
-#'      backup, backupReplaced: integer
-#'      count: integer
-#'    Attribute "FIRST_type": "Alliances"
-#'    Attribute "url": URL submitted to FIRST API
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame", "Schedule").
+#'
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'      \item \emph{number}: integer
+#'      \item \emph{name}: character
+#'      \item \emph{captain, round1, round2, round3}: integer
+#'      \item \emph{backup, backupReplaced}: integer
+#'      \item \emph{count}: integer}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
+#' sn <- GetSession("username", "key")
 #' GetAlliances(sn, 'WAAMV')
 GetAlliances <- function (session, event) {
   # Assemble URL
@@ -1217,7 +1229,7 @@ GetAlliances <- function (session, event) {
   # Remove prefix from column names.
   names(alliances) <- .TrimColNames(names(alliances))
 
-  attr(alliances, "FIRST_type") <- "Alliances"
+  class(alliances) <- append(class(alliances), "Alliances")
   return(alliances)
 }
 

@@ -36,7 +36,7 @@ test_that("GetSchedule() start, end, and level arguments work.", {
 })
 
 test_that("GetHybridSchedule() returns a data frame.", {
-  hyb <- GetHybridSchedule(sess, event = "WAELL")
+  hyb <- GetHybridSchedule(sess, event = "WAELL", expand_cols = TRUE)
 
   expect_is(hyb, "HybridSchedule")
   expect_equal(attr(hyb, "url"),
@@ -55,8 +55,8 @@ test_that("GetHybridSchedule() returns a data frame.", {
   expect_equal(names(hyb), df_names)
 })
 
-test_that("GetHybridSchedule() expand_rows arg returns expanded data frame.", {
-  hyb <- GetHybridSchedule(sess, event = "ORPHI", expand_rows = TRUE)
+test_that("GetHybridSchedule() expand_cols returns additional rows if FALSE.", {
+  hyb <- GetHybridSchedule(sess, event = "ORPHI")
 
   expect_is(hyb, "HybridSchedule")
   expect_equal(nrow(hyb), 360)

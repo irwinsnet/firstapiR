@@ -2,7 +2,7 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetScores}
 \alias{GetScores}
-\title{Get detailed match scores.}
+\title{Get detailed match scores}
 \usage{
 GetScores(session, event, level = "qual", team = NULL, match = NULL,
   start = NULL, end = NULL)

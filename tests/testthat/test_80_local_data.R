@@ -53,4 +53,10 @@ test_that("GetScores() returns a local data frame", {
   expect_true(attr(scores, "local_test_data"))
 })
 
+test_that("GetAlliances() returns a local data frame", {
+  alliances <- GetAlliances(sess, event = "WAAMV")
+  expect_is(alliances, "Alliances")
+  expect_true(attr(alliances, "local_test_data"))
+})
+
 rm(sess)

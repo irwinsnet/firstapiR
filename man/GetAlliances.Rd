@@ -7,32 +7,46 @@
 GetAlliances(session, event)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 
-\item{event}{Character Case insensitive event code (see \code{GetEvents()}).}
+\item{event}{A character vector containing a FIRST API event code
+(see \code{GetEvents}).}
 }
 \value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes:
-     number: integer
-     name: character
-     captain, round1, round2, round3: integer
-     backup, backupReplaced: integer
-     count: integer
-   Attribute "FIRST_type": "Alliances"
-   Attribute "url": URL submitted to FIRST API
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame", "Schedule").
+
+  \strong{Data Frame Columns}
+  \enumerate{
+     \item \emph{number}: integer
+     \item \emph{name}: character
+     \item \emph{captain, round1, round2, round3}: integer
+     \item \emph{backup, backupReplaced}: integer
+     \item \emph{count}: integer}
+
+  \strong{Data Frame Attributes}
+    \itemize{
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
 Returns a list of playoff alliances, including the alliance captains and
 teams that were selected for the each alliance.
 }
 \details{
-See the \emph{Event Alliances} section of the FIRST API documentation. The
-URL format is:
+See the \emph{Event Alliances} section of the FIRST API documentation
+for more details.
+
+The URL format is:
+
 \code{https://frc-api.firstinspires.org/v2.0/season/alliances/event}
 }
 \examples{
-sn <- GetSession(username, key)
+sn <- GetSession("username", "key")
 GetAlliances(sn, 'WAAMV')
 }
 

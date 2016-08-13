@@ -7,6 +7,7 @@ Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: Downloads First Robotics Competition (FRC) performance data from
     the FIRST API server and converts the data to R data frames. The performance
     data can also be provided as JSON or XML text.
+Depends: R (>= 3.3.1)
 License: MIT + file LICENSE
 Imports:
     base64enc (>= 0.1-3),

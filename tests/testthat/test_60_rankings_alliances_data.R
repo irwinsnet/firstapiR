@@ -11,8 +11,7 @@ sess <- GetSession(username, key)
 test_that("GetAlliances() returns a data frame", {
   al <- GetAlliances(sess, event = "WAELL")
 
-  expect_equal(class(al), "data.frame")
-  expect_equal(attr(al, "FIRST_type"), "Alliances")
+  expect_is(al, "Alliances")
   expect_equal(attr(al, "url"),
                "https://frc-api.firstinspires.org/v2.0/2016/alliances/WAELL")
   expect_equal(nrow(al), 8)
