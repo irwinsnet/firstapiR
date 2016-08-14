@@ -21,8 +21,7 @@ test_that("GetAlliances() returns a data frame", {
 test_that("GetRankings() returns a data frame", {
   rks <- GetRankings(sess, "PNCMP")
 
-  expect_equal(class(rks), "data.frame")
-  expect_equal(attr(rks, "FIRST_type"), "Rankings")
+  expect_is(rks, "Rankings")
   expect_equal(attr(rks, "url"),
                "https://frc-api.firstinspires.org/v2.0/2016/rankings/PNCMP")
   expect_equal(nrow(rks), 64)

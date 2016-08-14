@@ -2,7 +2,7 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetAlliances}
 \alias{GetAlliances}
-\title{Get playoff alliances}
+\title{Get teams assigned to playoff alliances}
 \usage{
 GetAlliances(session, event)
 }
@@ -38,8 +38,8 @@ Returns a list of playoff alliances, including the alliance captains and
 teams that were selected for the each alliance.
 }
 \details{
-See the \emph{Event Alliances} section of the FIRST API documentation
-for more details.
+See the \emph{Event Alliances} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 
 The URL format is:
 
@@ -47,6 +47,6 @@ The URL format is:
 }
 \examples{
 sn <- GetSession("username", "key")
-GetAlliances(sn, 'WAAMV')
+GetAlliances(sn, "WAAMV")
 }
 

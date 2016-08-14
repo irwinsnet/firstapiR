@@ -7,27 +7,39 @@
 GetRankings(session, event, team = NULL, top = NULL)
 }
 \arguments{
-\item{session}{Session A session list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 
-\item{event}{Character, Case insensitive event code (see \code{GetEvents()}).}
+\item{event}{A character vector containing a FIRST API event code
+(see \code{GetEvents}).}
 
-\item{team}{Team number. Optional.}
+\item{team}{An integer vector containing a team number. Optional.}
 
-\item{top}{Integer Number of teams to return.}
+\item{top}{An integer vector specifying the number of teams to return,
+starting with the top ranked team.}
 }
 \value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes (2016):
-     rank: integer
-     teamNumber: integer
-     sortOrder1, sortOrder2, sortOrder3, sortOrder4, sortOrder5,
-       sortOrder6: integer or numeric.
-     wins. losses, ties: integer
-     qualAverage: numeric
-     dq: integer
-     matchesPlayed: integer
-   Attribute "FIRST_type": "Rankings"
-   Attribute "url": URL submitted to FIRST API
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame", "Schedule").
+
+  \strong{Data Frame Columns}
+  \enumerate{
+     \item \emph{rank}: integer
+     \item \emph{teamNumber}: integer
+     \item \emph{sortOrder1, sortOrder2, sortOrder3, sortOrder4, sortOrder5,
+       sortOrder6}: integer or numeric.
+     \item \emph{wins, losses, ties}: integer
+     \item \emph{qualAverage}: numeric
+     \item \emph{dq}: integer
+     \item \emph{matchesPlayed}: integer}
+
+  \strong{Data Frame Attributes}
+    \itemize{
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
 The results vary depending on the season requested. The 2016 data fields are
@@ -35,14 +47,16 @@ listed here. See the FIRST API documentation for data fields for prior
 seasons.
 }
 \details{
-See the \emph{Event Rankings} section of the FIRST API documentation. The
-URL format is:
-\code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?
-teamNumber=team&top=top}
+See the \emph{Event Rankings} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
+
+The URL format is:
+
+\code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?teamNumber=team&top=top}
 }
 \examples{
-sn <- GetSession(username, key)
-GetRankings(sn, 'WAAMV')
+sn <- GetSession("username", "key")
+GetRankings(sn, "WAAMV")
 GetRankings(sn, "PNCMP", team = 1983)
 GetRankings(sn, "ARCHIMEDES", top = 5)
 }

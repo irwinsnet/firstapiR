@@ -37,6 +37,7 @@ NULL
 # Add url attribute to local data showing url used to create local data.
 # Provide both expanded and non-expanded versions of tables from local data.
 # Add error checking on 'level' argument.
+# Remove return (i.e., space) from all URL formats strings.
 
 # The FIRST API R Toolbox requires the following R packages. Install these
 # packages before using the R Toolbox.
@@ -1175,13 +1176,13 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 
 
 #  GetAlliances() ==============================================================
-#' Get playoff alliances
+#' Get teams assigned to playoff alliances
 #'
 #' Returns a list of playoff alliances, including the alliance captains and
 #' teams that were selected for the each alliance.
 #'
-#' See the \emph{Event Alliances} section of the FIRST API documentation
-#' for more details.
+#' See the \emph{Event Alliances} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
 #' The URL format is:
 #'
@@ -1215,7 +1216,7 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 #'
 #' @examples
 #' sn <- GetSession("username", "key")
-#' GetAlliances(sn, 'WAAMV')
+#' GetAlliances(sn, "WAAMV")
 GetAlliances <- function (session, event) {
   # Assemble URL
   url <- paste('alliances/', event, sep="")
@@ -1241,34 +1242,48 @@ GetAlliances <- function (session, event) {
 #' listed here. See the FIRST API documentation for data fields for prior
 #' seasons.
 #'
-#' See the \emph{Event Rankings} section of the FIRST API documentation. The
-#' URL format is:
-#' \code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?
-#' teamNumber=team&top=top}
+#' See the \emph{Event Rankings} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character, Case insensitive event code (see \code{GetEvents()}).
-#' @param team Team number. Optional.
-#' @param top Integer Number of teams to return.
+#' The URL format is:
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes (2016):
-#'      rank: integer
-#'      teamNumber: integer
-#'      sortOrder1, sortOrder2, sortOrder3, sortOrder4, sortOrder5,
-#'        sortOrder6: integer or numeric.
-#'      wins. losses, ties: integer
-#'      qualAverage: numeric
-#'      dq: integer
-#'      matchesPlayed: integer
-#'    Attribute "FIRST_type": "Rankings"
-#'    Attribute "url": URL submitted to FIRST API
+#' \code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?teamNumber=team&top=top}
+#'
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event A character vector containing a FIRST API event code
+#'   (see \code{GetEvents}).
+#' @param team An integer vector containing a team number. Optional.
+#' @param top An integer vector specifying the number of teams to return,
+#'   starting with the top ranked team.
+#'
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame", "Schedule").
+#'
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'      \item \emph{rank}: integer
+#'      \item \emph{teamNumber}: integer
+#'      \item \emph{sortOrder1, sortOrder2, sortOrder3, sortOrder4, sortOrder5,
+#'        sortOrder6}: integer or numeric.
+#'      \item \emph{wins, losses, ties}: integer
+#'      \item \emph{qualAverage}: numeric
+#'      \item \emph{dq}: integer
+#'      \item \emph{matchesPlayed}: integer}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
-#' GetRankings(sn, 'WAAMV')
+#' sn <- GetSession("username", "key")
+#' GetRankings(sn, "WAAMV")
 #' GetRankings(sn, "PNCMP", team = 1983)
 #' GetRankings(sn, "ARCHIMEDES", top = 5)
 GetRankings <- function (session, event, team = NULL, top = NULL) {
@@ -1286,9 +1301,8 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
   # Delete 'Rankings.' from the beginning of column names.
   names(rankings) <- .TrimColNames(names(rankings))
 
-  attr(rankings, "FIRST_type") <- "Rankings"
+  class(rankings) <- append(class(rankings), "Rankings")
   return(rankings)
-
 }
 
 
@@ -1588,7 +1602,7 @@ GetAwardsList <- function(session) {
       cmd_type = "hybrid"
   }
 
-  # Build varialbe name based on command type and format.
+  # Build variable name based on command type and format.
   if(tolower(data_format) == "xml") {
     local_data <- paste(cmd_type, "xml", sep = "_")
   } else {

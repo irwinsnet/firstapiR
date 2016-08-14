@@ -32,6 +32,9 @@ scores_xml <- firstapiR::GetScores(sn_x, event = "ARCHIMEDES")
 alliances_json <- firstapiR::GetAlliances(sn_j, "WAAMV")
 alliances_xml <- firstapiR::GetAlliances(sn_x, "WAAMV")
 
+rankings_json <- firstapiR::GetRankings(sn_j, "WAAMV")
+rankings_xml <- firstapiR::GetRankings(sn_x, "WAAMV")
+
 devtools::use_data(season_json, season_xml,
                    districts_json, districts_xml,
                    events_json, events_xml,
@@ -41,5 +44,6 @@ devtools::use_data(season_json, season_xml,
                    matches_json, matches_xml,
                    scores_json, scores_xml,
                    alliances_json, alliances_xml,
+                   rankings_json, rankings_xml,
                    data_time,
                    internal = TRUE, overwrite = TRUE)
