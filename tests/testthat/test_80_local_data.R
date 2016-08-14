@@ -59,4 +59,16 @@ test_that("GetAlliances() returns a local data frame", {
   expect_true(attr(alliances, "local_test_data"))
 })
 
+test_that("GetAwards() returns a local data frame", {
+  awards <- GetAwards(sess, "PNCMP", 360)
+  expect_is(awards, "Awards")
+  expect_true(attr(awards, "local_test_data"))
+})
+
+test_that("GetAwardsList() returns a local data frame", {
+  alist <- GetAwardsList(sess)
+  expect_is(alist, "AwardsList")
+  expect_true(attr(alist, "local_test_data"))
+})
+
 rm(sess)

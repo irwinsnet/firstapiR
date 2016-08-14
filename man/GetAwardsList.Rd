@@ -7,25 +7,39 @@
 GetAwardsList(session)
 }
 \arguments{
-\item{session}{Session A list created with \code{GetSession()}.}
+\item{session}{A Session object created with \code{GetSession()}.}
 }
 \value{
-A data.frame, json list, or xml list.
-   data.frame column names and classes:
-     awardId: integer
-     eventType: character
-     description: character
-     forPerson: logical
-   Attribute "FIRST_type": "AwardsList"
-   Attribute "url": URL submitted to FIRST API
+Depending on the \code{session$format} value, returns JSON text, an
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame", "Schedule").
+
+  \strong{Data Frame Columns}
+  \enumerate{
+     \item \emph{awardId}: integer
+     \item \emph{eventType}: character
+     \item \emph{description}: character
+     \item \emph{forPerson}: logical}
+
+  \strong{Data Frame Attributes}
+    \itemize{
+    \item \emph{url}: URL submitted to FIRST API
+    \item \emph{time_downloaded}: Local System time that the object was
+    downladed from the FIRST API server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.}
 }
 \description{
-See the \emph{Awards Listing} section of the FIRST API documentation. The
-URL format is:
+See the \emph{Awards Listing} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
+}
+\details{
+The URL format is:
+
 \code{https://frc-api.firstinspires.org/v2.0/season/awards/list}
 }
 \examples{
-sn <- GetSession(username, key)
+sn <- GetSession("username", "key")
 GetAwardsList(sn)
 }
 

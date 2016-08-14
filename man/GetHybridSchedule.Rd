@@ -96,6 +96,6 @@ hybrid?start=start&end=end}
 \examples{
 sn <- GetSession("username", "key")
 GetHybridSchedule(sn, event = "ORPHI")
-GetHybridSchedule(sn, level = "playoff", start = 3, end = 6)
+GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
 }
 

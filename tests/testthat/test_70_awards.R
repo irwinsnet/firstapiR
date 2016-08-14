@@ -11,8 +11,7 @@ sess <- GetSession(username, key)
 test_that("GetAwards() returns a data frame", {
   awards <- GetAwards(sess, event = "PNCMP")
 
-  expect_equal(class(awards), "data.frame")
-  expect_equal(attr(awards, "FIRST_type"), "Awards")
+  expect_is(awards, "Awards")
   expect_equal(attr(awards, "url"),
                "https://frc-api.firstinspires.org/v2.0/2016/awards/PNCMP")
   expect_equal(nrow(awards), 56)
@@ -36,8 +35,7 @@ test_that("GetAwards throws errors for incorrect arguments", {
 test_that("GetAwardsList() returns a data frame", {
   alist <- GetAwardsList(sess)
 
-  expect_equal(class(alist), "data.frame")
-  expect_equal(attr(alist, "FIRST_type"), "AwardsList")
+  expect_is(alist, "AwardsList")
   expect_equal(attr(alist, "url"),
                "https://frc-api.firstinspires.org/v2.0/2016/awards/list")
   expect_equal(nrow(alist), 92)

@@ -41,7 +41,7 @@ The FIRST API URL format is:
 \code{https://frc-api.firstinspires.org/v2.0/season/districts}
 }
 \examples{
-sn <- GetSession(username, "key")
+sn <- GetSession("username", "key")
 districts <- GetDistricts(sn)
 }
 

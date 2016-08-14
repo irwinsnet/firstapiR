@@ -82,8 +82,8 @@ The URL format is:
 }
 \examples{
 sn <- GetSession("username", "key")
-GetTeams(state = "California")
-GetTeams(district = "FIM")
-GetTeams(event = "CMP-CARVER")
+GetTeams(sn, state = "California")
+GetTeams(sn, district = "FIM")
+GetTeams(sn, event = "CMP-CARVER")
 }
 

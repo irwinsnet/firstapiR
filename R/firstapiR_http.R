@@ -205,7 +205,7 @@ GetSeason <- function(session) {
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, "key")
+#' sn <- GetSession("username", "key")
 #' districts <- GetDistricts(sn)
 GetDistricts <- function(session) {
   url <- "districts"
@@ -399,9 +399,9 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'
 #' @examples
 #' sn <- GetSession("username", "key")
-#' GetTeams(state = "California")
-#' GetTeams(district = "FIM")
-#' GetTeams(event = "CMP-CARVER")
+#' GetTeams(sn, state = "California")
+#' GetTeams(sn, district = "FIM")
+#' GetTeams(sn, event = "CMP-CARVER")
 GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
                       state = NULL, page = NULL) {
   # Check for unallowed combinations of arguments.
@@ -727,7 +727,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #' @examples
 #' sn <- GetSession("username", "key")
 #' GetHybridSchedule(sn, event = "ORPHI")
-#' GetHybridSchedule(sn, level = "playoff", start = 3, end = 6)
+#' GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
 GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
                               end = NULL, expand_cols = FALSE) {
   # Check for prohibited combinations of arguments
@@ -1309,36 +1309,51 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 #  GetAwards() =================================================================
 #' Get the awards that were presented to a team or at an event.
 #'
-#' See the \emph{Event Awards} section of the FIRST API documentation. The
-#' URL format is:
+#' See the \emph{Event Awards} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
+#'
+#' The URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season/awards/event/team}
 #'
-#' @param session Session A session list created with \code{GetSession()}.
-#' @param event Character Case insensitive event code (see \code{GetEvents()}).
-#' @param team Integer Team number.
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event A character vector containing a FIRST API event code
+#'   (see \code{GetEvents}). Must specify the \code{event} argument, the
+#'   \code{team} argument, or both.
+#' @param team An integer vector containing a team number. Optional.  Must
+#'   specify the \code{event} argument, the \code{team} argument, or both.
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      awardId: integer
-#'      teamId: integer
-#'      eventId: integer
-#'      eventDivisionId: logical
-#'      eventCode: character
-#'      name: character
-#'      series: integer
-#'      teamNumber: integer
-#'      fullTeamName: character
-#'      person: character
-#'    Attribute "FIRST_type": "Awards"
-#'    Attribute "url": URL submitted to FIRST API
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame", "Schedule").
+#'
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'      \item \emph{awardId}: integer
+#'      \item \emph{teamId}: integer
+#'      \item \emph{eventId}: integer
+#'      \item \emph{eventDivisionId}: logical
+#'      \item \emph{eventCode}: character
+#'      \item \emph{name}: character
+#'      \item \emph{series}: integer
+#'      \item \emph{teamNumber}: integer
+#'      \item \emph{fullTeamName}: character
+#'      \item \emph{person}: character}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
+#' sn <- GetSession("username", "key")
 #' GetAwards(sn, "PNCMP")
 #' GetAwards(sn, team = 360)
-#' GetAwards(sn, event = "PNCMP", 360)
+#' GetAwards(sn, "PNCMP", 360)
 GetAwards <- function(session, event = NULL, team = NULL) {
   # Check for incorrect combinations of arguments.
   if(is.null(event) && is.null(team))
@@ -1357,7 +1372,7 @@ GetAwards <- function(session, event = NULL, team = NULL) {
   # Remove column name prefix
   names(awards) <- .TrimColNames(names(awards))
 
-  attr(awards, "FIRST_type") <- "Awards"
+  class(awards) <- append(class(awards), "Awards")
   return(awards)
 }
 
@@ -1365,25 +1380,38 @@ GetAwards <- function(session, event = NULL, team = NULL) {
 #  GetAwardsList() =============================================================
 #' Get a list of all available awards for a season.
 #'
-#' See the \emph{Awards Listing} section of the FIRST API documentation. The
-#' URL format is:
+#' See the \emph{Awards Listing} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
+#'
+#' The URL format is:
+#'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/awards/list}
 #'
-#' @param session Session A list created with \code{GetSession()}.
+#' @param session A Session object created with \code{GetSession()}.
 #'
-#' @return A data.frame, json list, or xml list.
-#'    data.frame column names and classes:
-#'      awardId: integer
-#'      eventType: character
-#'      description: character
-#'      forPerson: logical
-#'    Attribute "FIRST_type": "AwardsList"
-#'    Attribute "url": URL submitted to FIRST API
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame", "Schedule").
+#'
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'      \item \emph{awardId}: integer
+#'      \item \emph{eventType}: character
+#'      \item \emph{description}: character
+#'      \item \emph{forPerson}: logical}
+#'
+#'   \strong{Data Frame Attributes}
+#'     \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession(username, key)
+#' sn <- GetSession("username", "key")
 #' GetAwardsList(sn)
 GetAwardsList <- function(session) {
   # Assemble URL
@@ -1395,30 +1423,35 @@ GetAwardsList <- function(session) {
   # Remove column name prefix
   names(alist) <- .TrimColNames(names(alist))
 
-  attr(alist, "FIRST_type") <- "AwardsList"
+  class(alist) <- append(class(alist), "AwardsList")
   return(alist)
 }
 
 
 #  .AddHTTPArgs() ==============================================================
-#' Add GET parameters to URL string.
+#' Add GET parameters to a URL string.
 #'
-#' @param url Character The portion of the FIRST API URL that follows the
-#'   season parameter and forward slash, but is not a GET parameter (i.e.,
-#'   before the '?'). For most FIRST API commands, the url string will be the
-#'   simple string that identifies the command, e.g., "districts" or "teams".
-#'   A few FIRST API commands use path parameters (i.e., Detailed Scores) in
-#'   addition to GET parameters -- in such cases the url argument must contain
-#'   the path parameters separated by '/'.
-#' @param http_args List A list of all GET parameters that will be supplied to
-#'   the URL query string. The elements of the list must have a name that
-#'   that matches the name of the GET parameter (e.g., teamNumber, eventCode).
-#'   Any list elements that are NULL will be skipped.
+#' .AddHTTPArgs is an internal function. It takes a named list and creates a GET
+#' parameter string suitable for inclusion in a URL. It adds a question mark
+#' ('?') to the beginning of the string and separates each name-value pair with
+#' an ampersand ('&'). List items with NULL values are ignored.
 #'
-#' @return Character A string containing a portion of the FIRST API URL,
-#'   starting with the path parameter immediately following the season (not
-#'   including the '/') and extending to the end of the URL, including the
-#'   GET query string.
+#' @param url A character vector containing the portion of the FIRST API URL
+#'   that follows the season parameter and forward slash, but is not a GET
+#'   parameter (i.e., before the '?'). For most FIRST API commands, the url
+#'   string will be the simple string that identifies the command, e.g.,
+#'   "districts" or "teams". A few FIRST API commands use path parameters (i.e.,
+#'   Detailed Scores) in addition to GET parameters -- in such cases the url
+#'   argument must contain the path parameters separated by '/'.
+#' @param http_args A list of all GET parameters that will be supplied to the
+#'   URL query string. The elements of the list must have a name that that
+#'   matches the name of the GET parameter (e.g., teamNumber, eventCode). Any
+#'   list elements that are NULL will be skipped.
+#'
+#' @return A character vector containing the portion of the FIRST API URL
+#'   starting with the path parameter that immediately follows the season (not
+#'   including the '/') and extending to the end of the URL, including the GET
+#'   query string.
 #'
 #' @examples
 #'   # From GetTeams()
@@ -1460,6 +1493,14 @@ GetAwardsList <- function(session) {
 #' .GetHTTP is an internal function that is not intended to be called by the
 #' user. .GetHTTP is called by other FIRST API methods.
 #'
+#' .GETHTTP is a crucial function -- it does most of the work for the firstapiR
+#' publicly accessible functions. It formulates the HTTP request from the
+#' \code{url} and \code{session} arguments, including final assembly on the url
+#' and creating the authorization header. It verifies there are no HTTP errors
+#' on the response and checks the response content for properly formatted JSON
+#' or XML text. Finally, if a data frame is requested, it converts the response
+#' to an R data frame.
+#'
 #' .GetHTTP will thow an error if any HTTP code other than 200 is received in
 #' the HTTP response. The error message will include the error code and
 #' the error message from the response content. See the Response Codes section
@@ -1468,16 +1509,16 @@ GetAwardsList <- function(session) {
 #' .GetHTTP will also throw an error if session$format = "data.frame" and no
 #' records are returned.
 #'
-#' @param session List A session list created with \code{GetSession()}.
-#' @param url Character A partial FIRST API URL. The url argument includes
-#' everything to the right of the season. For example,
+#' @param session A Session object created with \code{GetSession()}.
+#' @param url A character vector containing a partial FIRST API url. The url
+#'   argument includes everything to the right of the season. For example,
 #'   \code{'events?teamNumber=team&districtCode=district}.
 #'
 #' @return Returns either JSON text, an XML::XMLNode object, or an R data frame,
 #'   depending on the value of session$format.
 #'
 #' @examples
-#' sn <- GetSession(username, key)
+#' sn <- GetSession("username", "key")
 #' .GetHTTP(sn, "events?teamNumber=2557&districtCode=PNW")
 .GetHTTP <- function (session, url) {
   # Build Full URL
@@ -1537,18 +1578,21 @@ GetAwardsList <- function(session) {
 
 
 #  .TrimColNames() =============================================================
-#' Remove prefixes from data frame column names.
+#' Remove prefixes from data frame column names
+#'
+#' \code{.TrimColNames} is an internal function that is not intended to be
+#' called by the user. It is called by other FIRST API methods.
 #'
 #' .TrimColNames removes all portions of a string up to and including the first
 #' period. It's intended to produce shorter column names that are easier to
 #' type in R interactive sessions. Column names without periods are left
 #' unchanged.
 #'
-#' @param col_names Character A character vector of column names, generally
-#'   provided by the names() function.
+#' @param col_names A character vector of column names, generally provided by
+#'   the names() function.
 #'
-#' @return Character A character vector of trimmed column names, with the same
-#' length as the col_names argument.
+#' @return A character vector of trimmed column names, with the same length as
+#'   the col_names argument.
 #'
 #' @examples
 #' names(rankings) <- .TrimColNames(names(rankings))
@@ -1558,15 +1602,19 @@ GetAwardsList <- function(session) {
 
 
 #  .FactorColumns() ============================================================
-#' Convert character columns to factors.
+#' Convert character columns to factors
+#'
+#' \code{.FactorColumns} is an internal function that is not intended to be
+#' called by the user. It is called by other FIRST API methods.
 #'
 #' There are benefits to converting data frame columns with a limited number of
-#' unique character values to factors. Factors are conceptually similar to
-#' enumerations in other programming languages.
+#' unique character values to factors. For example, the R barplot function will
+#' automatically group values by factors, which could be a team, district, etc.
+#' Factors are conceptually similar to enumerations in other programming
+#' languages.
 #'
-#' @param df Data.frame The data.frame that will have it's columns converted to
-#'   factors.
-#' @param cols Character A vector of column names that identifies the columns
+#' @param df The data.frame that will have it's columns converted to factors.
+#' @param cols A character vector of column names that identifies the columns
 #'   that will be converted to factors.
 #'
 #' @return Data.frame
@@ -1579,6 +1627,44 @@ GetAwardsList <- function(session) {
   return(df)
 }
 
+
+# .GetLocalData() ==============================================================
+#' Extract FIRST data from a local file.
+#'
+#' \code{.GetLocalData} is an internal function that is not intended to be
+#' called by the user. It is called by other FIRST API methods.
+#'
+#' \code{.GetLocalData} extracts archived FIRST data from the packages local
+#' \code{R/sysdata.rda} file. The data is archived as JSON text or as an
+#' XML::XMLDocument object.
+#'
+#' Normally, \code{.GetLocalData} will not be used. However, if the user sets
+#' the authorization key in the Session object to the literal value "key", then
+#' \code{.GetHTTP()} will call \code{.GetLocalData()} instead of sending the
+#' HTTP request. As a result, \code{.GetHTTP} and all other firstapiR functions
+#' that depend on \code{.GetHTTP} will skip the HTTP request and return the
+#' archived, local data.
+#'
+#' This feature allows users to experiment with firstapiR features even if they
+#' don't have an official authorization key issued by FIRST. It also enables
+#' the examples in the firstapiR documentation to work. The actual HTTP request,
+#' HTTP error code check, and extraction of text data from the body of the HTTP
+#' response are the only parts of the code that are bypassed.
+#'
+#' @param url A character vector containing the portion of the FIRST API url
+#'  that follows the season path parameter, not including the '/' that follows
+#'  the season.
+#' @param data_format A character vector containing either "json" or "xml".
+#'
+#' @return While the local data will be of the same type as what was requested
+#'   (i.e., if called via \code{GetTeams} a list of teams will be returned,
+#'   \code{GetSchedule}) will return schedule data, etc.) arguments such as
+#'   \code{team} or \code{event} will be ignored. Refer to the
+#'   \code{data-raw/data.R} file to see the firstapiR commands that were used to
+#'   download the data from the FIRST API server.
+#'
+#' @examples
+#' content <- .GetLocalData(url, session$format)
 .GetLocalData <- function(url, data_format) {
   # Verify R/sysdata.rda file has been installed and is available.
   if(!exists("data_time"))
@@ -1600,6 +1686,13 @@ GetAwardsList <- function(session) {
     mod_type <- regmatches(url, mod_mtch)[[1]][[2]]
     if(mod_type == "hybrid")
       cmd_type = "hybrid"
+  }
+
+  if(cmd_type == "awards"){
+    mod_mtch <- regexec(api_mod_ptn, url, perl = TRUE)
+    mod_type <- regmatches(url, mod_mtch)[[1]][[2]]
+    if(mod_type == "list")
+      cmd_type <- "awards_list"
   }
 
   # Build variable name based on command type and format.

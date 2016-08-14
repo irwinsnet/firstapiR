@@ -35,6 +35,13 @@ alliances_xml <- firstapiR::GetAlliances(sn_x, "WAAMV")
 rankings_json <- firstapiR::GetRankings(sn_j, "WAAMV")
 rankings_xml <- firstapiR::GetRankings(sn_x, "WAAMV")
 
+awards_json <- firstapiR::GetAwards(sn_j, "PNCMP", 360)
+awards_xml <- firstapiR::GetAwards(sn_x, "PNCMP", 360)
+
+awards_list_json <- firstapiR::GetAwardsList(sn_j)
+awards_list_xml <- firstapiR::GetAwardsList(sn_x)
+
+
 devtools::use_data(season_json, season_xml,
                    districts_json, districts_xml,
                    events_json, events_xml,
@@ -45,5 +52,7 @@ devtools::use_data(season_json, season_xml,
                    scores_json, scores_xml,
                    alliances_json, alliances_xml,
                    rankings_json, rankings_xml,
+                   awards_json, awards_xml,
+                   awards_list_json, awards_list_xml,
                    data_time,
                    internal = TRUE, overwrite = TRUE)
