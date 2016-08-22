@@ -1,9 +1,3 @@
-library(testthat)
-library(firstapiR)
-
-# Define username and key variables
-source("user.R")
-
 context("FIRST R Sessions and Variables")
 
 test_username <- "username"
@@ -15,11 +9,11 @@ test_that("username and key defined", {
 })
 
 test_that("GetSession returns correct list", {
-  sess<- GetSession(username, key)
+  sess<- GetSession(test_username, test_key)
 
   expect_is(sess, "Session")
-  expect_equal(sess$username, username)
-  expect_equal(sess$key, key)
+  expect_equal(sess$username, test_username)
+  expect_equal(sess$key, test_key)
   expect_equal(sess$season, 2016)
   expect_false(sess$staging)
   expect_equal(sess$format, "data.frame")
@@ -35,9 +29,10 @@ test_that("GetSession throws errors for incorrect arguments", {
 })
 
 test_that("Version and URL variables are correct", {
-  expect_equal(.staging_url, "https://frc-staging-api.firstinspires.org")
-  expect_equal(.production_url, "https://frc-api.firstinspires.org")
-  expect_equal(.version, "v2.0")
+  expect_equal(firstapiR:::.staging_url,
+               "https://frc-staging-api.firstinspires.org")
+  expect_equal(firstapiR:::.production_url, "https://frc-api.firstinspires.org")
+  expect_equal(firstapiR:::.version, "v2.0")
 })
 
 rm(test_username, test_key)

@@ -118,6 +118,12 @@ GetSession <- function(username, key,
   return(session)
 }
 
+#' @export
+GetServerStatus <- function(session) {
+  status <- .GetHTTP(session, "status")
+  class(status) <- append(class(status), "Status")
+  return(status)
+}
 
 #  GetSeason() =================================================================
 #' Get high-level information for an FRC season
@@ -1523,7 +1529,9 @@ GetAwardsList <- function(session) {
 .GetHTTP <- function (session, url) {
   # Build Full URL
   full_url <- paste(if(session$staging) .staging_url else .production_url,
-                    .version, session$season, url, sep="/")
+                    .version, sep="/")
+  if(url != "status")
+    full_url <- paste(full_url, session$season, url, sep="/")
 
   # Create authorization and format headers
   raw_token <- paste(session$username, session$key, sep=':')
@@ -1567,9 +1575,11 @@ GetAwardsList <- function(session) {
   attr(result, "url") <- full_url
   if(session$key == "key") {
     attr(result, "local_test_data") <- TRUE
+    attr(result, "local_url") <- attr(content, "url")
     attr(result, "time_downloaded") <- attr(content, "time_downloaded")
   } else {
     attr(result, "local_test_data") <- FALSE
+    attr(result, "local_url", NULL)
     attr(result, "time_downloaded") <- Sys.time()
   }
 

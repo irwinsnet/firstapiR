@@ -1,42 +1,44 @@
-library(testthat)
-library(firstapiR)
-
-# Define username and key variables
-source("user.R")
+# test_40_schedule_data.R
 
 context("FIRST_R Schedule Functions")
 
-sess <- GetSession(username, key)
 
-test_that("GetSchedule() returns a data frame", {
-  sched <- GetSchedule(sess, event = "PNCMP")
+# GetSchedule ==================================================================
+test_that("GetSchedule() returns a local data frame", {
+  sched <- GetSchedule(sess_local, event = "ORPHI")
   expect_is(sched, "Schedule")
   expect_equal(attr(sched, "url"), paste("https://frc-api.firstinspires.org",
-      "/v2.0/2016/schedule/PNCMP?tournamentLevel=qual", sep = ""))
-  expect_equal(nrow(sched), 768)
+      "/v2.0/2016/schedule/ORPHI?tournamentLevel=qual", sep = ""))
+  expect_equal(nrow(sched), 360)
   expect_equal(length(sched), 9)
 })
 
-test_that("GetSchedule() expand_cols arg returns expanded data frame.", {
-  sched <- GetSchedule(sess, event = "PNCMP", expand_cols = TRUE)
+
+test_that("GetSchedule() expand_cols arg returns expanded local data frame.", {
+  sched <- GetSchedule(sess_local, event = "ORPHI", expand_cols = TRUE)
   expect_is(sched, "Schedule")
-  expect_equal(nrow(sched), 128)
+  expect_equal(nrow(sched), 60)
   expect_equal(length(sched), 17)
 })
 
-test_that("GetSchedule() start, end, and level arguments work.", {
-  sched <- GetSchedule(sess, event = "WAAMV", start = 10, end = 30,
+
+test_that("GetSchedule() start, end, and level arguments via HTTP.", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  sched <- GetSchedule(sess_http, event = "WAAMV", start = 10, end = 30,
                        expand_cols = TRUE)
   expect_equal(nrow(sched), 21)
 
-  sched <- GetSchedule(sess, event = "WAAMV", level = "playoff",
+  sched <- GetSchedule(sess_http, event = "WAAMV", level = "playoff",
                        expand_cols = TRUE)
   expect_equal(nrow(sched), 16)
   expect_equal(levels(sched$tournamentLevel[1]), "Playoff")
 })
 
-test_that("GetHybridSchedule() returns a data frame.", {
-  hyb <- GetHybridSchedule(sess, event = "WAELL", expand_cols = TRUE)
+
+# GetHybridSchedule() ==========================================================
+test_that("GetHybridSchedule() returns a local data frame.", {
+  hyb <- GetHybridSchedule(sess_local, event = "WAELL", expand_cols = TRUE)
 
   expect_is(hyb, "HybridSchedule")
   expect_equal(attr(hyb, "url"),
@@ -55,8 +57,11 @@ test_that("GetHybridSchedule() returns a data frame.", {
   expect_equal(names(hyb), df_names)
 })
 
-test_that("GetHybridSchedule() expand_cols returns additional rows if FALSE.", {
-  hyb <- GetHybridSchedule(sess, event = "ORPHI")
+
+test_that("GetHybridSchedule() expand_cols returns additional rows via HTTP.", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  hyb <- GetHybridSchedule(sess_http, event = "ORPHI")
 
   expect_is(hyb, "HybridSchedule")
   expect_equal(nrow(hyb), 360)
@@ -67,5 +72,3 @@ test_that("GetHybridSchedule() expand_cols returns additional rows if FALSE.", {
                "disqualified", "scoreFinal", "scoreFoul", "scoreAuto"  )
   expect_equal(names(hyb), df_names)
 })
-
-rm(sess)

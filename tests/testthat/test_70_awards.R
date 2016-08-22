@@ -1,15 +1,9 @@
-library(testthat)
-library(firstapiR)
-
-# Define username and key variables
-source("user.R")
-
 context("FIRST_R Awards")
 
-sess <- GetSession(username, key)
 
-test_that("GetAwards() returns a data frame", {
-  awards <- GetAwards(sess, event = "PNCMP")
+# GetAwards() ==================================================================
+test_that("GetAwards() returns a local data frame", {
+  awards <- GetAwards(sess_local, event = "PNCMP")
 
   expect_is(awards, "Awards")
   expect_equal(attr(awards, "url"),
@@ -22,18 +16,23 @@ test_that("GetAwards() returns a data frame", {
                                 "person"))
 })
 
-test_that("GetAwards team argument filters results", {
-  awards <- GetAwards(sess, event = "ARCHIMEDES", team = 180)
+
+test_that("GetAwards team argument via HTTP", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  awards <- GetAwards(sess_http, event = "ARCHIMEDES", team = 180)
   expect_equal(nrow(awards), 1)
 })
 
 test_that("GetAwards throws errors for incorrect arguments", {
-  expect_error(GetAwards(sess),
+  expect_error(GetAwards(sess_local),
                "You must specify either a team number or event code")
 })
 
+
+# GetAwardsList() ==============================================================
 test_that("GetAwardsList() returns a data frame", {
-  alist <- GetAwardsList(sess)
+  alist <- GetAwardsList(sess_local)
 
   expect_is(alist, "AwardsList")
   expect_equal(attr(alist, "url"),
@@ -43,4 +42,18 @@ test_that("GetAwardsList() returns a data frame", {
   expect_equal(names(alist), c("awardId", "eventType", "description",
                              "forPerson"))
 })
-rm(sess)
+
+
+test_that("GetAwardsList via HTTP", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  alist <- GetAwardsList(sess_http)
+
+  expect_is(alist, "AwardsList")
+  expect_equal(attr(alist, "url"),
+               "https://frc-api.firstinspires.org/v2.0/2016/awards/list")
+  expect_equal(nrow(alist), 92)
+  expect_equal(length(alist), 4)
+  expect_equal(names(alist), c("awardId", "eventType", "description",
+                               "forPerson"))
+})

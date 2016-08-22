@@ -1,21 +1,17 @@
-library(testthat)
-library(firstapiR)
-
-# Define username and key variables
-source("user.R")
+# test_50_score_data.R
 
 context("FIRST_R Match Results and Score Functions")
 
-sess <- GetSession(username, key)
 
-test_that("GetMatchResults() returns a data frame", {
-  mr <- GetMatchResults(sess, event = "WAELL")
+# GetMatchResults() ============================================================
+test_that("GetMatchResults() returns a local data frame", {
+  mr <- GetMatchResults(sess_local, event = "PNCMP")
 
   expect_is(mr, "MatchResults")
   expect_equal(attr(mr, "url"),
-            paste("https://frc-api.firstinspires.org/v2.0/2016/matches/WAELL",
+            paste("https://frc-api.firstinspires.org/v2.0/2016/matches/PNCMP",
                   "?tournamentLevel=qual", sep = ""))
-  expect_equal(nrow(mr), 468)
+  expect_equal(nrow(mr), 768)
   expect_equal(length(mr), 11)
   expect_equal(names(mr), c("actualStartTime", "description", "tournamentLevel",
                             "matchNumber", "postResultTime", "teamNumber",
@@ -23,30 +19,36 @@ test_that("GetMatchResults() returns a data frame", {
                             "scoreFoul", "scoreAuto"))
 })
 
-test_that("For GetMatchResults, expand_cols returns an expanded data frame", {
-  mr <- GetMatchResults(sess, event = "ORPHI", expand_cols = TRUE)
 
-  expect_equal(nrow(mr), 60)
+test_that("For GetMatchResults returns an expanded local data frame", {
+  mr <- GetMatchResults(sess_local, event = "PNCMP", expand_cols = TRUE)
+
+  expect_equal(nrow(mr), 128)
   expect_equal(length(mr), 23)
 })
 
-test_that("For GetMatchResults, start, end, and match args are correct", {
-  mr <- GetMatchResults(sess, event = "PNCMP", level = "playoff", start = 2,
-                        end = 5, expand_cols = TRUE)
+
+test_that("For GetMatchResults start, end, and match args via HTTP", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  mr <- GetMatchResults(sess_http, event = "PNCMP", level = "playoff",
+                        start = 2, end = 5, expand_cols = TRUE)
   expect_equal(nrow(mr), 4)
 
-  mr <- GetMatchResults(sess, event = "WAAMV", level = "qual", match = 10,
+  mr <- GetMatchResults(sess_http, event = "WAAMV", level = "qual", match = 10,
                         expand_cols = TRUE)
   expect_equal(nrow(mr), 1)
 })
 
+
+# GetScores() ==================================================================
 test_that("GetScores() returns a data frame", {
-  sc <- GetScores(sess, event = "WAAMV")
+  sc <- GetScores(sess_local, event = "ARCHIMEDES")
 
   expect_is(sc, "Scores")
   expect_equal(attr(sc, "url"),
-               "https://frc-api.firstinspires.org/v2.0/2016/scores/WAAMV/qual")
-  expect_equal(nrow(sc), 156)
+          "https://frc-api.firstinspires.org/v2.0/2016/scores/ARCHIMEDES/qual")
+  expect_equal(nrow(sc), 250)
   expect_equal(length(sc), 42)
   expect_equal(names(sc)[5:10], c("robot1Auto", "robot2Auto", "robot3Auto",
                                   "autoBouldersLow", "autoBouldersHigh",
@@ -55,11 +57,20 @@ test_that("GetScores() returns a data frame", {
 })
 
 
-test_that("GetScores() throws errors for incorrect arguments", {
-  expect_error(GetScores(sess, event = "WAELL", team = 4911, match = 1),
-               "You cannot specify both a team and match number")
-  expect_error(GetScores(sess, event = "WAELL", match = 2, start = 1),
-               "You cannot specify start or end if you specify match")
+test_that("GetScores() start and end args via HTTP", {
+  if(!sess_http_valid) skip("No username or authorization key")
 
+  sc <- GetScores(sess_http, event <- "PNCMP", start = 5, end = 10)
+
+  expect_is(sc, "Scores")
+  expect_equal(nrow(sc), 12)
+  expect_equal(length(sc), 42)
 })
-rm(sess)
+
+
+test_that("GetScores() throws errors for incorrect arguments", {
+  expect_error(GetScores(sess_local, event = "WAELL", team = 4911, match = 1),
+               "You cannot specify both a team and match number")
+  expect_error(GetScores(sess_local, event = "WAELL", match = 2, start = 1),
+               "You cannot specify start or end if you specify match")
+})
