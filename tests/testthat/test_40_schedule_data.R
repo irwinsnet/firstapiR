@@ -3,6 +3,13 @@
 context("FIRST_R Schedule Functions")
 
 
+sess_http_valid <- FALSE
+sess_local <- GetSession("username", "key")
+if(exists("username") & exists("key")) {
+  sess_http <- GetSession(username, key)
+  sess_http_valid <- TRUE
+}
+
 # GetSchedule ==================================================================
 test_that("GetSchedule() returns a local data frame", {
   sched <- GetSchedule(sess_local, event = "ORPHI")

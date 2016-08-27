@@ -76,8 +76,8 @@ Depending on the \code{session$format} value, returns JSON text, an
       R/sysdata.rda file.}
 }
 \description{
-See the \emph{Match Results} section of the FIRST API documentation for more
-details.
+See the \emph{Match Results} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 }
 \details{
 The URL format is:

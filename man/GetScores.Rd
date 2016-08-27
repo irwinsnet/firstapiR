@@ -76,8 +76,8 @@ The data frame contains two rows for each match, one for blue and the other
 for red.
 }
 \details{
-See the \emph{Detailed Scores} section of the FIRST API documentation for
-more details.
+See the \emph{Detailed Scores} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 
 The URL format is:
 

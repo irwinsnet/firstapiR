@@ -15,5 +15,8 @@ Imports:
     jsonlite (>= 0.9.21),
     XML (>= 3.98-1.4)
 RoxygenNote: 5.0.1
-Suggests: testthat
+Suggests: testthat,
+    knitr,
+    rmarkdown
 LazyData: true
+VignetteBuilder: knitr

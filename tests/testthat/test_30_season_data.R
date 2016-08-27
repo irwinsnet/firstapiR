@@ -1,7 +1,41 @@
 # test_30_season_data.R
+#
+# Tests firstapiR functions that retrieve season data.
+# By default, these tests run locally, without making HTTP connections to the
+# FIRST API server. To run test that firstapiR connects to the FIRST API
+# server, create character vectors named "username" and "key" in the console
+# and set their values to the username and key assigned to you by FIRST. Then
+# run the tests from the console using testthat::test_dir() or
+# testthat::test_file().
 
 context("FIRST_R Season Data Functions")
 
+# Check if the symbols username and key are defined.
+sess_http_valid <- FALSE
+sess_local <- GetSession("username", "key")
+if(exists("username") & exists("key")) {
+  sess_http <- GetSession(username, key)
+  sess_http_valid <- TRUE
+}
+
+# GetServerStatus() ============================================================
+test_that("GetStatus() returns a local data frame", {
+  status <- GetServerStatus(sess_local)
+
+  expect_is(status, "Status")
+  expect_equal(attr(status, "url"),
+               "https://frc-api.firstinspires.org/v2.0")
+  expect_equal(nrow(status), 1)
+  expect_equal(length(status), 3)
+  expect_equal(names(status), c("name", "version", "status"))
+})
+
+test_that("GetServerStatus returns a data frame via HTTP", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  status <- GetServerStatus(sess_http)
+  expect_is(status, "Status")
+})
 
 # GetSeason() ==================================================================
 test_that("GetSeason() returns a local data frame", {

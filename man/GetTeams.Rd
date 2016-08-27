@@ -73,7 +73,8 @@ responses into a single data frame. For xml and json formats, the user will
 have to call \code{GetTeams} for each page of data, specifying the page with
 the \code{page} argument.
 
-See the \emph{Team Listings} section of the FIRST API documentation.
+See the \emph{Team Listings} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 
 The URL format is:
 

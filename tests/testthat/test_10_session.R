@@ -1,12 +1,12 @@
+# test_10_session.R
+#
+# Tests GetSession() function and internal package variables.
+
+
 context("FIRST R Sessions and Variables")
 
 test_username <- "username"
 test_key <- "key"
-
-test_that("username and key defined", {
-  expect_equal(test_username, "username")
-  expect_equal(test_key, "key")
-})
 
 test_that("GetSession returns correct list", {
   sess<- GetSession(test_username, test_key)
@@ -34,5 +34,3 @@ test_that("Version and URL variables are correct", {
   expect_equal(firstapiR:::.production_url, "https://frc-api.firstinspires.org")
   expect_equal(firstapiR:::.version, "v2.0")
 })
-
-rm(test_username, test_key)

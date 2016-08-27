@@ -3,6 +3,13 @@
 context("FIRST_R Match Results and Score Functions")
 
 
+sess_http_valid <- FALSE
+sess_local <- GetSession("username", "key")
+if(exists("username") & exists("key")) {
+  sess_http <- GetSession(username, key)
+  sess_http_valid <- TRUE
+}
+
 # GetMatchResults() ============================================================
 test_that("GetMatchResults() returns a local data frame", {
   mr <- GetMatchResults(sess_local, event = "PNCMP")

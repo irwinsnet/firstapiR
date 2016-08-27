@@ -38,8 +38,8 @@ Returns information for the season specified in the session list (see
 documentation for the GetSession function for additional details.)
 }
 \details{
-See the \emph{Season Summary} section of the FIRST API documentation for
-additional details.
+See the \emph{Season Summary} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 
 The FIRST API URL format is:
 

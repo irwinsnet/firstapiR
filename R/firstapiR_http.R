@@ -24,8 +24,8 @@
 #' These functions use version 2.0 of the FIRST API. They have not been tested
 #' with version 1.0.
 #'
-#' @docType package
-#' @name firstapiR
+#'@doctype package
+#'@name firstapiR
 NULL
 
 # TODO:
@@ -118,7 +118,42 @@ GetSession <- function(username, key,
   return(session)
 }
 
+
+# GetServerStatus() ============================================================
+#' Get the status of the FIRST API server.
+#'
+#' See the \emph{API Index} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
+#'
+#' The FIRST API URL format is:
+#'
+#' \code{https://frc-api.firstinspires.org/v2.0}
+#'
+#' @param session A Session object created with \code{GetSession()}.
+#'
+#' @return Depending on the \code{session$format} value, returns JSON text, an
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame, "Season").
+#'
+#'   \strong{Data Frame Columns}
+#'   \enumerate{
+#'     \item \emph{name}: character
+#'     \item \emph{version}: double
+#'     \item \emph{status}: character}
+#'
+#'   \strong{Data Frame Attributes}
+#'   \itemize{
+#'     \item \emph{url}: URL submitted to FIRST API
+#'     \item \emph{time_downloaded}: Local System time that the object was
+#'     downladed from the FIRST API server.
+#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'       R/sysdata.rda file.}
+#'
 #' @export
+#'
+#' @examples
+#' sn <- GetSession("username", "key")
+#' status <- GetServerStatus(sn)
 GetServerStatus <- function(session) {
   status <- .GetHTTP(session, "status")
   class(status) <- append(class(status), "Status")
@@ -131,8 +166,8 @@ GetServerStatus <- function(session) {
 #' Returns information for the season specified in the session list (see
 #' documentation for the GetSession function for additional details.)
 #'
-#' See the \emph{Season Summary} section of the FIRST API documentation for
-#' additional details.
+#' See the \emph{Season Summary} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
 #' The FIRST API URL format is:
 #'
@@ -182,7 +217,8 @@ GetSeason <- function(session) {
 #' and codes. District codes are used as parameters for several other FIRST API
 #' functions.
 #'
-#' See the \emph{District Listings} section of the FIRST API documentation.
+#' See the \emph{District Listings} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
 #' The FIRST API URL format is:
 #'
@@ -231,7 +267,8 @@ GetDistricts <- function(session) {
 #  GetEvents() =================================================================
 #' Get information about FRC events
 #'
-#' See the \emph{Event Listings} section of the FIRST API documentation.
+#' See the \emph{Event Listings} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
 #' \code{GetEvents} will accept either the \code{team} or \code{district}
 #' parameters, neither parameter, or both parameters. If neither \code{team} nor
@@ -351,7 +388,8 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' have to call \code{GetTeams} for each page of data, specifying the page with
 #' the \code{page} argument.
 #'
-#' See the \emph{Team Listings} section of the FIRST API documentation.
+#' See the \emph{Team Listings} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
 #' The URL format is:
 #'
@@ -492,7 +530,8 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' will have one row per match, with all six participating teams listed in one
 #' row. This wide format is useful for displaying the schedule in a table.
 #'
-#' See the \emph{Event Schedule} section of the FIRST API documentation.
+#' See the \emph{Event Schedule} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
 #' The URL format is:
 #'
@@ -853,8 +892,8 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #  GetMatchResults() ===========================================================
 #' Get match scores and participating teams
 #'
-#' See the \emph{Match Results} section of the FIRST API documentation for more
-#' details.
+#' See the \emph{Match Results} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
 #' The URL format is:
 #'
@@ -1052,8 +1091,8 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' The data frame contains two rows for each match, one for blue and the other
 #' for red.
 #'
-#' See the \emph{Detailed Scores} section of the FIRST API documentation for
-#' more details.
+#' See the \emph{Detailed Scores} section of the FIRST API documentation at
+#' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
 #'The URL format is:
 #'

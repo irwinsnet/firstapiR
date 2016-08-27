@@ -1,6 +1,14 @@
+
 context("FIRST_R Rankings and Alliances")
 
 
+
+sess_http_valid <- FALSE
+sess_local <- GetSession("username", "key")
+if(exists("username") & exists("key")) {
+  sess_http <- GetSession(username, key)
+  sess_http_valid <- TRUE
+}
 # GetAlliances =================================================================
 test_that("GetAlliances() returns a local data frame", {
   al <- GetAlliances(sess_local, event = "WAAMV")

@@ -1,5 +1,12 @@
+
 context("FIRST_R Awards")
 
+sess_http_valid <- FALSE
+sess_local <- GetSession("username", "key")
+if(exists("username") & exists("key")) {
+  sess_http <- GetSession(username, key)
+  sess_http_valid <- TRUE
+}
 
 # GetAwards() ==================================================================
 test_that("GetAwards() returns a local data frame", {

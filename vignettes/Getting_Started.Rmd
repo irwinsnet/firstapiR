@@ -1,0 +1,184 @@
+---
+title: "Getting Started with firstapiR"
+author: "Stacy Irwin"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: > 
+  %\VignetteIndexEntry{Getting Started} 
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The firstapiR package provides R functions that download FIRST Robotics 
+Competition (FRC) data from the FIRST API server via hypertext transfer protocol
+(HTTP) requests. The firstapiR functions format the data as JSON, XML, or as R
+data frames.
+
+For obvious reasons, firstapiR should never ever be referred to as the FIRST API
+R Toolbox.
+
+### FIRST - *F*or *I*nspiration and *R*ecognition in *S*cience and *T*echnology
+
+FIRST engages kids in kindergarten through high school in exciting,
+mentor-based, research and robotics programs that help them become science and
+technology leaders, as well as well-rounded contributors to society. Learn more
+about FIRST by [visiting their website.](http://www.firstinspires.org/) FRC is
+one of four FIRST programs.
+
+In FRC, high-school students, in cooperation with adult mentors,
+design and build robots and operate them in competitions. The competitions have
+detailed rules ([check out the 2016 game manual ](http://www.firstinspires.org/resource-library/frc/competition-manual-qa-system))
+and an extensive amount of data is generated at each competition. All
+scheduling, team, scoring, and ranking data is stored in FIRST servers and is
+made available to users via the FIRST API.
+
+### Getting Access to the FIRST API
+
+To see what the FIRST API can do, visit the [FIRST API documentation page
+](http://docs.frcevents2.apiary.io/#). The documentation page provides detailed
+information on the HTTP request formats and authorization headers, as well as
+detailed descriptions of the data that is provided by each type of API call.
+
+To retrieve data from the FIRST API via firatapiR functions or via HTTP requests
+that you build yourself, you must have a username and authorization key issued
+by FIRST. To get a username and authorization key, go to the [FIRST Community
+Developers page on TeamForge
+](https://usfirst.collab.net/sf/projects/first_community_developers/). Follow
+the instructions on the page to join the project and FIRST will email you a
+username and authorization key. Make sure you keep your authorization key secret
+- don't post the key anywhere that is publicly accessible.
+
+### Learning R
+
+R is a functional, free language intended for statistical computing, data 
+analysis and plotting. I initially considered building this package in Python, 
+but in the end I wanted to learn to use R, so here we are. Compared to other
+languages like Java or Python, R does seem a bit quirky at first, but it has
+some very useful, built-in features for working with data. R has an extensive
+array of free add-in packages for manipulating and visualizing data, plus there
+is an excellent and free IDE available for R, RStudio.
+
+If you are new to R, experimenting with firstapiR isn't the worst way to get
+started, but there are some resources you should check out:
+
+  1. Download and user the free version of [RStudio](
+  https://www.rstudio.com/home/).
+  1. To learn R, I recommend starting with the [Quick R Website
+  ](http://www.statmethods.net/)
+  1. Next, check out the R introduction on the [main R documentation page
+  ](https://cran.r-project.org/manuals.html)
+  1. Everything written by [Hadley Wickham](http://hadley.nz/) is excellent. His
+  [Advanced R website](http://adv-r.had.co.nz/), [R package website
+  ](http://r-pkgs.had.co.nz/) and his [testthat
+  ](https://cran.r-project.org/web/packages/testthat/index.html) and [devtools
+  ](https://cran.r-project.org/web/packages/devtools/index.html) packages were
+  essential to the development of the firstapiR package.
+
+## Getting started - Creating a Session Object
+
+Every HTTP request to the FIRST API requires a username, an authorization key, a
+four digit year that identifies the season of interest, and a header that
+specifies whether the data should be returned as XML or JSON. Having to type all
+of these parameters into every function call would make firstapiR very
+cumbersome to use, especially from the R console. The firstapiR package solves
+this problem with the `GetSession()` function, which returns a Session object
+that contains all of the parameters listed above. All other firstapiR functions
+require a Session object as the first parameter. Here's an example:
+
+```{r}
+# Create a Session object
+sn <- firstapiR::GetSession("username", "key")
+sn
+```
+
+As you can see the Session object is really just an R list. It's also an
+an instance of class "Session", which will be useful to users who want to do
+some type checking.
+
+In addition to the username and key, the Session object specifies the season,
+data format ("data.frame", "xml", or "json") and whether the staging server
+should be used instead of the production server. Any of these parameters can be
+included as a named argument when calling GetSession(), or they can be modified
+later. For example:
+```{r}
+sn <- firstapiR::GetSession("username", "key", format = "xml")
+sn$season <- 2015
+sn
+```
+
+## Using the Session Object
+
+The following example shows how the session object is passed to a firstapiR
+function:
+```{r}
+# Use the Session object in a firstapiR function
+sn <- firstapiR::GetSession("username", "key")
+dist <- firstapiR::GetDistricts(sn)
+class(dist)
+dist
+```
+
+By default, GetSession creates a Session object with the current year, `format =
+"data.frame"`, and staging = `TRUE`. Consequently, GetDistricts() returns a data
+frame that is also an instance of class "Districts". GetDistricts() is usefule
+because the three-letter district codes are used as arguments to several other
+firatapiR functions.
+
+## Extracting Data from a Data Frame
+
+R provides numerous methods for extracting, filtering, and manipulating data in
+data frames. Refer to the R resources listed in this vignette for additional
+information. Individual data elements can be extracted from a data frame using
+the format `data_frame$column_name[[row_number]]`. For example:
+```{r}
+dist$code[[6]]
+```
+
+Here's one of many slick techniques:
+```{r}
+dist$name[dist$code == "PNW"]
+```
+
+## Why These Examples Work: Local verses HTTP Data
+
+Hopefully you were able to figure out that "username" and "key" are not
+afilliated with a valid FIRST API account. These examples work because
+for all firstapiR functions, if the key value in the Session object
+is the literal value "key", firstapiR skips the HTTP requests and extracts
+cached JSON or XML data from the R/sysdata.rda file. If you insert any other
+random value into the key parameter, or the username does not match an acutal
+FIRST API username, the the FIRST API will return a 401 status code and
+the firstapiR function will throw an error.
+
+All of the firstapirR functions add attributes to whatever data they return. 
+These attributes allow you to identify whether the data is local or was
+extracted directly from the FIRST API server. To demonstrate, we'll analyze the
+Districts data frame using R's str() function, which displays the structure of
+any object:
+
+```{r}
+str(dist)
+```
+
+The attribute "local_test_data" is set to TRUE if the object was created from
+cached data in the R/sysdata.rda file. The "local_url" contains the actual URL
+that was sent to the FIRST API server to request the data, and the
+"time_downloaded" shows when the data was downloaded from the server.
+
+For non-local, HTTP data, "local_test_data" will be set to FALSE, and
+"local_url" will be NULL. The "time_downloaded" attribute will contain the time
+that the HTTP request was received, based on the local system time.
+
+There is also a "url" attribute. This attribute always contains the URL that is
+constructed by firstapiR based on the arguments passed to the firstapiR
+function. Normally, this is the actual URL that is sent to the FIRST API server,
+but when extracting local data, this URL is mostly ignored. In the
+GetDistricts() example, "local_url" matches "url" because GetDistricts has no
+optional parameters and there is only one way to call this function. Most other
+firstapiR functions have many optional parameters and a multitude of possible
+return values. Since it's not practical to cache the entire FIRST API server,
+when requesting local data (by setting the key parameter to "key"), firstapiR
+ignores the optional parameters. The local data will be of the same type and
+format as what was requested. In these situations the "url" attribute will
+represent was was requested, and the "local_url" attribute will describe what
+was cached and returned.

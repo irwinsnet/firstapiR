@@ -1,5 +1,12 @@
+
 context("FIRST_R HTTP and Helper Functions")
 
+sess_http_valid <- FALSE
+sess_local <- GetSession("username", "key")
+if(exists("username") & exists("key")) {
+  sess_http <- GetSession(username, key)
+  sess_http_valid <- TRUE
+}
 
 test_that(".AddHTTPArgs constructs valid URL strings.", {
   expect_equal(firstapiR:::.AddHTTPArgs("events", list(teamNumber = 1318)),

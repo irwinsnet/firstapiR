@@ -57,7 +57,8 @@ Depending on the \code{session$format} value, returns JSON text, an
       R/sysdata.rda file.}
 }
 \description{
-See the \emph{Event Listings} section of the FIRST API documentation.
+See the \emph{Event Listings} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 }
 \details{
 \code{GetEvents} will accept either the \code{team} or \code{district}

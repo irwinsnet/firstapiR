@@ -81,7 +81,8 @@ be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
 will have one row per match, with all six participating teams listed in one
 row. This wide format is useful for displaying the schedule in a table.
 
-See the \emph{Event Schedule} section of the FIRST API documentation.
+See the \emph{Event Schedule} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 
 The URL format is:
 

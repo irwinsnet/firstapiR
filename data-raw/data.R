@@ -11,6 +11,12 @@ data_time <- Sys.time()
 sn_j <- firstapiR::GetSession(username, key, format = "json", season = 2016)
 sn_x <- firstapiR::GetSession(username, key, format = "xml", season = 2016)
 
+status_json <- firstapiR::GetServerStatus(sn_j)
+status_xml <- firstapiR::GetServerStatus(sn_x)
+url <- attr(status_xml, "url")
+status_xml <- toString(status_xml)
+attr(status_xml, "url") <- url
+
 season_json <- firstapiR::GetSeason(sn_j)
 season_xml <- firstapiR::GetSeason(sn_x)
 url <- attr(season_xml, "url")
@@ -73,7 +79,8 @@ url <- attr(awards_list_xml, "url")
 attr(awards_list_xml, "url") <- url
 
 
-devtools::use_data(season_json, season_xml,
+devtools::use_data(status_json, status_xml,
+                   season_json, season_xml,
                    districts_json, districts_xml,
                    events_json, events_xml,
                    teams_json, teams_xml,
