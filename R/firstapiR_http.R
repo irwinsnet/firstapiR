@@ -119,7 +119,7 @@ GetSession <- function(username, key,
 }
 
 
-# GetServerStatus() ============================================================
+#  GetServerStatus() ===========================================================
 #' Get the status of the FIRST API server.
 #'
 #' See the \emph{API Index} section of the FIRST API documentation at
@@ -159,6 +159,7 @@ GetServerStatus <- function(session) {
   class(status) <- append(class(status), "Status")
   return(status)
 }
+
 
 #  GetSeason() =================================================================
 #' Get high-level information for an FRC season
@@ -1677,7 +1678,7 @@ GetAwardsList <- function(session) {
 }
 
 
-# .GetLocalData() ==============================================================
+#  .GetLocalData() =============================================================
 #' Extract FIRST data from a local file.
 #'
 #' \code{.GetLocalData} is an internal function that is not intended to be
