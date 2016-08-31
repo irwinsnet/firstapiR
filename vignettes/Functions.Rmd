@@ -1,5 +1,5 @@
 ---
-title: "More firstapiR Functions"
+title: "Overview of firstapiR Functions"
 author: "Stacy Irwin"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,3 +9,147 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+The _Getting Started_ vignette covered how to use the `GetSession()` function
+to create a Session object and how to use that Session object in other
+firstapiR functions. This vignette provides an overview of the remaining
+firstapiR functions. For detailed information on each function, type
+`help(function_name)` at the console or in the RStudio help view search box.
+
+## Simple Functions
+
+There are several functions that take no arguments other than the `Session`
+argument.
+
+`GetServerStatus(session)`
+  ~ Retrieves information about the FIRST API server.
+  
+`GetSeason(session)`
+  ~ Gets information about the season specified in session$season.
+
+`GetDistricts(session)`
+  ~ Provides a list of FIRST districts.
+  
+`GetAwardsList(session)`
+  ~ Obtains a list and description of awards available to FRC teams.
+  
+## Functions with Additional Arguments
+
+All other firstapiR functions take at least a few additional arguments. Most of 
+the additional arguments are optional and, usually, only one or two of the
+additional arguments are used at any one time.
+
+`GetEvents(session, event, team, district, exclude_district)`
+  ~ Provide information about FRC competition events.
+  
+`GetTeams(session, team, event, district, state, page)`
+  ~ Gets information about FIRST FRC teams.
+  
+`GetSchedule(session, event, level, team, start, end, expand_cols)`
+  ~ Downloads the match schedule for a specific event.
+  
+`GetHybridSchedule(session, event, level, start, end, expand_cols)`
+  ~ Downloads the match schedule, along with results for completed matches.
+  
+`GetMatchResults(session, event, level, team, match, start, end, expand_cols)`
+  ~ Gets the scores for the selected matches.
+  
+`GetScores(session, event, level, team, match, start, end)`
+  ~ Downloads the scoring sheet for each match.
+  
+`GetAlliances(session, event)`
+  ~ Obtains the playoff alliances.
+  
+`GetRankings(session, event, team, top)`
+  ~ Gets the team rankings.
+  
+`GetAwards(session, event, team)`
+  ~ Lists the awards and recipients for an FRC competition.
+
+## Function Arguments
+
+Many of the same arguments are used in several different firstapiR functions.
+
+### team
+
+The four digit FRC team number
+
+### districts
+
+A code representing a FIRST district. Use GetDistricts() to obtain the district
+codes that can be used in other firstapiR functions:
+
+``` {r districtCodes}
+library(firstapiR)
+sn <- GetSession("username", "key")
+districts <- GetDistricts(sn)
+```
+
+### event
+
+An event code, such as _WAAMV_ (disctrict competition held at Auburn MountainView
+High School in Washington State) or _PNCMP_ (Pacific Northwest District
+Championships). Use the GetEvents() functio to get the event codes:
+
+``` {r eventCodes}
+sn <- GetSession("username", "key")
+PNW_events <- GetEvents(sn, district = "PNW")
+PNW_events[, c("code", "name")]
+PNW_events[, c("code", "dateStart")]
+```
+
+## Expanded Columns Option
+
+There are three functions that return data about competition matches and that
+accept the `expand_cols` argument:
+
+* GetSchedule()
+* GetHybridSchedule()
+* GetMatchResults()
+
+By default, `expand_cols` is _FALSE_. Here's what happens when omitting
+`expand_cols` or setting it to _FALSE_:
+
+``` {r expand_cols1}
+sn <- firstapiR::GetSession("username", "key")
+sched <- firstapiR::GetSchedule(sn, event = "ORPHI")
+
+# Display the first 12 rows of the data frame, skipping the first three colums
+sched[1:12, 4:9]
+```
+
+GetSchedule() returns six rows for every match, with each row containing
+information about one of the six teams assigned to the match. Let's see what
+happens when `expand_cols` is set to _TRUE_:
+
+``` {r expand_cols2}
+sched <- firstapiR::GetSchedule(sn, event = "ORPHI", expand_cols = TRUE)
+
+sched[1:6, c("matchNumber", "Red1.team", "Red2.team", "Red3.team",
+              "Blue1.team", "Blue2.team", "Blue3.team")]
+```
+
+GetSchedule() now only returns one row for every match, with separate (i.e., 
+expanded) columns for each of the six teams assigned to the match. Setting
+`expand_cols` to _TRUE_ results in a more compact, easier to read schedule. So
+why does firstapiR even provide an option to have one team per row?
+Here's why:
+
+``` {r}
+mr <- firstapiR::GetMatchResults(sn, "PNCMP")
+
+# Put the teams in order by average score
+mr$teamNumber <- reorder(mr$teamNumber, -mr$scoreFinal, mean)
+
+# Select the top 8 teams by average score
+top8 <- levels(mr$teamNumber)[1:8]
+
+# Create a new match results data frame with only the top 10 teams
+mr8 <- mr[mr$teamNumber %in% top8, ]
+
+# Clean up the data frame by removing unused team numbers
+mr8$teamNumber <- droplevels(mr8$teamNumber)
+
+# Boxplot the top 8 teams
+boxplot(scoreFinal~teamNumber, mr8, las = 2, main = "Qual Scores, Top 8 Teams",
+        sub = "2016 PNW District Championships")
+```
