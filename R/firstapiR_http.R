@@ -1,5 +1,5 @@
 #  firstapiR_http.R FIRST API R Toolbox ========================================
-#' firstapiR: FIRST API R Toolbox
+#' firstapiR: R Functions for the FIRST API Server
 #'
 #' The R Toolbox functions will connect to the FIRST API server and download
 #' data on FIRST Robotics Competition (FRC) teams, events, match results, and
@@ -24,23 +24,10 @@
 #' These functions use version 2.0 of the FIRST API. They have not been tested
 #' with version 1.0.
 #'
-#'@docType package
 #'@name firstapiR
 NULL
 
-# TODO:
-# Switch single quotes (') to double quotes (")
-# URL format strings in their own paragraph, and use @section tag.
-# Figure out how to format field list in return section.
-# Assign inherited class to each function result data.frame using append()
-# Continue working through functions starting at GetEvents().
-# Add url attribute to local data showing url used to create local data.
-# Provide both expanded and non-expanded versions of tables from local data.
-# Add error checking on 'level' argument.
-# Remove return (i.e., space) from all URL formats strings.
-
-# The FIRST API R Toolbox requires the following R packages. Install these
-# packages before using the R Toolbox.
+# The firstapiR package requires the following R packages.
 # base64enc
 # httr
 # jsonlite
@@ -285,7 +272,7 @@ GetDistricts <- function(session) {
 #' specified, or if both the \code{district} and \code{exclude_district}
 #' arguments are specified.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #'
 #'   \code{https://frc-api.firstinspires.org/v2.0/season/events?
 #'   teamNumber=team&districtCode=district&excludeDistrict=district}
@@ -392,7 +379,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' See the \emph{Team Listings} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/teams&eventCode=event
 #' ?districtCode=district?state=state?page=2}
@@ -488,7 +475,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
     }
 
     # For data frames, merge all pages into one data frame.
-    if(session$format == 'data.frame') {
+    if(session$format == "data.frame") {
       teams_df <- teams[[1]]
       for(page in 2:pages) {
         teams_df <- merge(teams_df, teams[[page]], all = TRUE)
@@ -534,7 +521,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' See the \emph{Event Schedule} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event?
 #' tournamentLevel=level&teamNumber=team&start=start&end=end}
@@ -597,7 +584,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' GetSchedule(sn, "PNCMP", start=5, end=10)
 #' GetSchedule(sn, "WAAMV", level='playoff')
 #' GetSchedule(sn, "PNCMP", team=4911, end=25)
-GetSchedule <- function (session, event, level = 'qual', team = NULL,
+GetSchedule <- function (session, event, level = "qual", team = NULL,
                          start = NULL, end = NULL, expand_cols = FALSE) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
@@ -610,7 +597,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
   # Send HTTP request
   sched <- .GetHTTP(session, url)
 
-  if(session$format != 'data.frame') return(sched)
+  if(session$format != "data.frame") return(sched)
 
   # Delete 'Schedule.' from the beginning of column names.
   names(sched) <- .TrimColNames(names(sched))
@@ -654,10 +641,10 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
                                      "field", "tournamentLevel"))
   } else {
     # Add columns for team number, station, and surrogate
-    sched['teamNumber'] <- vector(mode = "integer", length = nrow(sched))
-    sched['alliance'] <- vector(mode = "character", length = nrow(sched))
-    sched['station'] <- vector(mode = "character", length = nrow(sched))
-    sched['surrogate'] <- vector(mode = "logical", length = nrow(sched))
+    sched["teamNumber"] <- vector(mode = "integer", length = nrow(sched))
+    sched["alliance"] <- vector(mode = "character", length = nrow(sched))
+    sched["station"] <- vector(mode = "character", length = nrow(sched))
+    sched["surrogate"] <- vector(mode = "logical", length = nrow(sched))
 
     # Extract teams and delete nested teams column.
     teams <- sched$Teams
@@ -709,7 +696,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #' See the \emph{Hybrid Schedule} section of the FIRST API documentation for
 #' more details.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event/level/
 #' hybrid?start=start&end=end}
@@ -774,7 +761,7 @@ GetSchedule <- function (session, event, level = 'qual', team = NULL,
 #' sn <- GetSession("username", "key")
 #' GetHybridSchedule(sn, event = "ORPHI")
 #' GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
-GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
+GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
                               end = NULL, expand_cols = FALSE) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
@@ -787,7 +774,7 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
   # Send HTTP request
   sched <- .GetHTTP(session, url)
 
-  if(session$format != 'data.frame') return(sched)
+  if(session$format != "data.frame") return(sched)
 
   # Delete 'Schedule.' from the beginning of column names.
   names(sched) <- .TrimColNames(names(sched))
@@ -836,15 +823,15 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
                                      "tournamentLevel"))
   } else {
     # Add columns for team number, station, and surrogate
-    sched['teamNumber'] <- vector(mode = "integer", length = nrow(sched))
-    sched['station'] <- vector(mode = "character", length = nrow(sched))
-    sched['surrogate'] <- vector(mode = "logical", length = nrow(sched))
-    sched['disqualified'] <- vector(mode = "logical", length = nrow(sched))
+    sched["teamNumber"] <- vector(mode = "integer", length = nrow(sched))
+    sched["station"] <- vector(mode = "character", length = nrow(sched))
+    sched["surrogate"] <- vector(mode = "logical", length = nrow(sched))
+    sched["disqualified"] <- vector(mode = "logical", length = nrow(sched))
 
     # Add combined scores columns
-    sched['scoreFinal'] <- vector(mode = "integer", length = nrow(sched))
-    sched['scoreFoul'] <- vector(mode = "integer", length = nrow(sched))
-    sched['scoreAuto'] <- vector(mode = "integer", length = nrow(sched))
+    sched["scoreFinal"] <- vector(mode = "integer", length = nrow(sched))
+    sched["scoreFoul"] <- vector(mode = "integer", length = nrow(sched))
+    sched["scoreAuto"] <- vector(mode = "integer", length = nrow(sched))
 
     # Extract teams and delete nested teams column.
     teams <- sched$Teams
@@ -864,12 +851,12 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 
         # Extract red and blue scores into combined scoreing columns
         if(substr(sched$station[mrow], 1, 1) == 'R')
-          score <- 'scoreRed'
+          score <- "scoreRed"
         else
-          score <- 'scoreBlue'
-        sched$scoreFinal[[mrow]] <- sched[[paste(score, 'Final', sep="")]][[mrow]]
-        sched$scoreFoul[[mrow]] <- sched[[paste(score, 'Foul', sep = "")]][[mrow]]
-        sched$scoreAuto[[mrow]] <- sched[[paste(score, 'Auto', sep = "")]][[mrow]]
+          score <- "scoreBlue"
+        sched$scoreFinal[[mrow]] <- sched[[paste(score, "Final", sep="")]][[mrow]]
+        sched$scoreFoul[[mrow]] <- sched[[paste(score, "Foul", sep = "")]][[mrow]]
+        sched$scoreAuto[[mrow]] <- sched[[paste(score, "Auto", sep = "")]][[mrow]]
       }
     }
 
@@ -896,7 +883,7 @@ GetHybridSchedule <- function(session, event, level = 'qual', start = NULL,
 #' See the \emph{Match Results} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/matches/event
 #' ?tournamentLevel=level&teamNumber=team&matchNumber=match&start=start&end=end}
@@ -987,7 +974,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   # Send HTTP request and get data.
   matches <- .GetHTTP(session, url)
 
-  if(session$format != 'data.frame') return(matches)
+  if(session$format != "data.frame") return(matches)
 
   # Delete 'Matches.' from the beginning of column names.
   names(matches) <- substr(names(matches), 9, 100)
@@ -1029,14 +1016,14 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
     }
   } else {
     # Add columns for each operating station
-    matches['teamNumber'] <- vector(mode = "integer", length = nrow(matches))
-    matches['station'] <- vector(mode = "character", length = nrow(matches))
-    matches['disqualified'] <- vector(mode = "logical", length = nrow(matches))
+    matches["teamNumber"] <- vector(mode = "integer", length = nrow(matches))
+    matches["station"] <- vector(mode = "character", length = nrow(matches))
+    matches["disqualified"] <- vector(mode = "logical", length = nrow(matches))
 
     # Add combined scores columns
-    matches['scoreFinal'] <- vector(mode = "integer", length = nrow(matches))
-    matches['scoreFoul'] <- vector(mode = "integer", length = nrow(matches))
-    matches['scoreAuto'] <- vector(mode = "integer", length = nrow(matches))
+    matches["scoreFinal"] <- vector(mode = "integer", length = nrow(matches))
+    matches["scoreFoul"] <- vector(mode = "integer", length = nrow(matches))
+    matches["scoreAuto"] <- vector(mode = "integer", length = nrow(matches))
 
     # Extract teams and delete nested teams column.
     teams <- matches$Teams
@@ -1055,9 +1042,9 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 
         # Extract red and blue scores into combined scoreing columns
         if(substr(xMatches$station[mrow], 1, 1) == 'R')
-          score <- 'scoreRed'
+          score <- "scoreRed"
         else
-          score <- 'scoreBlue'
+          score <- "scoreBlue"
         xMatches$scoreFinal[[mrow]] <- xMatches[[paste(score, 'Final', sep="")]][[mrow]]
         xMatches$scoreFoul[[mrow]] <- xMatches[[paste(score, 'Foul', sep = "")]][[mrow]]
         xMatches$scoreAuto[[mrow]] <- xMatches[[paste(score, 'Auto', sep = "")]][[mrow]]
@@ -1095,7 +1082,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' See the \emph{Detailed Scores} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#'The URL format is:
+#'The FIRST API URL format is:
 #'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/matches/event/level?
 #' teamNumber=team&matchNumber=match&start=start&end=end}
@@ -1160,7 +1147,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' GetScores(sn, event = "ARCHIMEDES")
 #' GetScores(sn, event = "WAELL", start = 1, end = 10)
 #' GetScores(sn, event = "WAELL", match = 15)
-GetScores <- function(session, event, level = 'qual', team = NULL,
+GetScores <- function(session, event, level = "qual", team = NULL,
                               match = NULL, start = NULL, end = NULL) {
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && !is.null(match))
@@ -1176,7 +1163,7 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
   # Send HTTP request and get data.
   scores <- .GetHTTP(session, url)
 
-  if(session$format != 'data.frame') return(scores)
+  if(session$format != "data.frame") return(scores)
 
   # Delete 'MatcheScores.' from the beginning of column names.
   names(scores) <- .TrimColNames(names(scores))
@@ -1230,7 +1217,7 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 #' See the \emph{Event Alliances} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/alliances/event}
 #'
@@ -1265,13 +1252,13 @@ GetScores <- function(session, event, level = 'qual', team = NULL,
 #' GetAlliances(sn, "WAAMV")
 GetAlliances <- function (session, event) {
   # Assemble URL
-  url <- paste('alliances/', event, sep="")
+  url <- paste("alliances/", event, sep="")
 
   # Send HTTP request
   alliances <- .GetHTTP(session, url)
 
   # Skip further processing if result is not a data frame.
-  if(session$format != 'data.frame') return(alliances)
+  if(session$format != "data.frame") return(alliances)
 
   # Remove prefix from column names.
   names(alliances) <- .TrimColNames(names(alliances))
@@ -1291,7 +1278,7 @@ GetAlliances <- function (session, event) {
 #' See the \emph{Event Rankings} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?teamNumber=team&top=top}
 #'
@@ -1358,7 +1345,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 #' See the \emph{Event Awards} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #' \code{https://frc-api.firstinspires.org/v2.0/season/awards/event/team}
 #'
 #' @param session A Session object created with \code{GetSession()}.
@@ -1429,7 +1416,7 @@ GetAwards <- function(session, event = NULL, team = NULL) {
 #' See the \emph{Awards Listing} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
-#' The URL format is:
+#' The FIRST API URL format is:
 #'
 #' \code{https://frc-api.firstinspires.org/v2.0/season/awards/list}
 #'
@@ -1461,7 +1448,7 @@ GetAwards <- function(session, event = NULL, team = NULL) {
 #' GetAwardsList(sn)
 GetAwardsList <- function(session) {
   # Assemble URL
-  url <- 'awards/list'
+  url <- "awards/list"
 
   # Send HTTP request
   alist <- .GetHTTP(session, url)
@@ -1516,7 +1503,7 @@ GetAwardsList <- function(session) {
   for(idx in 1:length(http_args)) {
     # Skip NULL arguments
     if(!is.null(http_args[[idx]])) {
-      res <- paste(res, if(first_arg) '?' else '&', sep = '')
+      res <- paste(res, if(first_arg) "?" else "&", sep = '')
 
       # Convert logical arguments to character values "true" or "false"
       if(is.logical(http_args[[idx]]))
@@ -1576,9 +1563,9 @@ GetAwardsList <- function(session) {
   # Create authorization and format headers
   raw_token <- paste(session$username, session$key, sep=':')
   token <- base64enc::base64encode(charToRaw(raw_token))
-  auth_header = paste('Basic', token)
-  format_header <- switch(tolower(session$format), 'xml' = 'application/xml',
-                          'application/json')
+  auth_header = paste("Basic", token)
+  format_header <- switch(tolower(session$format), "xml" = "application/xml",
+                          "application/json")
   headers <- c(Authorization = auth_header, Accept = format_header)
   user_agent <- "firstapiR: Version 0.0.0.9000"
 
@@ -1600,8 +1587,8 @@ GetAwardsList <- function(session) {
 
   # Format results based on session$format setting.
   result <- switch(tolower(session$format),
-                   'json' = jsonlite::prettify(content),
-                   'xml' = {
+                   "json" = jsonlite::prettify(content),
+                   "xml" = {
                      raw_xml <- content
                     XML::xmlRoot(XML::xmlTreeParse(raw_xml, asText = TRUE))
                    },
