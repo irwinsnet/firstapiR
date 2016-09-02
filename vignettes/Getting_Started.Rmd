@@ -76,6 +76,7 @@ website](http://adv-r.had.co.nz/), [R package website
 ](https://cran.r-project.org/web/packages/devtools/index.html) packages were 
 essential to the development of the firstapiR package.
 
+
 ## Getting started - Creating a Session Object
 
 Every HTTP request to the FIRST API requires a username, an authorization key, a
@@ -116,6 +117,7 @@ sn$season <- 2015
 sn
 ```
 
+
 ## Using the Session Object
 
 The following example shows how the session object is passed to a firstapiR 
@@ -144,6 +146,7 @@ GetSession(), firstapiR skips the HTTP request and pulls data from a local
 cache. See _Why These Examples Work: Local verses HTTP Data_ below for an
 explanation of this feature.
 
+
 ## Extracting Data from a Data Frame
 
 R provides numerous methods for extracting, filtering, and manipulating data in 
@@ -163,6 +166,7 @@ Here's one of many slick techniques that are available in R:
 dist$name[dist$code == "PNW"]
 ```
 
+
 ## Next Steps
 
 This package provides a detailed help file for every firstapiR function. In 
@@ -179,12 +183,9 @@ firstapiR functions:
 
 Table: **External Functions in firstapiR Package**
 
-This package contains two other vignettes:
+In addition to help documents on each function, this package contains one other
+vignette: _Overview of firstapiR Functions_.
 
-1. _More firstapiR Functions_ provides guidance and examples on a few of the 
-trickier firstapiR functions.
-1. _Analyzing FIRST API Data_ provides a few examples of how data provided by
-firstapiR functions can be manipulated and exported in R.
 
 ## Advanced Topics
 

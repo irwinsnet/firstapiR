@@ -15,6 +15,7 @@ firstapiR functions. This vignette provides an overview of the remaining
 firstapiR functions. For detailed information on each function, type
 `help(function_name)` at the console or in the RStudio help view search box.
 
+
 ## Simple Functions
 
 There are several functions that take no arguments other than the `Session`
@@ -31,6 +32,7 @@ argument.
   
 `GetAwardsList(session)`
   ~ Obtains a list and description of awards available to FRC teams.
+  
   
 ## Functions with Additional Arguments
 
@@ -65,13 +67,14 @@ additional arguments are used at any one time.
 `GetAwards(session, event, team)`
   ~ Lists the awards and recipients for an FRC competition.
 
+
 ## Function Arguments
 
 Many of the same arguments are used in several different firstapiR functions.
 
 ### team
 
-The four digit FRC team number
+The four digit FRC team number. 
 
 ### districts
 
@@ -97,6 +100,16 @@ PNW_events[, c("code", "name")]
 PNW_events[, c("code", "dateStart")]
 ```
 
+### level
+
+Either "playoff" or "qual". Defaults to "qual".
+
+### start, end, match
+
+Integers specifying the range of matches that will be included in the returned
+data.
+
+
 ## Expanded Columns Option
 
 There are three functions that return data about competition matches and that
@@ -106,33 +119,11 @@ accept the `expand_cols` argument:
 * GetHybridSchedule()
 * GetMatchResults()
 
-By default, `expand_cols` is _FALSE_. Here's what happens when omitting
-`expand_cols` or setting it to _FALSE_:
-
-``` {r expand_cols1}
-sn <- firstapiR::GetSession("username", "key")
-sched <- firstapiR::GetSchedule(sn, event = "ORPHI")
-
-# Display the first 12 rows of the data frame, skipping the first three colums
-sched[1:12, 4:9]
-```
-
-GetSchedule() returns six rows for every match, with each row containing
-information about one of the six teams assigned to the match. Let's see what
-happens when `expand_cols` is set to _TRUE_:
-
-``` {r expand_cols2}
-sched <- firstapiR::GetSchedule(sn, event = "ORPHI", expand_cols = TRUE)
-
-sched[1:6, c("matchNumber", "Red1.team", "Red2.team", "Red3.team",
-              "Blue1.team", "Blue2.team", "Blue3.team")]
-```
-
-GetSchedule() now only returns one row for every match, with separate (i.e., 
-expanded) columns for each of the six teams assigned to the match. Setting
-`expand_cols` to _TRUE_ results in a more compact, easier to read schedule. So
-why does firstapiR even provide an option to have one team per row?
-Here's why:
+By default, `expand_cols` is _FALSE_. This causes the function to return a data 
+frame with six rows for every match, with one column for team number, one column
+for the alliance, etc. This format is preferable for analyzing data. For
+example, the following code extracts the top eight teams from the data frame by
+average match score and draws a boxplot for each team.
 
 ``` {r}
 mr <- firstapiR::GetMatchResults(sn, "PNCMP")
@@ -140,16 +131,41 @@ mr <- firstapiR::GetMatchResults(sn, "PNCMP")
 # Put the teams in order by average score
 mr$teamNumber <- reorder(mr$teamNumber, -mr$scoreFinal, mean)
 
-# Select the top 8 teams by average score
-top8 <- levels(mr$teamNumber)[1:8]
-
-# Create a new match results data frame with only the top 10 teams
+# Filter out all but the top 8 teams
+top8 <- mr$teamNumber[1:8]
 mr8 <- mr[mr$teamNumber %in% top8, ]
-
-# Clean up the data frame by removing unused team numbers
 mr8$teamNumber <- droplevels(mr8$teamNumber)
 
 # Boxplot the top 8 teams
 boxplot(scoreFinal~teamNumber, mr8, las = 2, main = "Qual Scores, Top 8 Teams",
         sub = "2016 PNW District Championships")
 ```
+
+Aggregating team performance data would be more difficult if the scores were
+spread across six different columns instead of contained within a single column.
+
+Setting `expand_cols` to _TRUE_ puts all data for the match into a single row
+in the data frame with six different columns for teamNumber, surrogate, final
+score, etc. This format is useful for displaying an easy to read table:
+
+``` {r}
+sched <- firstapiR::GetSchedule(sn, event = "ORPHI", expand_cols = TRUE)
+
+# Display the first 12 rows of the data frame, skipping the first three colums
+sched[1:3, 4:17]
+```
+
+## Pages Argument
+
+There is one firstapiR function, `GetTeams()`, that accepts the `page`
+argument. When requesting data on FRC teams, the FIRST API will split the
+results into multiple pages if there are more than 65 teams in the response,
+requiring a separate HTTP request for each page.
+Users that are requesting the data frame format can ignore the `page` argument
+because `GetTeams` will automatically detect if there are multiple pages in the
+response, conduct a separate HTTP request for each page, and merge the results
+into a single data frame. This feature is not available when XML or JSON formats
+are sepecifed in the `Session$format` parameter. Users requesting XML or JSON
+formatted data will have to call GetTeams() for each page of data, incrementing
+the `page` argument for each request.
+
