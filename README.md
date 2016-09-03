@@ -31,7 +31,7 @@ GitHub. Type the following command at the RStudio console prompt:
 devtools::install_github("irwinsnet/firstapiR")
 ```
 
-The install_github command should automatically install any dependent packages. 
+The `install_github` command should automatically install any dependent packages. 
 If R complains about some package being missing, just install it from the CRAN 
 repository using RStudio's install packages feature (see step 1) and then
 repeat step 2.
@@ -59,13 +59,15 @@ for HTTP requests to the FIRST API server, as well as the HTTP responses.
 
 ### Learning More About the FIRST API Server
 
-* Read the [Getting Started Vignette](inst/doc/Getting_Started.html).
-* Read the [Functions Overview Vignette](inst/doc/Functions.html)
-* Read the help documentation that is provided for each function. The vignettes
-  and help documentation are downloaded as part of the firstapiR package and
-  are available offline in RStudio. One quick way to get to the firstapiR help
-  documents is to click on the firstapiR package in the RSudio _Packages_
-  window, which brings up an index to all firstapiR help resources.
+Documentation for firstapiR is automatically downloaded when you install the
+firstapiR package and is available offline. To learn more about firstapiR:
+
+* Read the _Getting Started Vignette_. Get to the vignette by clicking on the
+  firstapiR package in the RSudio _Packages_ window, which brings up an index to
+  all firstapiR help resources. Click on the _Userguides, pacakage vignettes..._
+  link to navigate to the _Getting Started Vignette_
+* Read the _Functions Overview Vignette_. 
+* Read the help documentation that is provided for each function. 
 
 
 ### FIRST - *F*or *I*nspiration and *R*ecognition in *S*cience and *T*echnology
@@ -77,8 +79,8 @@ about FIRST by [visiting their website.](http://www.firstinspires.org/)
 
 FRC is one of four FIRST programs. In FRC, high-school students, in cooperation
 with adult mentors, design and build robots and operate them in competitions.
-The competitions have detailed rules ([check out the 2016 game manual 
-](http://www.firstinspires.org/resource-library/frc/competition-manual-qa-system))
+The competitions have detailed rules ([check out the 2016 game
+manual](http://www.firstinspires.org/resource-library/frc/competition-manual-qa-system))
 and an extensive amount of data is generated at each competition. All 
 scheduling, team, scoring, and ranking data is stored in FIRST servers and is 
 made available to users via the FIRST API.
