@@ -41,22 +41,31 @@ repeat step 2.
 
 The firstapiR package does contain some example data from the FIRST API server,
 so you can experiment with firstapiR without a FIRST API server account. See the
-[Getting Started Vignette]()
+[Getting Started Vignette](inst/doc/Getting_Started.html) for guidance.
 
-To see what the FIRST API can do, visit the [FIRST API documentation page 
-](http://docs.frcevents2.apiary.io/#). The documentation page provides detailed 
-information on the formats for HTTP request and authorization headers, as well
-as detailed descriptions of the data provided by each type of API call.
-
-To use the FIRST API (via firatapiR functions or via HTTP requests that you
-build yourself), you must have a username and authorization key issued by FIRST.
-To get a username and authorization key, go to the [FIRST Community Developers
-page on TeamForge 
+To use firstapiR to download data from the FIRST API server, you must have a
+username and authorization key for the FIRST API server. To get a username and
+authorization key, go to the [FIRST Community Developers page on TeamForge 
 ](https://usfirst.collab.net/sf/projects/first_community_developers/). Follow 
 the instructions on the page to join the project and FIRST will email you a 
 username and authorization key. Make sure you keep your authorization key
 secret -- don't post the key anywhere that is publicly accessible.
 
+Detailed documentation on the FIRST API is available at the [FIRST API
+documentation page](http://docs.frcevents2.apiary.io/#). The documentation page
+provides detailed information on the URL formats and headers that are required
+for HTTP requests to the FIRST API server, as well as the HTTP responses.
+
+
+### Learning More About the FIRST API Server
+
+* Read the [Getting Started Vignette](inst/doc/Getting_Started.html).
+* Read the [Functions Overview Vignette](inst/doc/Functions.html)
+* Read the help documentation that is provided for each function. The vignettes
+  and help documentation are downloaded as part of the firstapiR package and
+  are available offline in RStudio. One quick way to get to the firstapiR help
+  documents is to click on the firstapiR package in the RSudio _Packages_
+  window, which brings up an index to all firstapiR help resources.
 
 
 ### FIRST - *F*or *I*nspiration and *R*ecognition in *S*cience and *T*echnology
