@@ -1,0 +1,171 @@
+---
+title: "Overview of firstapiR Functions"
+author: "Stacy Irwin"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The _Getting Started_ vignette covered how to use the `GetSession()` function
+to create a Session object and how to use that Session object in other
+firstapiR functions. This vignette provides an overview of the remaining
+firstapiR functions. For detailed information on each function, type
+`help(function_name)` at the console or in the RStudio help view search box.
+
+
+## Simple Functions
+
+There are several functions that take no arguments other than the `Session`
+argument.
+
+`GetServerStatus(session)`
+  ~ Retrieves information about the FIRST API server.
+  
+`GetSeason(session)`
+  ~ Gets information about the season specified in session$season.
+
+`GetDistricts(session)`
+  ~ Provides a list of FIRST districts.
+  
+`GetAwardsList(session)`
+  ~ Obtains a list and description of awards available to FRC teams.
+  
+  
+## Functions with Additional Arguments
+
+All other firstapiR functions take at least a few additional arguments. Most of 
+the additional arguments are optional and, usually, only one or two of the
+additional arguments are used at any one time.
+
+`GetEvents(session, event, team, district, exclude_district)`
+  ~ Provide information about FRC competition events.
+  
+`GetTeams(session, team, event, district, state, page)`
+  ~ Gets information about FIRST FRC teams.
+  
+`GetSchedule(session, event, level, team, start, end, expand_cols)`
+  ~ Downloads the match schedule for a specific event.
+  
+`GetHybridSchedule(session, event, level, start, end, expand_cols)`
+  ~ Downloads the match schedule, along with results for completed matches.
+  
+`GetMatchResults(session, event, level, team, match, start, end, expand_cols)`
+  ~ Gets the scores for the selected matches.
+  
+`GetScores(session, event, level, team, match, start, end)`
+  ~ Downloads the scoring sheet for each match.
+  
+`GetAlliances(session, event)`
+  ~ Obtains the playoff alliances.
+  
+`GetRankings(session, event, team, top)`
+  ~ Gets the team rankings.
+  
+`GetAwards(session, event, team)`
+  ~ Lists the awards and recipients for an FRC competition.
+
+
+## Function Arguments
+
+Many of the same arguments are used in several different firstapiR functions.
+
+### team
+
+The four digit FRC team number. 
+
+### districts
+
+A code representing a FIRST district. Use GetDistricts() to obtain the district
+codes that can be used in other firstapiR functions:
+
+``` {r districtCodes}
+library(firstapiR)
+sn <- GetSession("username", "key")
+districts <- GetDistricts(sn)
+```
+
+### event
+
+An event code, such as _WAAMV_ (disctrict competition held at Auburn MountainView
+High School in Washington State) or _PNCMP_ (Pacific Northwest District
+Championships). Use the GetEvents() functio to get the event codes:
+
+``` {r eventCodes}
+sn <- GetSession("username", "key")
+PNW_events <- GetEvents(sn, district = "PNW")
+PNW_events[, c("code", "name")]
+PNW_events[, c("code", "dateStart")]
+```
+
+### level
+
+Either "playoff" or "qual". Defaults to "qual".
+
+### start, end, match
+
+Integers specifying the range of matches that will be included in the returned
+data.
+
+
+## Expanded Columns Option
+
+There are three functions that return data about competition matches and that
+accept the `expand_cols` argument:
+
+* GetSchedule()
+* GetHybridSchedule()
+* GetMatchResults()
+
+By default, `expand_cols` is _FALSE_. This causes the function to return a data 
+frame with six rows for every match, with one column for team number, one column
+for the alliance, etc. This format is preferable for analyzing data. For
+example, the following code extracts the top eight teams from the data frame by
+average match score and draws a boxplot for each team.
+
+``` {r}
+mr <- firstapiR::GetMatchResults(sn, "PNCMP")
+
+# Put the teams in order by average score
+mr$teamNumber <- reorder(mr$teamNumber, -mr$scoreFinal, mean)
+
+# Filter out all but the top 8 teams
+top8 <- mr$teamNumber[1:8]
+mr8 <- mr[mr$teamNumber %in% top8, ]
+mr8$teamNumber <- droplevels(mr8$teamNumber)
+
+# Boxplot the top 8 teams
+boxplot(scoreFinal~teamNumber, mr8, las = 2, main = "Qual Scores, Top 8 Teams",
+        sub = "2016 PNW District Championships")
+```
+
+Aggregating team performance data would be more difficult if the scores were
+spread across six different columns instead of contained within a single column.
+
+Setting `expand_cols` to _TRUE_ puts all data for the match into a single row
+in the data frame with six different columns for teamNumber, surrogate, final
+score, etc. This format is useful for displaying an easy to read table:
+
+``` {r}
+sched <- firstapiR::GetSchedule(sn, event = "ORPHI", expand_cols = TRUE)
+
+# Display the first 12 rows of the data frame, skipping the first three colums
+sched[1:3, 4:17]
+```
+
+## Pages Argument
+
+There is one firstapiR function, `GetTeams()`, that accepts the `page`
+argument. When requesting data on FRC teams, the FIRST API will split the
+results into multiple pages if there are more than 65 teams in the response,
+requiring a separate HTTP request for each page.
+Users that are requesting the data frame format can ignore the `page` argument
+because `GetTeams` will automatically detect if there are multiple pages in the
+response, conduct a separate HTTP request for each page, and merge the results
+into a single data frame. This feature is not available when XML or JSON formats
+are sepecifed in the `Session$format` parameter. Users requesting XML or JSON
+formatted data will have to call GetTeams() for each page of data, incrementing
+the `page` argument for each request.
+
