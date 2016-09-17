@@ -38,6 +38,7 @@ NULL
 .production_url <- "https://frc-api.firstinspires.org"
 .version <- "v2.0"
 .default_season <- as.integer(format(Sys.Date(), "%Y"))
+.package_version <- "1.0.0"
 
 
 #  GetSession() ================================================================
@@ -162,6 +163,9 @@ GetServerStatus <- function(session) {
 #' \code{https://frc-api.firstinspires.org/v2.0/season}
 #'
 #' @param session A Session object created with \code{GetSession()}.
+#' @param mod_since A character vector containing an HTTP formated date and
+#'   time. Use the \code{httr::http_date} and \code{httr::parse_http_date}
+#'   functions to convert between HTTP date strings to POSIXt date values.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
 #'   XML::XMLDocument object, or a data.frame with class set to
@@ -191,8 +195,12 @@ GetServerStatus <- function(session) {
 #' @examples
 #' sn <- GetSession("username", "key", season = 2015, staging = TRUE)
 #' summary <- GetSeason(sn)
-GetSeason <- function(session) {
-  season <- .GetHTTP(session, "")
+GetSeason <- function(session, ...) {
+  season <- .GetHTTP(session, "", ...)
+
+  # Skip rest of function for empty, XML, or JSON results
+  if(is.na(season) || session$format != "data.frame") return(season)
+
   class(season) <- append(class(season), "Season")
   return(season)
 }
@@ -237,12 +245,12 @@ GetSeason <- function(session) {
 #' @examples
 #' sn <- GetSession("username", "key")
 #' districts <- GetDistricts(sn)
-GetDistricts <- function(session) {
+GetDistricts <- function(session, ...) {
   url <- "districts"
-  districts <- .GetHTTP(session, url)
+  districts <- .GetHTTP(session, url, ...)
 
-  # Skip rest of function for XML or JSON results
-  if(session$format != "data.frame") return(districts)
+  # Skip rest of function for empty, XML, or JSON results
+  if(is.na(districts) || session$format != "data.frame") return(districts)
 
   # Shorten the column names to reduce amount of typing required.
   names(districts) <- .TrimColNames(names(districts))
@@ -328,7 +336,7 @@ GetDistricts <- function(session) {
 #' frc_data <- GetEvents(sn, district = 'PNW')
 #' frc_data <- GetEvents(sn, team = 360, exclude_district = TRUE)
 GetEvents <- function(session, event = NULL, team = NULL,
-                      district = NULL, exclude_district = NULL) {
+                      district = NULL, exclude_district = NULL, ...) {
   # Check for unallowed combinations of arguments.
   if(!is.null(event) && (!is.null(team) || !is.null(district) ||
                               !is.null(exclude_district)))
@@ -342,10 +350,10 @@ GetEvents <- function(session, event = NULL, team = NULL,
   url <- .AddHTTPArgs("events", event_args)
 
   # Send HTTP request
-  events <- .GetHTTP(session, url)
+  events <- .GetHTTP(session, url, ...)
 
-  # Skip rest of function for XML or JSON results
-  if(session$format != "data.frame") return(events)
+  # Skip rest of function for empty, XML, or JSON results
+  if(is.na(events) || session$format != "data.frame") return(events)
 
   # Shorten the column names to reduce amount of typing required.
   names(events) <- .TrimColNames(names(events))
@@ -435,7 +443,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' GetTeams(sn, district = "FIM")
 #' GetTeams(sn, event = "CMP-CARVER")
 GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
-                      state = NULL, page = NULL) {
+                      state = NULL, page = NULL, ...) {
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && (!is.null(event) || !is.null(district) ||
                          !is.null(state)))
@@ -456,10 +464,10 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   teams <- list()
 
   # Send HTTP request and get first page of data.
-  teams[[1]] <- .GetHTTP(session, url)
+  teams[[1]] <- .GetHTTP(session, url, ...)
 
-  # Skip remainder of function for XML or JSON formats.
-  if(session$format != "data.frame") return(teams[[1]])
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(teams) || session$format != "data.frame") return(teams[[1]])
 
   # Get total number of pages
   pages <- teams[[1]]$pageTotal[1]
@@ -585,7 +593,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' GetSchedule(sn, "WAAMV", level='playoff')
 #' GetSchedule(sn, "PNCMP", team=4911, end=25)
 GetSchedule <- function (session, event, level = "qual", team = NULL,
-                         start = NULL, end = NULL, expand_cols = FALSE) {
+                         start = NULL, end = NULL, expand_cols = FALSE, ...) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
 
@@ -595,9 +603,10 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
   url <- .AddHTTPArgs(paste("schedule", event, sep = "/"), sched_args)
 
   # Send HTTP request
-  sched <- .GetHTTP(session, url)
+  sched <- .GetHTTP(session, url, ...)
 
-  if(session$format != "data.frame") return(sched)
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(sched) || session$format != "data.frame") return(sched)
 
   # Delete 'Schedule.' from the beginning of column names.
   names(sched) <- .TrimColNames(names(sched))
@@ -762,7 +771,7 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' GetHybridSchedule(sn, event = "ORPHI")
 #' GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
 GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
-                              end = NULL, expand_cols = FALSE) {
+                              end = NULL, expand_cols = FALSE, ...) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
 
@@ -772,9 +781,10 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
                       sched_args)
 
   # Send HTTP request
-  sched <- .GetHTTP(session, url)
+  sched <- .GetHTTP(session, url, ...)
 
-  if(session$format != "data.frame") return(sched)
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(sched) || session$format != "data.frame") return(sched)
 
   # Delete 'Schedule.' from the beginning of column names.
   names(sched) <- .TrimColNames(names(sched))
@@ -957,7 +967,7 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #' GetMatchResults(sn, "CMP-ARCHIMEDES", level="qual", start=10, end=20)
 GetMatchResults <- function(session, event, level = "qual", team = NULL,
                             match = NULL, start = NULL, end = NULL,
-                            expand_cols = FALSE) {
+                            expand_cols = FALSE, ...) {
   # Check for unallowed combinations of arguments.
   if((!is.null(match) || !is.null(start) || !is.null(end)) && is.null(level))
     stop("You must specify the level when you specify match, start, or end.")
@@ -972,9 +982,10 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   url <- .AddHTTPArgs(paste("matches", event, sep = "/"), result_args)
 
   # Send HTTP request and get data.
-  matches <- .GetHTTP(session, url)
+  matches <- .GetHTTP(session, url, ...)
 
-  if(session$format != "data.frame") return(matches)
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(matches) || session$format != "data.frame") return(matches)
 
   # Delete 'Matches.' from the beginning of column names.
   names(matches) <- substr(names(matches), 9, 100)
@@ -1148,7 +1159,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' GetScores(sn, event = "WAELL", start = 1, end = 10)
 #' GetScores(sn, event = "WAELL", match = 15)
 GetScores <- function(session, event, level = "qual", team = NULL,
-                              match = NULL, start = NULL, end = NULL) {
+                              match = NULL, start = NULL, end = NULL, ...) {
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && !is.null(match))
     stop("You cannot specify both a team and match number")
@@ -1161,9 +1172,10 @@ GetScores <- function(session, event, level = "qual", team = NULL,
   url <- .AddHTTPArgs(paste("scores", event, level, sep = "/"), score_args)
 
   # Send HTTP request and get data.
-  scores <- .GetHTTP(session, url)
+  scores <- .GetHTTP(session, url, ...)
 
-  if(session$format != "data.frame") return(scores)
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(scores) || session$format != "data.frame") return(scores)
 
   # Delete 'MatcheScores.' from the beginning of column names.
   names(scores) <- .TrimColNames(names(scores))
@@ -1250,15 +1262,15 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #' @examples
 #' sn <- GetSession("username", "key")
 #' GetAlliances(sn, "WAAMV")
-GetAlliances <- function (session, event) {
+GetAlliances <- function (session, event, ...) {
   # Assemble URL
   url <- paste("alliances/", event, sep="")
 
   # Send HTTP request
-  alliances <- .GetHTTP(session, url)
+  alliances <- .GetHTTP(session, url, ...)
 
-  # Skip further processing if result is not a data frame.
-  if(session$format != "data.frame") return(alliances)
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(alliances) || session$format != "data.frame") return(alliances)
 
   # Remove prefix from column names.
   names(alliances) <- .TrimColNames(names(alliances))
@@ -1319,7 +1331,7 @@ GetAlliances <- function (session, event) {
 #' GetRankings(sn, "WAAMV")
 #' GetRankings(sn, "PNCMP", team = 1983)
 #' GetRankings(sn, "ARCHIMEDES", top = 5)
-GetRankings <- function (session, event, team = NULL, top = NULL) {
+GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && !is.null(top))
     stop("You cannot specify both the team and top argument")
@@ -1329,7 +1341,10 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
   url <- .AddHTTPArgs(paste("rankings", event, sep = "/"), rank_args)
 
   # Send HTTP request and get data.
-  rankings <- .GetHTTP(session, url)
+  rankings <- .GetHTTP(session, url, ...)
+
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(rankings) || session$format != "data.frame") return(rankings)
 
   # Delete 'Rankings.' from the beginning of column names.
   names(rankings) <- .TrimColNames(names(rankings))
@@ -1387,7 +1402,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL) {
 #' GetAwards(sn, "PNCMP")
 #' GetAwards(sn, team = 360)
 #' GetAwards(sn, "PNCMP", 360)
-GetAwards <- function(session, event = NULL, team = NULL) {
+GetAwards <- function(session, event = NULL, team = NULL, ...) {
   # Check for incorrect combinations of arguments.
   if(is.null(event) && is.null(team))
     stop("You must specify either a team number or event code")
@@ -1400,7 +1415,10 @@ GetAwards <- function(session, event = NULL, team = NULL) {
     url <- paste(url, team, sep = "/")
 
   # Send HTTP request
-  awards <- .GetHTTP(session, url)
+  awards <- .GetHTTP(session, url, ...)
+
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(awards) || session$format != "data.frame") return(awards)
 
   # Remove column name prefix
   names(awards) <- .TrimColNames(names(awards))
@@ -1446,12 +1464,15 @@ GetAwards <- function(session, event = NULL, team = NULL) {
 #' @examples
 #' sn <- GetSession("username", "key")
 #' GetAwardsList(sn)
-GetAwardsList <- function(session) {
+GetAwardsList <- function(session, ...) {
   # Assemble URL
   url <- "awards/list"
 
   # Send HTTP request
-  alist <- .GetHTTP(session, url)
+  alist <- .GetHTTP(session, url, ...)
+
+  # Skip remainder of function for empty, XML, or JSON formats.
+  if(is.na(alist) || session$format != "data.frame") return(alist)
 
   # Remove column name prefix
   names(alist) <- .TrimColNames(names(alist))
@@ -1553,7 +1574,13 @@ GetAwardsList <- function(session) {
 #' @examples
 #' sn <- GetSession("username", "key")
 #' .GetHTTP(sn, "events?teamNumber=2557&districtCode=PNW")
-.GetHTTP <- function (session, url) {
+.GetHTTP <- function (session, url, mod_since = NULL,
+                      only_mod_since = NULL) {
+
+  # Check arguments
+  if(!is.null(mod_since) && !is.null(only_mod_since))
+    stop("Cannot specify both mod_since and only_mod_since arguments.")
+
   # Build Full URL
   full_url <- paste(if(session$staging) .staging_url else .production_url,
                     .version, sep="/")
@@ -1564,39 +1591,56 @@ GetAwardsList <- function(session) {
   raw_token <- paste(session$username, session$key, sep=':')
   token <- base64enc::base64encode(charToRaw(raw_token))
   auth_header = paste("Basic", token)
+
   format_header <- switch(tolower(session$format), "xml" = "application/xml",
                           "application/json")
+
   headers <- c(Authorization = auth_header, Accept = format_header)
-  user_agent <- "firstapiR: Version 0.0.0.9000"
+
+  # Add modification date headers
+  if(!is.null(mod_since)) headers[["If-Modified-Since"]] <-
+    mod_since
+  if(!is.null(only_mod_since)) headers[["FMS-OnlyModifiedSince"]] <-
+    only_mod_since
 
   if(session$key == "key") {
     # Use local data from R/sysdata.rda if user specifies dummy key.
     # See data-raw/data.R for more info.
     content <- .GetLocalData(url, session$format)
+    no_results <- FALSE
   } else {
     # Send GET request to FIRST API server
+    user_agent <- paste("firstapiR: Version ", .package_version)
     r <- httr::GET(full_url, httr::add_headers(.headers = headers),
                    httr::user_agent(user_agent))
 
     # Check HTTP Response Status Code
-    if(httr::status_code(r) != 200) stop(paste(httr::status_code(r),
-                                               httr::content(r, "text"),
-                                               sep=": "))
+    if(!(httr::status_code(r) %in% c(200, 304)))
+      stop(paste(httr::status_code(r), httr::content(r, "text"), sep=": "))
+
     content <- httr::content(r, "text")
+    last_modified <- httr::headers(r)[["Last-Modified"]]
+
+    no_results <- (httr::status_code(r) == 304)
   }
 
-  # Format results based on session$format setting.
-  result <- switch(tolower(session$format),
-                   "json" = jsonlite::prettify(content),
-                   "xml" = {
-                     raw_xml <- content
-                    XML::xmlRoot(XML::xmlTreeParse(raw_xml, asText = TRUE))
-                   },
-                   data.frame(jsonlite::fromJSON(content)))
+  # Set results to FALSE if no records are returned
+  if(no_results) {
+    result <- NA
+  } else {
+    # Format results based on session$format setting.
+    result <- switch(tolower(session$format),
+                     "json" = jsonlite::prettify(content),
+                     "xml" = {
+                       raw_xml <- content
+                      XML::xmlRoot(XML::xmlTreeParse(raw_xml, asText = TRUE))
+                     },
+                     data.frame(jsonlite::fromJSON(content)))
+  }
 
-  # Throw error if no records are returned.
+  # Set result to FALSE if no records are returned
   if(session$format == "data.frame" && length(result) == 0)
-    stop("No records returned.")
+    result <- NA
 
   # Set descriptive attributes.
   attr(result, "url") <- full_url
@@ -1604,11 +1648,17 @@ GetAwardsList <- function(session) {
     attr(result, "local_test_data") <- TRUE
     attr(result, "local_url") <- attr(content, "url")
     attr(result, "time_downloaded") <- attr(content, "time_downloaded")
+    attr(result, "last_modified") <- attr(content, "last_modified")
+    attr(result, "partial") <- FALSE
   } else {
     attr(result, "local_test_data") <- FALSE
-    attr(result, "local_url", NULL)
+    attr(result, "local_url") <- NULL
     attr(result, "time_downloaded") <- Sys.time()
+    attr(result, "last_modified") <- last_modified
+    attr(result, "partial") <- no_results
   }
+  attr(result, "only_mod_since") <- only_mod_since
+  attr(result, "mod_since") <- mod_since
 
   return(result)
 }
