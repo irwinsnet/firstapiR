@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Stacy Irwin" />
+
+<meta name="date" content="2016-09-17" />
+
+<title>Overview of firstapiR Functions</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Overview of firstapiR Functions</h1>
+<h4 class="author"><em>Stacy Irwin</em></h4>
+<h4 class="date"><em>2016-09-17</em></h4>
+
+
+
+<p>The <em>Getting Started</em> vignette covered how to use the <code>GetSession()</code> function to create a Session object and how to use that Session object in other firstapiR functions. This vignette provides an overview of the remaining firstapiR functions. For detailed information on each function, type <code>help(function_name)</code> at the console or in the RStudio help view search box.</p>
+<div id="simple-functions" class="section level2">
+<h2>Simple Functions</h2>
+<p>There are several functions that take no arguments other than the <code>Session</code> argument.</p>
+<dl>
+<dt><code>GetServerStatus(session)</code></dt>
+<dd>Retrieves information about the FIRST API server.
+</dd>
+<dt><code>GetSeason(session)</code></dt>
+<dd>Gets information about the season specified in session$season.
+</dd>
+<dt><code>GetDistricts(session)</code></dt>
+<dd>Provides a list of FIRST districts.
+</dd>
+<dt><code>GetAwardsList(session)</code></dt>
+<dd>Obtains a list and description of awards available to FRC teams.
+</dd>
+</dl>
+</div>
+<div id="functions-with-additional-arguments" class="section level2">
+<h2>Functions with Additional Arguments</h2>
+<p>All other firstapiR functions take at least a few additional arguments. Most of the additional arguments are optional and, usually, only one or two of the additional arguments are used at any one time.</p>
+<dl>
+<dt><code>GetEvents(session, event, team, district, exclude_district)</code></dt>
+<dd>Provide information about FRC competition events.
+</dd>
+<dt><code>GetTeams(session, team, event, district, state, page)</code></dt>
+<dd>Gets information about FIRST FRC teams.
+</dd>
+<dt><code>GetSchedule(session, event, level, team, start, end, expand_cols)</code></dt>
+<dd>Downloads the match schedule for a specific event.
+</dd>
+<dt><code>GetHybridSchedule(session, event, level, start, end, expand_cols)</code></dt>
+<dd>Downloads the match schedule, along with results for completed matches.
+</dd>
+<dt><code>GetMatchResults(session, event, level, team, match, start, end, expand_cols)</code></dt>
+<dd>Gets the scores for the selected matches.
+</dd>
+<dt><code>GetScores(session, event, level, team, match, start, end)</code></dt>
+<dd>Downloads the scoring sheet for each match.
+</dd>
+<dt><code>GetAlliances(session, event)</code></dt>
+<dd>Obtains the playoff alliances.
+</dd>
+<dt><code>GetRankings(session, event, team, top)</code></dt>
+<dd>Gets the team rankings.
+</dd>
+<dt><code>GetAwards(session, event, team)</code></dt>
+<dd>Lists the awards and recipients for an FRC competition.
+</dd>
+</dl>
+</div>
+<div id="function-arguments" class="section level2">
+<h2>Function Arguments</h2>
+<p>Many of the same arguments are used in several different firstapiR functions.</p>
+<div id="team" class="section level3">
+<h3>team</h3>
+<p>The four digit FRC team number.</p>
+</div>
+<div id="districts" class="section level3">
+<h3>districts</h3>
+<p>A code representing a FIRST district. Use GetDistricts() to obtain the district codes that can be used in other firstapiR functions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(firstapiR)
+sn &lt;-<span class="st"> </span><span class="kw">GetSession</span>(<span class="st">&quot;username&quot;</span>, <span class="st">&quot;key&quot;</span>)
+districts &lt;-<span class="st"> </span><span class="kw">GetDistricts</span>(sn)</code></pre></div>
+</div>
+<div id="event" class="section level3">
+<h3>event</h3>
+<p>An event code, such as <em>WAAMV</em> (disctrict competition held at Auburn MountainView High School in Washington State) or <em>PNCMP</em> (Pacific Northwest District Championships). Use the GetEvents() functio to get the event codes:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sn &lt;-<span class="st"> </span><span class="kw">GetSession</span>(<span class="st">&quot;username&quot;</span>, <span class="st">&quot;key&quot;</span>)
+PNW_events &lt;-<span class="st"> </span><span class="kw">GetEvents</span>(sn, <span class="dt">district =</span> <span class="st">&quot;PNW&quot;</span>)
+PNW_events[, <span class="kw">c</span>(<span class="st">&quot;code&quot;</span>, <span class="st">&quot;name&quot;</span>)]</code></pre></div>
+<pre><code>##     code                                                          name
+## 1  ORORE  PNW District - Clackamas Academy of Industrial Science Event
+## 2  ORPHI                                PNW District - Philomath Event
+## 3  ORWIL                              PNW District - Wilsonville Event
+## 4  PNCMP Pacific Northwest District Championship sponsored by Autodesk
+## 5  WAAHS                                   PNW District - Auburn Event
+## 6  WAAMV                      PNW District - Auburn Mountainview Event
+## 7  WAELL            PNW District - Central Washington University Event
+## 8  WAMOU                             PNW District - Mount Vernon Event
+## 9  WASNO                             PNW District - Glacier Peak Event
+## 10 WASPO                              PNW District - West Valley Event</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PNW_events[, <span class="kw">c</span>(<span class="st">&quot;code&quot;</span>, <span class="st">&quot;dateStart&quot;</span>)]</code></pre></div>
+<pre><code>##     code           dateStart
+## 1  ORORE 2016-03-31T00:00:00
+## 2  ORPHI 2016-03-24T00:00:00
+## 3  ORWIL 2016-03-10T00:00:00
+## 4  PNCMP 2016-04-06T00:00:00
+## 5  WAAHS 2016-04-01T00:00:00
+## 6  WAAMV 2016-03-03T00:00:00
+## 7  WAELL 2016-03-17T00:00:00
+## 8  WAMOU 2016-03-18T00:00:00
+## 9  WASNO 2016-03-11T00:00:00
+## 10 WASPO 2016-03-03T00:00:00</code></pre>
+</div>
+<div id="level" class="section level3">
+<h3>level</h3>
+<p>Either “playoff” or “qual”. Defaults to “qual”.</p>
+</div>
+<div id="start-end-match" class="section level3">
+<h3>start, end, match</h3>
+<p>Integers specifying the range of matches that will be included in the returned data.</p>
+</div>
+</div>
+<div id="expanded-columns-option" class="section level2">
+<h2>Expanded Columns Option</h2>
+<p>There are three functions that return data about competition matches and that accept the <code>expand_cols</code> argument:</p>
+<ul>
+<li>GetSchedule()</li>
+<li>GetHybridSchedule()</li>
+<li>GetMatchResults()</li>
+</ul>
+<p>By default, <code>expand_cols</code> is <em>FALSE</em>. This causes the function to return a data frame with six rows for every match, with one column for team number, one column for the alliance, etc. This format is preferable for analyzing data. For example, the following code extracts the top eight teams from the data frame by average match score and draws a boxplot for each team.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mr &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetMatchResults</span>(sn, <span class="st">&quot;PNCMP&quot;</span>)
+
+<span class="co"># Put the teams in order by average score</span>
+mr$teamNumber &lt;-<span class="st"> </span><span class="kw">reorder</span>(mr$teamNumber, -mr$scoreFinal, mean)
+
+<span class="co"># Filter out all but the top 8 teams</span>
+top8 &lt;-<span class="st"> </span>mr$teamNumber[<span class="dv">1</span>:<span class="dv">8</span>]
+mr8 &lt;-<span class="st"> </span>mr[mr$teamNumber %in%<span class="st"> </span>top8, ]
+mr8$teamNumber &lt;-<span class="st"> </span><span class="kw">droplevels</span>(mr8$teamNumber)
+
+<span class="co"># Boxplot the top 8 teams</span>
+<span class="kw">boxplot</span>(scoreFinal~teamNumber, mr8, <span class="dt">las =</span> <span class="dv">2</span>, <span class="dt">main =</span> <span class="st">&quot;Qual Scores, Top 8 Teams&quot;</span>,
+        <span class="dt">sub =</span> <span class="st">&quot;2016 PNW District Championships&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Aggregating team performance data would be more difficult if the scores were spread across six different columns instead of contained within a single column.</p>
+<p>Setting <code>expand_cols</code> to <em>TRUE</em> puts all data for the match into a single row in the data frame with six different columns for teamNumber, surrogate, final score, etc. This format is useful for displaying an easy to read table:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sched &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetSchedule</span>(sn, <span class="dt">event =</span> <span class="st">&quot;ORPHI&quot;</span>, <span class="dt">expand_cols =</span> <span class="ot">TRUE</span>)
+
+<span class="co"># Display the first 12 rows of the data frame, skipping the first three colums</span>
+sched[<span class="dv">1</span>:<span class="dv">3</span>, <span class="dv">4</span>:<span class="dv">17</span>]</code></pre></div>
+<pre><code>##             startTime matchNumber Red1.team Red1.surrogate Red2.team
+## 1 2016-03-25T10:45:00           1      5198          FALSE      1318
+## 2 2016-03-25T10:52:00           2      2411          FALSE      2521
+## 3 2016-03-25T11:02:00           3      4488          FALSE      3636
+##   Red2.surrogate Red3.team Red3.surrogate Blue1.team Blue1.surrogate
+## 1          FALSE       997          FALSE       3024           FALSE
+## 2          FALSE      2811          FALSE       3131           FALSE
+## 3          FALSE      3049          FALSE       1983           FALSE
+##   Blue2.team Blue2.surrogate Blue3.team Blue3.surrogate
+## 1       1359           FALSE        957           FALSE
+## 2       3812           FALSE       3574           FALSE
+## 3        847           FALSE       4057           FALSE</code></pre>
+</div>
+<div id="pages-argument" class="section level2">
+<h2>Pages Argument</h2>
+<p>There is one firstapiR function, <code>GetTeams()</code>, that accepts the <code>page</code> argument. When requesting data on FRC teams, the FIRST API will split the results into multiple pages if there are more than 65 teams in the response, requiring a separate HTTP request for each page. Users that are requesting the data frame format can ignore the <code>page</code> argument because <code>GetTeams</code> will automatically detect if there are multiple pages in the response, conduct a separate HTTP request for each page, and merge the results into a single data frame. This feature is not available when XML or JSON formats are sepecifed in the <code>Session$format</code> parameter. Users requesting XML or JSON formatted data will have to call GetTeams() for each page of data, incrementing the <code>page</code> argument for each request.</p>
+</div>
+<div id="modified-since-arguments" class="section level2">
+<h2>Modified-Since Arguments</h2>
+<p>There are two additional arguments that can be passed to almost all firstapiR functions (only <code>GetSession()</code> and <code>GetServerStatus()</code> do not accept them). The two arguments, which are always optional, are <code>mod_since</code> and <code>only_mod_since</code>. These two arguments help to reduce the load on the FIRST API server by allowing the server to skip the database query and send only a short HTTP response when the FIRST API server data has not changed since the user last queried the server.</p>
+<p>Both of these arguments accept a character vector containing an HTTP formatted date and time string. If the user includes the <code>mod_since</code> argument, and no data has changed on the FIRST API server since the date and time specified in the argument, the FIRST API server will provide an HTTP 304 response with no content. When this happens, irstapiR functions will return a logical character vector with the value <code>NA</code>. Here is an example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create an HTTP date-time string set to midnight GMT yesterday</span>
+mod_date &lt;-<span class="st"> </span>httr::<span class="kw">http_date</span>(<span class="kw">as.POSIXct</span>(<span class="kw">Sys.Date</span>() -<span class="st"> </span><span class="dv">1</span>))
+
+<span class="co"># Request recently changed data from the server</span>
+match_results &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetMatchResults</span>(sn, <span class="dt">event =</span> <span class="st">&quot;PNCMP&quot;</span>,
+                                            <span class="dt">mod_since =</span> mod_date)
+
+<span class="co"># Assuming there have been no updates to the data since yesterday, this</span>
+<span class="co">#   returns TRUE</span>
+<span class="kw">is.na</span>(match_results)
+
+<span class="co"># The value passed to mod_since returned as an attribute, event when the</span>
+<span class="co">#   result is NA</span>
+<span class="kw">print</span>(<span class="kw">attr</span>(match_results, <span class="st">&quot;mod_since&quot;</span>))</code></pre></div>
+<p>If the user includes the <code>only_mod_since</code> argument, the FIRST API server will return only the data that has changed since the date and time specified in the <code>only_mod_since</code> argument. In no changes have been made, the FIRST API server provides a 304 response and firstapiR functions return a logical vector set to <code>NA</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create an HTTP date-time string set to midnight GMT yesterday</span>
+mod_date &lt;-<span class="st"> </span>httr::<span class="kw">http_date</span>(<span class="kw">as.POSIXct</span>(<span class="kw">Sys.Date</span>() -<span class="st"> </span><span class="dv">1</span>))
+
+<span class="co"># Request recently changed data from the server</span>
+match_results &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetMatchResults</span>(sn, <span class="dt">event =</span> <span class="st">&quot;PNCMP&quot;</span>,
+                                            <span class="dt">only_mod_since =</span> mod_date)
+
+<span class="co"># Assuming there have been no updates to the data since yesterday, this</span>
+<span class="co">#   returns TRUE</span>
+<span class="kw">is.na</span>(match_results)
+
+<span class="co"># The value passed to mod_since returned as an attribute, event when the</span>
+<span class="co">#   result is NA</span>
+<span class="kw">print</span>(<span class="kw">attr</span>(match_results, <span class="st">&quot;only_mod_since&quot;</span>))</code></pre></div>
+<p>If the <code>mod_since</code> or <code>only_mod_since</code> arguments are not specified, the corresponding <code>mod_since</code> or only_mod_since<code>attribute attached to the return value will be set to</code>NULL`.</p>
+<p>Users can keep track of the date and time provided in the <code>last_modified</code> attribute, which corresponds to the most recent date and time that the information changed on the FIRST API server, and use this date and time to request only new data from the server. If a user repeats a firstapiR function call with the same arguments and sets the <code>mod_since</code> or <code>only_mod_since</code> argument to the <code>last_modified</code> attribute value from the intial firstapiR function call, the FIRST API server will return all requested data – the same data that was provided in the first function call. Users who would rather receive a 304 response in this situation should either add at least a second to the <code>last_modified</code> value, or should instead use the <code>time_downloaded</code> attribute value to set the <code>mod_since</code> or <code>only_mod_since</code> arguments.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
