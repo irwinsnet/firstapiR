@@ -5,7 +5,7 @@
 \title{Get the match schedule and results.}
 \usage{
 GetHybridSchedule(session, event, level = "qual", start = NULL,
-  end = NULL, expand_cols = FALSE)
+  end = NULL, expand_cols = FALSE, ...)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -26,11 +26,20 @@ Optional.}
 with a different column for each team. If \code{FALSE}, there will be six
 rows for each match, with each row listing one assigned team and their
 station. Optional.}
+
+\item{mod_since}{A character vector containing an HTTP formatted date and
+time. Returns \code{NA} if no changes have been made to the requested data
+since the date and time provided. Optional.}
+
+\item{only_mod_since}{A character vector containing an HTTP formatted date
+and time. This function only returns data that has changed since the date
+and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, or a data.frame with class set to
-  c("data.frame", "Schedule").
+  XML::XMLDocument object, a logical vector of length one with value
+  \code{NA}, or a data.frame with class set to c("data.frame,
+  "HybridSchedule").
 
   \strong{Data Frame Columns}
   \enumerate{
@@ -60,13 +69,25 @@ Depending on the \code{session$format} value, returns JSON text, an
          \item \emph{Red1.dq, Red2.dq, Red3.dq}: logical
          \item \emph{Blue1.dq, Blue2.dq, Blue3.dq}: logical}
 
-  \strong{Data Frame Attributes}
-    \itemize{
-    \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was
-    downladed from the FIRST API server.
+  \strong{Data Frame or NA Object Attributes}
+  \itemize{
+    \item \emph{url}: Character vector containing URL submitted to FIRST API
+      server.
     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.}
+      R/sysdata.rda file.
+    \item \emph{local_url}: Character vector containing URL used to download
+      local data.
+    \item \emph{time_downloaded}: Character vector containing the local
+      system time that the object was downladed from the FIRST API server.
+      Formatted an an http date and time string.
+    \item \emph{last_modified}: Character vector containing the date and time
+      that the data was last modified by the FIRST API server.
+    \item \emph{mod_since}: Character vector containing the value passed to
+      the \code{mod_since argument}, or NULL if no argument was passed.
+      Formatted as an http date and time string.
+    \item \emph{only_mod_since}: Character vector containing the value passed
+      to the \code{only_mod_since} argument, or NULL if no argument was
+      passed. Formatted as an http date and time string.}
 }
 \description{
 For matches that have been played, \code{GetHybridSchedule} returns the teams
@@ -88,7 +109,7 @@ row. This wide format is useful for displaying the schedule in a table.
 See the \emph{Hybrid Schedule} section of the FIRST API documentation for
 more details.
 
-The URL format is:
+The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event/level/
 hybrid?start=start&end=end}

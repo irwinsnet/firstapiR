@@ -5,7 +5,7 @@
 \title{Get the match schedule for a specific event}
 \usage{
 GetSchedule(session, event, level = "qual", team = NULL, start = NULL,
-  end = NULL, expand_cols = FALSE)
+  end = NULL, expand_cols = FALSE, ...)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -28,11 +28,19 @@ Optional.}
 with a different column for each team. If \code{FALSE}, there will be six
 rows for each match, with each row listing one assigned team and their
 station. Optional.}
+
+\item{mod_since}{A character vector containing an HTTP formatted date and
+time. Returns \code{NA} if no changes have been made to the requested data
+since the date and time provided. Optional.}
+
+\item{only_mod_since}{A character vector containing an HTTP formatted date
+and time. This function only returns data that has changed since the date
+and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, or a data.frame with class set to
-  c("data.frame, "Schedule").
+  XML::XMLDocument object, a logical vector of length one with value
+  \code{NA}, or a data.frame with class set to c("data.frame, "Schedule").
 
   \strong{Data Frame Columns}
   \enumerate{
@@ -84,7 +92,7 @@ row. This wide format is useful for displaying the schedule in a table.
 See the \emph{Event Schedule} section of the FIRST API documentation at
 \url{http://docs.frcevents2.apiary.io/#} for more details.
 
-The URL format is:
+The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event?
 tournamentLevel=level&teamNumber=team&start=start&end=end}

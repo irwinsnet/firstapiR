@@ -4,7 +4,7 @@
 \alias{GetRankings}
 \title{Get team rankings}
 \usage{
-GetRankings(session, event, team = NULL, top = NULL)
+GetRankings(session, event, team = NULL, top = NULL, ...)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -16,11 +16,19 @@ GetRankings(session, event, team = NULL, top = NULL)
 
 \item{top}{An integer vector specifying the number of teams to return,
 starting with the top ranked team.}
+
+\item{mod_since}{A character vector containing an HTTP formatted date and
+time. Returns \code{NA} if no changes have been made to the requested data
+since the date and time provided. Optional.}
+
+\item{only_mod_since}{A character vector containing an HTTP formatted date
+and time. This function only returns data that has changed since the date
+and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, or a data.frame with class set to
-  c("data.frame", "Schedule").
+  XML::XMLDocument object, a logical vector of length one with value
+  \code{NA}, or a data.frame with class set to c("data.frame, "Rankings").
 
   \strong{Data Frame Columns}
   \enumerate{
@@ -33,13 +41,25 @@ Depending on the \code{session$format} value, returns JSON text, an
      \item \emph{dq}: integer
      \item \emph{matchesPlayed}: integer}
 
-  \strong{Data Frame Attributes}
-    \itemize{
-    \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was
-    downladed from the FIRST API server.
+  \strong{Data Frame or NA Object Attributes}
+  \itemize{
+    \item \emph{url}: Character vector containing URL submitted to FIRST API
+      server.
     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.}
+      R/sysdata.rda file.
+    \item \emph{local_url}: Character vector containing URL used to download
+      local data.
+    \item \emph{time_downloaded}: Character vector containing the local
+      system time that the object was downladed from the FIRST API server.
+      Formatted an an http date and time string.
+    \item \emph{last_modified}: Character vector containing the date and time
+      that the data was last modified by the FIRST API server.
+    \item \emph{mod_since}: Character vector containing the value passed to
+      the \code{mod_since argument}, or NULL if no argument was passed.
+      Formatted as an http date and time string.
+    \item \emph{only_mod_since}: Character vector containing the value passed
+      to the \code{only_mod_since} argument, or NULL if no argument was
+      passed. Formatted as an http date and time string.}
 }
 \description{
 The results vary depending on the season requested. The 2016 data fields are
@@ -50,7 +70,7 @@ seasons.
 See the \emph{Event Rankings} section of the FIRST API documentation at
 \url{http://docs.frcevents2.apiary.io/#} for more details.
 
-The URL format is:
+The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?teamNumber=team&top=top}
 }

@@ -145,3 +145,14 @@ test_that("GetTeams() throws errors or warnings for incorrect arguments", {
               "Do not specify GetTeams page argument for data frame format")
 })
 
+
+test_that("only_mod_since and mod_since return NA when set to current time", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  mod_date <- httr::http_date(Sys.time())
+
+  teams <- GetTeams(sess_http, event = "ORPHI", mod_since = mod_date)
+  expect_true(is.na(teams))
+  expect_equal(attr(teams, "mod_since"), mod_date)
+})
+

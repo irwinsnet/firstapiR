@@ -1,6 +1,4 @@
-
 context("FIRST_R Rankings and Alliances")
-
 
 
 sess_http_valid <- FALSE

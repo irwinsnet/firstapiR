@@ -12,7 +12,6 @@ ConvertXMLDocToText <- function(xml_doc) {
   xml_text <- toString(xml_doc)
   attr(xml_text, "url") <- url
   attr(xml_text, "last_modified") <- last_modified
-  print(last_modified)
   return(xml_text)
 }
 

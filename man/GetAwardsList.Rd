@@ -4,15 +4,15 @@
 \alias{GetAwardsList}
 \title{Get a list of all available awards for a season.}
 \usage{
-GetAwardsList(session)
+GetAwardsList(session, ...)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, or a data.frame with class set to
-  c("data.frame", "Schedule").
+  XML::XMLDocument object, a logical vector of length one with value
+  \code{NA}, or a data.frame with class set to c("data.frame, "AwardsList").
 
   \strong{Data Frame Columns}
   \enumerate{
@@ -21,20 +21,32 @@ Depending on the \code{session$format} value, returns JSON text, an
      \item \emph{description}: character
      \item \emph{forPerson}: logical}
 
-  \strong{Data Frame Attributes}
-    \itemize{
-    \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was
-    downladed from the FIRST API server.
+  \strong{Data Frame or NA Object Attributes}
+  \itemize{
+    \item \emph{url}: Character vector containing URL submitted to FIRST API
+      server.
     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.}
+      R/sysdata.rda file.
+    \item \emph{local_url}: Character vector containing URL used to download
+      local data.
+    \item \emph{time_downloaded}: Character vector containing the local
+      system time that the object was downladed from the FIRST API server.
+      Formatted an an http date and time string.
+    \item \emph{last_modified}: Character vector containing the date and time
+      that the data was last modified by the FIRST API server.
+    \item \emph{mod_since}: Character vector containing the value passed to
+      the \code{mod_since argument}, or NULL if no argument was passed.
+      Formatted as an http date and time string.
+    \item \emph{only_mod_since}: Character vector containing the value passed
+      to the \code{only_mod_since} argument, or NULL if no argument was
+      passed. Formatted as an http date and time string.}
 }
 \description{
 See the \emph{Awards Listing} section of the FIRST API documentation at
 \url{http://docs.frcevents2.apiary.io/#} for more details.
 }
 \details{
-The URL format is:
+The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season/awards/list}
 }

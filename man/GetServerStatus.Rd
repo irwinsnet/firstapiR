@@ -11,8 +11,8 @@ GetServerStatus(session)
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, or a data.frame with class set to
-  c("data.frame, "Season").
+  XML::XMLDocument object, a logical vector of length one with value
+  \code{NA}, or a data.frame with class set to c("data.frame, "Status").
 
   \strong{Data Frame Columns}
   \enumerate{
@@ -20,13 +20,19 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{version}: double
     \item \emph{status}: character}
 
-  \strong{Data Frame Attributes}
+  \strong{Data Frame or NA Object Attributes}
   \itemize{
-    \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was
-    downladed from the FIRST API server.
+    \item \emph{url}: Character vector containing URL submitted to FIRST API
+      server.
     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.}
+      R/sysdata.rda file.
+    \item \emph{local_url}: Character vector containing URL used to download
+      local data.
+    \item \emph{time_downloaded}: Character vector containing the local
+      system time that the object was downladed from the FIRST API server.
+      Formatted an an http date and time string.
+    \item \emph{last_modified}: Character vector containing the date and time
+      that the data was last modified by the FIRST API server.}
 }
 \description{
 See the \emph{API Index} section of the FIRST API documentation at

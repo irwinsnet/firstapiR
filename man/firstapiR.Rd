@@ -2,7 +2,7 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{firstapiR}
 \alias{firstapiR}
-\title{firstapiR: FIRST API R Toolbox}
+\title{firstapiR: R Functions for the FIRST API Server}
 \description{
 The R Toolbox functions will connect to the FIRST API server and download
 data on FIRST Robotics Competition (FRC) teams, events, match results, and
@@ -10,13 +10,13 @@ awards.
 }
 \details{
 The FIRST API accepts formatted hypertext transfer protocol (HTTP) GET
-requests for FRC data and provides results in either javascript object
-notation (json) or extensible markup language (xml) format. Detailed
-documentation for the FIRST API, including precise rules for constructing the
-HTTP requests, is available at \url{http://docs.frcevents2.apiary.io/#}
+requests and provides FRC data in either javascript object notation (json) or
+extensible markup language (xml) format. Detailed documentation for the FIRST
+API, including precise rules for constructing the HTTP requests, is available
+at \url{http://docs.frcevents2.apiary.io/#}
 
 A username and authorization key are required for connecting to the FIRST
-API and for using the R Kit. To obtain a username and key, join the FIRST
+API and for using the firstapiR. To obtain a username and key, join the FIRST
 Community Developers project on TeamForge at
 \url{https://usfirst.collab.net/sf/projects/first_community_developers/}
 

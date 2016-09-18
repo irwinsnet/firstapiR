@@ -76,7 +76,6 @@ test_that("mod_since argument causes old results to not be returned", {
 
   expect_true(is.na(events))
   expect_equal(attr(events, "mod_since"), mod_date)
-  expect_true(attr(events, "partial"))
 })
 
 test_that("only_mod_since argument returns only recently changed data", {
@@ -88,5 +87,4 @@ test_that("only_mod_since argument returns only recently changed data", {
 
   expect_true(is.na(scores))
   expect_equal(attr(scores, "only_mod_since"), mod_date)
-  expect_true(attr(scores, "partial"))
 })

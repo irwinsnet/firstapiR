@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stacy Irwin" />
 
-<meta name="date" content="2016-09-01" />
+<meta name="date" content="2016-09-17" />
 
 <title>Getting Started with firstapiR</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Getting Started with firstapiR</h1>
 <h4 class="author"><em>Stacy Irwin</em></h4>
-<h4 class="date"><em>2016-09-01</em></h4>
+<h4 class="date"><em>2016-09-17</em></h4>
 
 
 
@@ -243,7 +243,8 @@ dist$name[dist$code ==<span class="st"> &quot;PNW&quot;</span>]</code></pre></di
 ##  - attr(*, &quot;url&quot;)= chr &quot;https://frc-api.firstinspires.org/v2.0/2016/districts&quot;
 ##  - attr(*, &quot;local_test_data&quot;)= logi TRUE
 ##  - attr(*, &quot;local_url&quot;)= chr &quot;https://frc-api.firstinspires.org/v2.0/2016/districts&quot;
-##  - attr(*, &quot;time_downloaded&quot;)= POSIXct, format: &quot;2016-08-24 06:27:09&quot;</code></pre>
+##  - attr(*, &quot;time_downloaded&quot;)= POSIXct, format: &quot;2016-09-17 08:52:14&quot;
+##  - attr(*, &quot;last_modified&quot;)= chr &quot;Thu, 10 Dec 2015 01:34:23 GMT&quot;</code></pre>
 <p>The attribute <em>local_test_data</em> is set to TRUE if the object was created from cached data in the R/sysdata.rda file. The <em>local_url</em> attribute contains the actual URL that was sent to the FIRST API server to request the data, and the <em>time_downloaded</em> attribute shows when the data was downloaded from the server.</p>
 <p>For non-local, HTTP data, <em>local_test_data</em> will be set to FALSE, and <em>local_url</em> will be NULL. The <em>time_downloaded</em> attribute will contain the time that the HTTP request was received, based on the local system time.</p>
 <p>There is also a <em>url</em> attribute. This attribute always contains the URL that is constructed from the arguments passed to the firstapiR function. Normally, this is the actual URL that is sent to the FIRST API server, but when extracting local data, this URL is mostly ignored. In the GetDistricts() example, <em>local_url</em> matches <em>url</em> because GetDistricts has no optional parameters and there is only one way to call this function. Most other firstapiR functions have many optional parameters and a multitude of possible return values. Since it’s not practical to cache the entire FIRST API server, when requesting local data (by setting the key parameter to “key”), firstapiR ignores the optional parameters. The local data will be of the same type and format as what was requested. In these situations the <em>url</em> attribute will represent was was requested, and the <em>local_url</em> attribute will describe what was cached and returned.</p>

@@ -42,6 +42,21 @@ test_that("GetSchedule() start, end, and level arguments via HTTP.", {
   expect_equal(levels(sched$tournamentLevel[1]), "Playoff")
 })
 
+test_that("only_mod_since and mod_since return NA when set to current time", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  mod_date <- httr::http_date(Sys.time())
+
+  sched <- GetSchedule(sess_http, event = "ORPHI", mod_since = mod_date)
+  expect_true(is.na(sched))
+  expect_equal(attr(sched, "mod_since"), mod_date)
+
+  sched <- GetSchedule(sess_http, event = "ORPHI", expand_cols = TRUE,
+                       only_mod_since = mod_date)
+  expect_true(is.na(sched))
+  expect_equal(attr(sched, "only_mod_since"), mod_date)
+})
+
 
 # GetHybridSchedule() ==========================================================
 test_that("GetHybridSchedule() returns a local data frame.", {
@@ -78,4 +93,19 @@ test_that("GetHybridSchedule() expand_cols returns additional rows via HTTP.", {
                "actualStartTime", "teamNumber", "station", "surrogate",
                "disqualified", "scoreFinal", "scoreFoul", "scoreAuto"  )
   expect_equal(names(hyb), df_names)
+})
+
+test_that("only_mod_since and mod_since return NA when set to current time", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  mod_date <- httr::http_date(Sys.time())
+
+  sched <- GetHybridSchedule(sess_http, event = "ORPHI", mod_since = mod_date)
+  expect_true(is.na(sched))
+  expect_equal(attr(sched, "mod_since"), mod_date)
+
+  sched <- GetHybridSchedule(sess_http, event = "ORPHI", expand_cols = TRUE,
+                       only_mod_since = mod_date)
+  expect_true(is.na(sched))
+  expect_equal(attr(sched, "only_mod_since"), mod_date)
 })

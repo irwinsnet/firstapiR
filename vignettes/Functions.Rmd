@@ -169,3 +169,77 @@ are sepecifed in the `Session$format` parameter. Users requesting XML or JSON
 formatted data will have to call GetTeams() for each page of data, incrementing
 the `page` argument for each request.
 
+## Modified-Since Arguments
+
+There are two additional arguments that can be passed to almost all firstapiR
+functions (only `GetSession()` and `GetServerStatus()` do not accept them). The
+two arguments, which are always optional, are `mod_since` and `only_mod_since`.
+These two arguments help to reduce the load on the FIRST API server by allowing
+the server to skip the database query and send only a short HTTP response when
+the FIRST API server data has not changed since the user last queried the
+server.
+
+Both of these arguments accept a character vector containing an HTTP formatted 
+date and time string. If the user includes the `mod_since` argument, and no data
+has changed on the FIRST API server since the date and time specified in the 
+argument, the FIRST API server will provide an HTTP 304 response with no 
+content. When this happens, irstapiR functions will return a logical character
+vector with the value `NA`. Here is an example:
+
+```{r eval = FALSE}
+# Create an HTTP date-time string set to midnight GMT yesterday
+mod_date <- httr::http_date(as.POSIXct(Sys.Date() - 1))
+
+# Request recently changed data from the server
+match_results <- firstapiR::GetMatchResults(sn, event = "PNCMP",
+                                            mod_since = mod_date)
+
+# Assuming there have been no updates to the data since yesterday, this
+#   returns TRUE
+is.na(match_results)
+
+# The value passed to mod_since returned as an attribute, even when the
+#   result is NA
+print(attr(match_results, "mod_since"))
+
+```
+
+If the user includes the `only_mod_since` argument, the FIRST API server will
+return only the data that has changed since the date and time specified in the
+`only_mod_since` argument. In no changes have been made, the FIRST API server
+provides a 304 response and firstapiR functions return a logical vector set to
+`NA`.
+
+```{r eval = FALSE}
+# Create an HTTP date-time string set to midnight GMT yesterday
+mod_date <- httr::http_date(as.POSIXct(Sys.Date() - 1))
+
+# Request recently changed data from the server
+match_results <- firstapiR::GetMatchResults(sn, event = "PNCMP",
+                                            only_mod_since = mod_date)
+
+# Assuming there have been no updates to the data since yesterday, this
+#   returns TRUE
+is.na(match_results)
+
+# The value passed to mod_since returned as an attribute, even when the
+#   result is NA
+print(attr(match_results, "only_mod_since"))
+
+```
+
+If the `mod_since` or `only_mod_since` arguments are not specified, the
+corresponding `mod_since` or only_mod_since` attribute attached to the return
+value will be set to `NULL`.
+
+Users can keep track of the date and time provided in the `last_modified`
+attribute, which corresponds to the most recent date and time that the
+information changed on the FIRST API server, and use this date and time to
+request only new data from the server. If a user repeats a firstapiR function
+call with the same arguments and sets the `mod_since` or `only_mod_since`
+argument to the `last_modified` attribute value from the intial firstapiR
+function call, the FIRST API server will return all requested data -- the same
+data that was provided in the first function call. Users who would rather
+receive a 304 response in this situation should either add at least a second to
+the `last_modified` value, or should instead use the `time_downloaded` attribute
+value to set the `mod_since` or `only_mod_since` arguments.

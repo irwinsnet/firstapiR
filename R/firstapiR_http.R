@@ -6,13 +6,13 @@
 #' awards.
 #'
 #' The FIRST API accepts formatted hypertext transfer protocol (HTTP) GET
-#' requests for FRC data and provides results in either javascript object
-#' notation (json) or extensible markup language (xml) format. Detailed
-#' documentation for the FIRST API, including precise rules for constructing the
-#' HTTP requests, is available at \url{http://docs.frcevents2.apiary.io/#}
+#' requests and provides FRC data in either javascript object notation (json) or
+#' extensible markup language (xml) format. Detailed documentation for the FIRST
+#' API, including precise rules for constructing the HTTP requests, is available
+#' at \url{http://docs.frcevents2.apiary.io/#}
 #'
 #' A username and authorization key are required for connecting to the FIRST
-#' API and for using the R Kit. To obtain a username and key, join the FIRST
+#' API and for using the firstapiR. To obtain a username and key, join the FIRST
 #' Community Developers project on TeamForge at
 #' \url{https://usfirst.collab.net/sf/projects/first_community_developers/}
 #'
@@ -120,8 +120,8 @@ GetSession <- function(username, key,
 #' @param session A Session object created with \code{GetSession()}.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame, "Season").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Status").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -129,13 +129,19 @@ GetSession <- function(username, key,
 #'     \item \emph{version}: double
 #'     \item \emph{status}: character}
 #'
-#'   \strong{Data Frame Attributes}
+#'   \strong{Data Frame or NA Object Attributes}
 #'   \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.}
 #'
 #' @export
 #'
@@ -144,6 +150,10 @@ GetSession <- function(username, key,
 #' status <- GetServerStatus(sn)
 GetServerStatus <- function(session) {
   status <- .GetHTTP(session, "status")
+
+  # Skip rest of function for XML or JSON results
+  if(session$format != "data.frame") return(status)
+
   class(status) <- append(class(status), "Status")
   return(status)
 }
@@ -163,13 +173,16 @@ GetServerStatus <- function(session) {
 #' \code{https://frc-api.firstinspires.org/v2.0/season}
 #'
 #' @param session A Session object created with \code{GetSession()}.
-#' @param mod_since A character vector containing an HTTP formated date and
-#'   time. Use the \code{httr::http_date} and \code{httr::parse_http_date}
-#'   functions to convert between HTTP date strings to POSIXt date values.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame, "Season").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Season").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -182,13 +195,25 @@ GetServerStatus <- function(session) {
 #'     \item \emph{FRCChampionships.startDate}: character
 #'     \item \emph{FRCChampionships.location}: character}
 #'
-#'   \strong{Data Frame Attributes}
+#'   \strong{Data Frame or NA Object Attributes}
 #'   \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -221,10 +246,16 @@ GetSeason <- function(session, ...) {
 #' \code{https://frc-api.firstinspires.org/v2.0/season/districts}
 #'
 #' @param session A Session object created with \code{GetSession()}.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame, "Districts").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Districts").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -232,13 +263,25 @@ GetSeason <- function(session, ...) {
 #'     \item \emph{name}: character
 #'     \item \emph{districtCount}: integer}
 #'
-#'   \strong{Data Frame Attributes}
+#'   \strong{Data Frame or NA Object Attributes}
 #'   \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -296,10 +339,16 @@ GetDistricts <- function(session, ...) {
 #'   district.
 #' @param exclude_district A logical vector. If set to \code{TRUE}, district
 #'   events are excluded from results. Optional.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame, "Events").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Events").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -320,13 +369,25 @@ GetDistricts <- function(session, ...) {
 #'     \item \emph{dateEnd}: character
 #'     \item \emph{eventCount}: integer}
 #'
-#'   \strong{Data Frame Attributes}
+#'   \strong{Data Frame or NA Object Attributes}
 #'   \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -405,10 +466,16 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'   will filter results to all teams in the specified state. Optional.
 #' @param page An integer vector that specifyies which page of results should be
 #'   returned. Optional. Use only for xml or json formats.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame, "Teams").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Teams").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -427,13 +494,25 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'     \item \emph{pageCurrent}: integer
 #'     \item \emph{pageTotal}: integer}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'   \strong{Data Frame or NA Object Attributes}
+#'   \itemize{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -493,7 +572,11 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
       # Replace attributes that were stripped due to merging
       attr(teams, "url") <- team_attr$url
       attr(teams, "local_test_data") <- team_attr$local_test_data
+      attr(teams, "local_url") <- team_attr$local_url
       attr(teams, "time_downloaded") <- team_attr$time_downloaded
+      attr(teams, "last_modified") <- team_attr$last_modified
+      attr(teams, "mod_since") <- team_attr$mod_since
+      attr(teams, "only_mod_since") <- team_attr$only_mod_since
     }
   } else
     teams <- teams[[1]]
@@ -548,10 +631,16 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'   with a different column for each team. If \code{FALSE}, there will be six
 #'   rows for each match, with each row listing one assigned team and their
 #'   station. Optional.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame, "Schedule").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Schedule").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -723,10 +812,17 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'   with a different column for each team. If \code{FALSE}, there will be six
 #'   rows for each match, with each row listing one assigned team and their
 #'   station. Optional.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame", "Schedule").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame,
+#'   "HybridSchedule").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -756,13 +852,25 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'          \item \emph{Red1.dq, Red2.dq, Red3.dq}: logical
 #'          \item \emph{Blue1.dq, Blue2.dq, Blue3.dq}: logical}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'   \strong{Data Frame or NA Object Attributes}
+#'   \itemize{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -919,10 +1027,17 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'   with a different column for each team. If \code{FALSE}, there will be six
 #'   rows for each match, with each row listing one assigned team and their
 #'   station. Optional.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame", "Schedule").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame,
+#'   "MatchResults").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -949,13 +1064,25 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'          \item \emph{Blue1.surrogate, Blue2.surrogate,
 #'            Blue3.surrogate}: logical}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'   \strong{Data Frame or NA Object Attributes}
+#'   \itemize{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -1114,10 +1241,16 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' @param start An integer vector containing the earliest match to
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame", "Schedule").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Scores").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -1143,13 +1276,25 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{breachPoints, capturePoints}: integer
 #'      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'   \strong{Data Frame or NA Object Attributes}
+#'   \itemize{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -1236,10 +1381,16 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #' @param session A Session object created with \code{GetSession()}.
 #' @param event A character vector containing a FIRST API event code
 #'   (see \code{GetEvents}).
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame", "Schedule").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Alliances").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -1249,13 +1400,25 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{backup, backupReplaced}: integer
 #'      \item \emph{count}: integer}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'   \strong{Data Frame or NA Object Attributes}
+#'   \itemize{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -1300,10 +1463,16 @@ GetAlliances <- function (session, event, ...) {
 #' @param team An integer vector containing a team number. Optional.
 #' @param top An integer vector specifying the number of teams to return,
 #'   starting with the top ranked team.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame", "Schedule").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Rankings").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -1316,13 +1485,25 @@ GetAlliances <- function (session, event, ...) {
 #'      \item \emph{dq}: integer
 #'      \item \emph{matchesPlayed}: integer}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'   \strong{Data Frame or NA Object Attributes}
+#'   \itemize{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -1369,10 +1550,16 @@ GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
 #'   \code{team} argument, or both.
 #' @param team An integer vector containing a team number. Optional.  Must
 #'   specify the \code{event} argument, the \code{team} argument, or both.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame", "Schedule").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "Awards").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -1387,13 +1574,25 @@ GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
 #'      \item \emph{fullTeamName}: character
 #'      \item \emph{person}: character}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'   \strong{Data Frame or NA Object Attributes}
+#'   \itemize{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -1441,8 +1640,8 @@ GetAwards <- function(session, event = NULL, team = NULL, ...) {
 #' @param session A Session object created with \code{GetSession()}.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, or a data.frame with class set to
-#'   c("data.frame", "Schedule").
+#'   XML::XMLDocument object, a logical vector of length one with value
+#'   \code{NA}, or a data.frame with class set to c("data.frame, "AwardsList").
 #'
 #'   \strong{Data Frame Columns}
 #'   \enumerate{
@@ -1451,13 +1650,25 @@ GetAwards <- function(session, event = NULL, team = NULL, ...) {
 #'      \item \emph{description}: character
 #'      \item \emph{forPerson}: logical}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#'   \strong{Data Frame or NA Object Attributes}
+#'   \itemize{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -1624,7 +1835,7 @@ GetAwardsList <- function(session, ...) {
     no_results <- (httr::status_code(r) == 304)
   }
 
-  # Set results to FALSE if no records are returned
+  # Set results to NA if no records are returned
   if(no_results) {
     result <- NA
   } else {
@@ -1638,7 +1849,7 @@ GetAwardsList <- function(session, ...) {
                      data.frame(jsonlite::fromJSON(content)))
   }
 
-  # Set result to FALSE if no records are returned
+  # Set result to NA if no records are returned
   if(session$format == "data.frame" && length(result) == 0)
     result <- NA
 
@@ -1649,13 +1860,11 @@ GetAwardsList <- function(session, ...) {
     attr(result, "local_url") <- attr(content, "url")
     attr(result, "time_downloaded") <- attr(content, "time_downloaded")
     attr(result, "last_modified") <- attr(content, "last_modified")
-    attr(result, "partial") <- FALSE
   } else {
     attr(result, "local_test_data") <- FALSE
     attr(result, "local_url") <- NULL
-    attr(result, "time_downloaded") <- Sys.time()
+    attr(result, "time_downloaded") <- httr::http_date(Sys.time())
     attr(result, "last_modified") <- last_modified
-    attr(result, "partial") <- no_results
   }
   attr(result, "only_mod_since") <- only_mod_since
   attr(result, "mod_since") <- mod_since

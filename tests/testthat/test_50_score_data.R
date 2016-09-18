@@ -47,6 +47,21 @@ test_that("For GetMatchResults start, end, and match args via HTTP", {
   expect_equal(nrow(mr), 1)
 })
 
+test_that("only_mod_since and mod_since return NA when set to current time", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  mod_date <- httr::http_date(Sys.time())
+
+  results <- GetMatchResults(sess_http, event = "ORPHI", mod_since = mod_date)
+  expect_true(is.na(results))
+  expect_equal(attr(results, "mod_since"), mod_date)
+
+  results <- GetMatchResults(sess_http, event = "ORPHI", expand_cols = TRUE,
+                             only_mod_since = mod_date)
+  expect_true(is.na(results))
+  expect_equal(attr(results, "only_mod_since"), mod_date)
+})
+
 
 # GetScores() ==================================================================
 test_that("GetScores() returns a data frame", {
@@ -80,4 +95,14 @@ test_that("GetScores() throws errors for incorrect arguments", {
                "You cannot specify both a team and match number")
   expect_error(GetScores(sess_local, event = "WAELL", match = 2, start = 1),
                "You cannot specify start or end if you specify match")
+})
+
+test_that("only_mod_since and mod_since return NA when set to current time", {
+  if(!sess_http_valid) skip("No username or authorization key")
+
+  mod_date <- httr::http_date(Sys.time())
+
+  scores <- GetScores(sess_http, event = "ORPHI", mod_since = mod_date)
+  expect_true(is.na(scores))
+  expect_equal(attr(scores, "mod_since"), mod_date)
 })

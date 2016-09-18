@@ -62,12 +62,15 @@ for HTTP requests to the FIRST API server, as well as the HTTP responses.
 Documentation for firstapiR is automatically downloaded when you install the
 firstapiR package and is available offline. To learn more about firstapiR:
 
-* Read the _Getting Started Vignette_. Get to the vignette by clicking on the
-  firstapiR package in the RSudio _Packages_ window, which brings up an index to
-  all firstapiR help resources. Click on the _Userguides, pacakage vignettes..._
-  link to navigate to the _Getting Started Vignette_
-* Read the _Functions Overview Vignette_. 
+* Read the (Getting Started Vignette)[
+http://htmlpreview.github.io/?https://github.com/irwinsnet/firstapiR/blob/master/inst/doc/Getting_Started.html]. 
+* Read the (Functions Overview Vignette)[http://htmlpreview.github.io/?https://github.com/irwinsnet/firstapiR/blob/master/inst/doc/Functions.html]. 
 * Read the help documentation that is provided for each function. 
+
+You can read the vignettes directly in RStudio if firstapiR is installed. Click 
+on the firstapiR package in the RSudio _Packages_ window, which brings up an
+index to all firstapiR help resources. Click on the _Userguides, package
+vignettes..._ link to navigate to the _Getting Started Vignette_.
 
 
 ### FIRST - *F*or *I*nspiration and *R*ecognition in *S*cience and *T*echnology
