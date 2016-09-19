@@ -2,9 +2,10 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetAwards}
 \alias{GetAwards}
-\title{Get the awards that were presented to a team or at an event.}
+\title{Get the awards that were presented at an event}
 \usage{
-GetAwards(session, event = NULL, team = NULL, ...)
+GetAwards(session, event = NULL, team = NULL, mod_since = NULL,
+  only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -26,10 +27,21 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Awards").
+  XML::XMLDocument object or a data.frame with class set to c("data.frame,
+  "Awards"). Returns a logical vector of length one with value \code{NA} if
+  data is unchanged since date and time passed in arguments \code{mod_since}
+  or \code{only_mod_since}.
+}
+\description{
+See the \emph{Event Awards} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
+}
+\details{
+The FIRST API URL format is:
+\code{https://frc-api.firstinspires.org/v2.0/season/awards/event/team}
+}
+\section{Columns}{
 
-  \strong{Data Frame Columns}
   \enumerate{
      \item \emph{awardId}: integer
      \item \emph{teamId}: integer
@@ -41,8 +53,10 @@ Depending on the \code{session$format} value, returns JSON text, an
      \item \emph{teamNumber}: integer
      \item \emph{fullTeamName}: character
      \item \emph{person}: character}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -61,14 +75,6 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-See the \emph{Event Awards} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
-}
-\details{
-The FIRST API URL format is:
-\code{https://frc-api.firstinspires.org/v2.0/season/awards/event/team}
 }
 \examples{
 sn <- GetSession("username", "key")

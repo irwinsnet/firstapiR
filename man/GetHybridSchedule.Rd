@@ -2,10 +2,11 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetHybridSchedule}
 \alias{GetHybridSchedule}
-\title{Get the match schedule and results.}
+\title{Get the match schedule and results}
 \usage{
 GetHybridSchedule(session, event, level = "qual", start = NULL,
-  end = NULL, expand_cols = FALSE, ...)
+  end = NULL, expand_cols = FALSE, mod_since = NULL,
+  only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -14,9 +15,9 @@ GetHybridSchedule(session, event, level = "qual", start = NULL,
 (see \code{GetEvents}).}
 
 \item{level}{A character vector containing either \emph{"qual"} or
-\emph{"playoff"}. Defaults to \emph{"qual"}. Optional.}
+\emph{"playoff"}. Optional: defaults to \emph{"qual"}.}
 
-\item{start}{An integer vector containing the earliest match to
+\item{start}{An integer vector containing the earliest match to return.
 Optional.}
 
 \item{end}{An integer vector containing the latest match to return. Optional.}
@@ -37,11 +38,38 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame,
-  "HybridSchedule").
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "HybridSchedule"). Returns a logical vector of length one with value
+  \code{NA} if data is unchanged since date and time passed in arguments
+  \code{mod_since} or \code{only_mod_since}.
+}
+\description{
+For matches that have been played, \code{GetHybridSchedule} returns the teams
+assigned to the match and the match results. If the mtach has not yet been
+played, the assigned teams and schedule data are returned, but the result
+fields are blank.
+}
+\details{
+Depending on the \code{expand_cols} argument, \code{GetHybridSchedule} can
+structure the resulting data frame two diferent ways. When \code{expand_cols}
+is set to \emph{FALSE} the data frame will contain six rows for every match
+returned. Each row will include data on one team that participates in the
+match. This narrow (i.e., fewer columns) structure is useful when filtering
+results to specific teams, because only one column, \emph{teamNumber}, must
+be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
+will have one row per match, with all six participating teams listed in one
+row. This wide format is useful for displaying the schedule in a table.
 
-  \strong{Data Frame Columns}
+See the \emph{Hybrid Schedule} section of the FIRST API documentation for
+more details.
+
+The FIRST API URL format is:
+
+\code{https://frc-api.firstinspires.org/v2.0/season/schedule/event/level/
+hybrid?start=start&end=end}
+}
+\section{Columns}{
+
   \enumerate{
      \item \emph{description}: character
      \item \emph{tournamentLevel}: factor
@@ -68,8 +96,10 @@ Depending on the \code{session$format} value, returns JSON text, an
            Blue3.surrogate}: logical
          \item \emph{Red1.dq, Red2.dq, Red3.dq}: logical
          \item \emph{Blue1.dq, Blue2.dq, Blue3.dq}: logical}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -88,31 +118,6 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-For matches that have been played, \code{GetHybridSchedule} returns the teams
-assigned to the match and the match results. If the mtach has not yet been
-played, the assigned teams and schedule data are returned, but the result
-fields are blank.
-}
-\details{
-Depending on the \code{expand_cols} argument, \code{GetHybridSchedule} can
-structure the resulting data frame two diferent ways. When \code{expand_cols}
-is set to \emph{FALSE} the data frame will contain six rows for every match
-returned. Each row will include data on one team that participates in the
-match. This narrow (i.e., fewer columns) structure is useful when filtering
-results to specific teams, because only one column, \emph{teamNumber}, must
-be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
-will have one row per match, with all six participating teams listed in one
-row. This wide format is useful for displaying the schedule in a table.
-
-See the \emph{Hybrid Schedule} section of the FIRST API documentation for
-more details.
-
-The FIRST API URL format is:
-
-\code{https://frc-api.firstinspires.org/v2.0/season/schedule/event/level/
-hybrid?start=start&end=end}
 }
 \examples{
 sn <- GetSession("username", "key")

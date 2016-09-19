@@ -4,7 +4,8 @@
 \alias{GetRankings}
 \title{Get team rankings}
 \usage{
-GetRankings(session, event, team = NULL, top = NULL, ...)
+GetRankings(session, event, team = NULL, top = NULL, mod_since = NULL,
+  only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -27,10 +28,26 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Rankings").
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "Rankings"). Returns a logical vector of length one with value \code{NA} if
+  data is unchanged since date and time passed in arguments \code{mod_since}
+  or \code{only_mod_since}.
+}
+\description{
+The results vary depending on the season requested. The 2016 data fields are
+listed here. See the FIRST API documentation for data fields for prior
+seasons.
+}
+\details{
+See the \emph{Event Rankings} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 
-  \strong{Data Frame Columns}
+The FIRST API URL format is:
+
+\code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?teamNumber=team&top=top}
+}
+\section{Columns}{
+
   \enumerate{
      \item \emph{rank}: integer
      \item \emph{teamNumber}: integer
@@ -40,8 +57,10 @@ Depending on the \code{session$format} value, returns JSON text, an
      \item \emph{qualAverage}: numeric
      \item \emph{dq}: integer
      \item \emph{matchesPlayed}: integer}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -60,19 +79,6 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-The results vary depending on the season requested. The 2016 data fields are
-listed here. See the FIRST API documentation for data fields for prior
-seasons.
-}
-\details{
-See the \emph{Event Rankings} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
-
-The FIRST API URL format is:
-
-\code{https://frc-api.firstinspires.org/v2.0/season/rankings/event?teamNumber=team&top=top}
 }
 \examples{
 sn <- GetSession("username", "key")

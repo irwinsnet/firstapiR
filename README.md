@@ -2,7 +2,7 @@
 
 The firstapiR package provides R functions that download FIRST Robotics 
 Competition (FRC) data from the FIRST API server via hypertext transfer protocol
-(HTTP) requests. The firstapiR functions format the data as JSON text, XML text,
+(HTTP) requests. The firstapiR package formats the data as JSON text, XML text,
 or as R data frames.
 
 ### Installing R
@@ -41,7 +41,8 @@ repeat step 2.
 
 The firstapiR package does contain some example data from the FIRST API server,
 so you can experiment with firstapiR without a FIRST API server account. See the
-[Getting Started Vignette](inst/doc/Getting_Started.html) for guidance.
+[Getting Started](http://irwinsnet.github.io/firstapiR/Getting_Started)
+vignette for guidance.
 
 To use firstapiR to download data from the FIRST API server, you must have a
 username and authorization key for the FIRST API server. To get a username and
@@ -62,15 +63,17 @@ for HTTP requests to the FIRST API server, as well as the HTTP responses.
 Documentation for firstapiR is automatically downloaded when you install the
 firstapiR package and is available offline. To learn more about firstapiR:
 
-* Read the (Getting Started Vignette)[
-http://htmlpreview.github.io/?https://github.com/irwinsnet/firstapiR/blob/master/inst/doc/Getting_Started.html]. 
-* Read the (Functions Overview Vignette)[http://htmlpreview.github.io/?https://github.com/irwinsnet/firstapiR/blob/master/inst/doc/Functions.html]. 
+* Read the
+  [Getting Started](http://irwinsnet.github.io/firstapiR/Getting_Started)
+  vignette.
+* Read the [Overview of firstapiR Functions
+  ](http://irwinsnet.github.io/firstapiR/Functions) vignette.
 * Read the help documentation that is provided for each function. 
 
-You can read the vignettes directly in RStudio if firstapiR is installed. Click 
-on the firstapiR package in the RSudio _Packages_ window, which brings up an
-index to all firstapiR help resources. Click on the _Userguides, package
-vignettes..._ link to navigate to the _Getting Started Vignette_.
+Both vignettes are available locally in RStudio once the firstapiR package is 
+installed. Click on the firstapiR package in the RSudio _Packages_ window, which
+brings up an index to all firstapiR help resources. Click on the _Userguides,
+package vignettes..._ link to navigate to the _Getting Started Vignette_.
 
 
 ### FIRST - *F*or *I*nspiration and *R*ecognition in *S*cience and *T*echnology

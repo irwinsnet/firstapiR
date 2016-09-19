@@ -42,7 +42,7 @@ sched[1:3, 4:17]
 #  #   returns TRUE
 #  is.na(match_results)
 #  
-#  # The value passed to mod_since returned as an attribute, event when the
+#  # The value passed to mod_since returned as an attribute, even when the
 #  #   result is NA
 #  print(attr(match_results, "mod_since"))
 #  
@@ -59,7 +59,7 @@ sched[1:3, 4:17]
 #  #   returns TRUE
 #  is.na(match_results)
 #  
-#  # The value passed to mod_since returned as an attribute, event when the
+#  # The value passed to mod_since returned as an attribute, even when the
 #  #   result is NA
 #  print(attr(match_results, "only_mod_since"))
 #  

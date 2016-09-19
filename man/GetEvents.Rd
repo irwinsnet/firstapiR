@@ -5,7 +5,7 @@
 \title{Get information about FRC events}
 \usage{
 GetEvents(session, event = NULL, team = NULL, district = NULL,
-  exclude_district = NULL, ...)
+  exclude_district = NULL, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -34,47 +34,10 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Events").
-
-  \strong{Data Frame Columns}
-  \enumerate{
-    \item \emph{code}: character
-    \item \emph{divisionCode}: character
-    \item \emph{name}: character
-    \item \emph{type}: factor ('Regional', 'DistrictEvent',
-       'DistrictChampionship', 'ChampionshipSubdivision',
-       'ChampionshipDivision', 'Championship', 'Offseason')
-    \item \emph{districtCode}: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC',
-      'PCH', 'PNW')
-    \item \emph{venue}: character
-    \item \emph{city}: character
-    \item \emph{stateprov}: factor
-    \item \emph{country}: factor
-    \item \emph{timezone}: factor
-    \item \emph{dateStart}: character
-    \item \emph{dateEnd}: character
-    \item \emph{eventCount}: integer}
-
-  \strong{Data Frame or NA Object Attributes}
-  \itemize{
-    \item \emph{url}: Character vector containing URL submitted to FIRST API
-      server.
-    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.
-    \item \emph{local_url}: Character vector containing URL used to download
-      local data.
-    \item \emph{time_downloaded}: Character vector containing the local
-      system time that the object was downladed from the FIRST API server.
-      Formatted an an http date and time string.
-    \item \emph{last_modified}: Character vector containing the date and time
-      that the data was last modified by the FIRST API server.
-    \item \emph{mod_since}: Character vector containing the value passed to
-      the \code{mod_since argument}, or NULL if no argument was passed.
-      Formatted as an http date and time string.
-    \item \emph{only_mod_since}: Character vector containing the value passed
-      to the \code{only_mod_since} argument, or NULL if no argument was
-      passed. Formatted as an http date and time string.}
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "Events"). Returns a logical vector of length one with value \code{NA} if
+  data is unchanged since date and time passed in arguments \code{mod_since}
+  or \code{only_mod_since}.
 }
 \description{
 See the \emph{Event Listings} section of the FIRST API documentation at
@@ -99,6 +62,48 @@ The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season/events?
   teamNumber=team&districtCode=district&excludeDistrict=district}
+}
+\section{Columns}{
+
+  \enumerate{
+    \item \emph{code}: character
+    \item \emph{divisionCode}: character
+    \item \emph{name}: character
+    \item \emph{type}: factor ('Regional', 'DistrictEvent',
+       'DistrictChampionship', 'ChampionshipSubdivision',
+       'ChampionshipDivision', 'Championship', 'Offseason')
+    \item \emph{districtCode}: factor ('CHM', 'FIM', 'IN', 'MAR', 'NC',
+      'PCH', 'PNW')
+    \item \emph{venue}: character
+    \item \emph{city}: character
+    \item \emph{stateprov}: factor
+    \item \emph{country}: factor
+    \item \emph{timezone}: factor
+    \item \emph{dateStart}: character
+    \item \emph{dateEnd}: character
+    \item \emph{eventCount}: integer}
+}
+
+\section{Attributes}{
+
+  \itemize{
+    \item \emph{url}: Character vector containing URL submitted to FIRST API
+      server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.
+    \item \emph{local_url}: Character vector containing URL used to download
+      local data.
+    \item \emph{time_downloaded}: Character vector containing the local
+      system time that the object was downladed from the FIRST API server.
+      Formatted an an http date and time string.
+    \item \emph{last_modified}: Character vector containing the date and time
+      that the data was last modified by the FIRST API server.
+    \item \emph{mod_since}: Character vector containing the value passed to
+      the \code{mod_since argument}, or NULL if no argument was passed.
+      Formatted as an HTTP date and time string.
+    \item \emph{only_mod_since}: Character vector containing the value passed
+      to the \code{only_mod_since} argument, or NULL if no argument was
+      passed. Formatted as an HTTP date and time string.}
 }
 \examples{
 sn <- GetSession("username", "key")

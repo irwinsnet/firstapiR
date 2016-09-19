@@ -9,11 +9,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The _Getting Started_ vignette covered how to use the `GetSession()` function
-to create a Session object and how to use that Session object in other
-firstapiR functions. This vignette provides an overview of the remaining
-firstapiR functions. For detailed information on each function, type
-`help(function_name)` at the console or in the RStudio help view search box.
+The [Getting Started](http://irwinsnet.github.io/firstapiR/Getting_Started)
+vignette covered how to use the `GetSession()` function to create a Session
+object and how to use that Session object in other firstapiR functions. This
+vignette provides an overview of the remaining firstapiR functions. For detailed
+information on each function, type `help(function_name)` at the console or in
+the RStudio help view search box.
 
 
 ## Simple Functions
@@ -198,7 +199,7 @@ match_results <- firstapiR::GetMatchResults(sn, event = "PNCMP",
 #   returns TRUE
 is.na(match_results)
 
-# The value passed to mod_since returned as an attribute, event when the
+# The value passed to mod_since returned as an attribute, even when the
 #   result is NA
 print(attr(match_results, "mod_since"))
 
@@ -222,7 +223,7 @@ match_results <- firstapiR::GetMatchResults(sn, event = "PNCMP",
 #   returns TRUE
 is.na(match_results)
 
-# The value passed to mod_since returned as an attribute, event when the
+# The value passed to mod_since returned as an attribute, even when the
 #   result is NA
 print(attr(match_results, "only_mod_since"))
 

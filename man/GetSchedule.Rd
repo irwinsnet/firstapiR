@@ -5,7 +5,8 @@
 \title{Get the match schedule for a specific event}
 \usage{
 GetSchedule(session, event, level = "qual", team = NULL, start = NULL,
-  end = NULL, expand_cols = FALSE, ...)
+  end = NULL, expand_cols = FALSE, mod_since = NULL,
+  only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -18,7 +19,7 @@ GetSchedule(session, event, level = "qual", team = NULL, start = NULL,
 
 \item{team}{An integer vector containing a team number. Optional.}
 
-\item{start}{An integer vector containing the earliest match to
+\item{start}{An integer vector containing the earliest match to return.
 Optional.}
 
 \item{end}{An integer vector containing the latest match to return. Optional.}
@@ -39,39 +40,10 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Schedule").
-
-  \strong{Data Frame Columns}
-  \enumerate{
-    \item \emph{description}: character
-    \item \emph{field}: character
-    \item \emph{tournamentLevel}: factor
-    \item \emph{matchNumber}: integer
-    \item \emph{startTime}: character}
-
-     If expand_cols == \emph{FALSE}
-       \enumerate{
-         \item \emph{teamNumber}: factor
-         \item \emph{alliance}: factor (Red, Blue)
-         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-         \item \emph{surrogate}: logical}
-
-    If expand_cols == \emph{TRUE}
-      \enumerate{
-        \item \emph{Red1.team, Red2.team, Red3.team}: factor
-        \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
-        \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
-        \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
-          logical}
-
-  \strong{Data Frame Attributes}
-    \itemize{
-    \item \emph{url}: URL submitted to FIRST API
-    \item \emph{time_downloaded}: Local System time that the object was
-    downladed from the FIRST API server.
-    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.}
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "Schedule"). Returns a logical vector of length one with value \code{NA} if
+  data is unchanged since date and time passed in arguments \code{mod_since}
+  or \code{only_mod_since}.
 }
 \description{
 Returns either the qualification schedule or the playoff schedule, based on
@@ -96,6 +68,52 @@ The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season/schedule/event?
 tournamentLevel=level&teamNumber=team&start=start&end=end}
+}
+\section{Columns}{
+
+  \enumerate{
+    \item \emph{description}: character
+    \item \emph{field}: character
+    \item \emph{tournamentLevel}: factor
+    \item \emph{matchNumber}: integer
+    \item \emph{startTime}: character}
+
+     If expand_cols == \emph{FALSE}
+       \enumerate{
+         \item \emph{teamNumber}: factor
+         \item \emph{alliance}: factor (Red, Blue)
+         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
+         \item \emph{surrogate}: logical}
+
+    If expand_cols == \emph{TRUE}
+      \enumerate{
+        \item \emph{Red1.team, Red2.team, Red3.team}: factor
+        \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
+        \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
+        \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
+          logical}
+}
+
+\section{Attributes}{
+
+ \enumerate{
+    \item \emph{url}: Character vector containing URL submitted to FIRST API
+      server.
+    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+      R/sysdata.rda file.
+    \item \emph{local_url}: Character vector containing URL used to download
+      local data.
+    \item \emph{time_downloaded}: Character vector containing the local
+      system time that the object was downladed from the FIRST API server.
+      Formatted an an http date and time string.
+    \item \emph{last_modified}: Character vector containing the date and time
+      that the data was last modified by the FIRST API server.
+    \item \emph{mod_since}: Character vector containing the value passed to
+      the \code{mod_since argument}, or NULL if no argument was passed.
+      Formatted as an http date and time string.
+    \item \emph{only_mod_since}: Character vector containing the value passed
+      to the \code{only_mod_since} argument, or NULL if no argument was
+      passed. Formatted as an http date and time string.}
 }
 \examples{
 sn <- GetSession("username", "key")

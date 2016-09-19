@@ -4,7 +4,7 @@
 \alias{GetSeason}
 \title{Get high-level information for an FRC season}
 \usage{
-GetSeason(session, ...)
+GetSeason(session, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -19,10 +19,25 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Season").
+  XML::XMLDocument object, or a data.frame with class set to
+  c("data.frame, "Season"). Returns a logical vector of length one with value
+  \code{NA} if data is unchanged since date and time passed in arguments
+  \code{mod_since} or \code{only_mod_since}.
+}
+\description{
+Returns information for the season specified in the session list (see
+documentation for the GetSession function for additional details.)
+}
+\details{
+See the \emph{Season Summary} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 
-  \strong{Data Frame Columns}
+The FIRST API URL format is:
+
+\code{https://frc-api.firstinspires.org/v2.0/season}
+}
+\section{Columns}{
+
   \enumerate{
     \item \emph{eventCount}: integer
     \item \emph{gameName}: factor
@@ -32,8 +47,10 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{FRCChampionships.name}: character
     \item \emph{FRCChampionships.startDate}: character
     \item \emph{FRCChampionships.location}: character}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -52,18 +69,6 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-Returns information for the season specified in the session list (see
-documentation for the GetSession function for additional details.)
-}
-\details{
-See the \emph{Season Summary} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
-
-The FIRST API URL format is:
-
-\code{https://frc-api.firstinspires.org/v2.0/season}
 }
 \examples{
 sn <- GetSession("username", "key", season = 2015, staging = TRUE)

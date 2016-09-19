@@ -5,7 +5,7 @@
 \title{Get details on FRC teams}
 \usage{
 GetTeams(session, team = NULL, event = NULL, district = NULL,
-  state = NULL, page = NULL, ...)
+  state = NULL, page = NULL, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -25,7 +25,7 @@ the response to only the teams in the specified district. Optional.}
 will filter results to all teams in the specified state. Optional.}
 
 \item{page}{An integer vector that specifyies which page of results should be
-returned. Optional. Use only for xml or json formats.}
+returned. Optional. Use only for XML or JSON formats.}
 
 \item{mod_since}{A character vector containing an HTTP formatted date and
 time. Returns \code{NA} if no changes have been made to the requested data
@@ -37,10 +37,37 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Teams").
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "Teams"). Returns a logical vector of length one with value \code{NA} if
+  data is unchanged since date and time passed in arguments \code{mod_since}
+  or \code{only_mod_since}.
+}
+\description{
+Provides lists of FRC teams for specified events, districts, and states. With
+no parameters (except for \code{session}), \code{GetTeams} will provide a
+list of all FRC teams.
+}
+\details{
+Because the length of the \code{GetTeams} response can be several thousand
+lines long, the FIRST API server will break up its response into several
+pages when the number of teams in the response exceeds 65. For the data frame
+format, \code{GetTeams} will send a request to the FIRST API server and
+determine from the first response whether additional HTTP requests are
+necessary to retrieve all requested data. \code{GetTeams} will then merge all
+responses into a single data frame. For XML and JSON formats, the user will
+have to call \code{GetTeams} for each page of data, specifying the page with
+the \code{page} argument.
 
-  \strong{Data Frame Columns}
+See the \emph{Team Listings} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
+
+The FIRST API URL format is:
+
+\code{https://frc-api.firstinspires.org/v2.0/season/teams&eventCode=event
+?districtCode=district?state=state?page=2}
+}
+\section{Columns}{
+
   \enumerate{
     \item \emph{teamNumber}: character
     \item \emph{nameFull}: character
@@ -56,8 +83,10 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{teamCountPage}: integer
     \item \emph{pageCurrent}: integer
     \item \emph{pageTotal}: integer}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -76,30 +105,6 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-Provides lists of FRC teams for specified events, districts, and states. With
-no parameters (except for \code{session}), \code{GetTeams} will provide a
-list of all FRC teams.
-}
-\details{
-Because the length of the \code{GetTeams} response can be several thousand
-lines long, the FIRST API server will break up its response into several
-pages when the number of teams in the response exceeds 65. For the data frame
-format, \code{GetTeams} will send a request to the FIRST API server and
-determine from the first response whether additional HTTP requests are
-necessary to retrieve all requested data. \code{GetTeams} will then merge all
-responses into a single data frame. For xml and json formats, the user will
-have to call \code{GetTeams} for each page of data, specifying the page with
-the \code{page} argument.
-
-See the \emph{Team Listings} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
-
-The FIRST API URL format is:
-
-\code{https://frc-api.firstinspires.org/v2.0/season/teams&eventCode=event
-?districtCode=district?state=state?page=2}
 }
 \examples{
 sn <- GetSession("username", "key")

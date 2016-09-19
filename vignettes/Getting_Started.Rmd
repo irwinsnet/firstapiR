@@ -11,11 +11,8 @@ vignette: >
 
 The firstapiR package provides R functions that download FIRST Robotics 
 Competition (FRC) data from the FIRST API server via hypertext transfer protocol
-(HTTP) requests. The firstapiR functions format the data as JSON text, XML text,
-or as R data frames.
-
-For obvious reasons, firstapiR should never ever be referred to as the FIRST API
-R Toolbox.
+(HTTP) requests. The firstapiR package formats the resulting data as JSON text,
+XML text, or as R data frames.
 
 ### FIRST - *F*or *I*nspiration and *R*ecognition in *S*cience and *T*echnology
 
@@ -50,13 +47,13 @@ username and authorization key. Make sure you keep your authorization key secret
 
 ### Learning R
 
-R is a functional, free language intended for statistical computing, data 
-analysis and plotting. I initially considered building this package in Python, 
-but in the end I wanted to learn to use R, so here we are. Compared to other 
-languages like Java or Python, R does seem a bit quirky at first, but it has 
-some very useful, built-in features for working with data. R has an extensive 
-array of free add-in packages for manipulating and visualizing data, plus there 
-is an excellent and free IDE available for R, RStudio.
+R is a functional language intended for statistical computing, data analysis and
+plotting. I initially considered building this package in Python, but in the end
+I wanted to learn to use R, so here we are. Compared to other languages like
+Java or Python, R does seem a bit quirky at first, but it has some useful,
+built-in features for working with data. R has an extensive array of free add-in
+packages for manipulating and visualizing data, plus there is an excellent and
+free IDE available for R, RStudio.
 
 If you are new to R, experimenting with firstapiR isn't the worst way to get 
 started, but there are some resources you should check out:
@@ -136,10 +133,10 @@ dist
 ```
 
 By default, GetSession creates a Session object with the current year, `format =
-"data.frame"`, and staging = `TRUE`. Consequently, GetDistricts() returns a data
-frame that is also an instance of class "Districts". GetDistricts() is useful 
-because the three-letter district codes are used as arguments to several other 
-firatapiR functions.
+"data.frame"`, and staging = `TRUE`. etDistricts() returns a data frame that is
+also an instance of class "Districts". GetDistricts() is useful because the
+three-letter district codes are used as arguments to several other firatapiR
+functions.
 
 **Note**: If you run the example above, passing the string "key" to 
 GetSession(), firstapiR skips the HTTP request and pulls data from a local
@@ -184,7 +181,8 @@ firstapiR functions:
 Table: **External Functions in firstapiR Package**
 
 In addition to help documents on each function, this package contains one other
-vignette: _Overview of firstapiR Functions_.
+vignette: 
+[Overview of firstapiR Functions](http://irwinsnet.github.io/firstapiR/Functions).
 
 
 ## Advanced Topics
@@ -196,7 +194,7 @@ affiliated with a valid FIRST API account. These examples work because for all
 firstapiR functions, if the key value in the Session object is the literal value
 "key", firstapiR skips the HTTP requests and extracts cached JSON or XML data
 from the R/sysdata.rda file. If you insert any other random value into the key
-parameter, or the username does not match an actual FIRST API username, the the
+parameter, or the username does not match an actual FIRST API username, the
 FIRST API will return a 401 status code and the firstapiR function will throw an
 error.
 
@@ -232,23 +230,25 @@ _local_url_ will be NULL. The _time_downloaded_ attribute will contain the time
 that the HTTP request was received, based on the local system time.
 
 There is also a _url_ attribute. This attribute always contains the URL that is 
-constructed from the arguments passed to the firstapiR function. Normally, this is the 
-actual URL that is sent to the FIRST API server, but when extracting local data,
-this URL is mostly ignored. In the GetDistricts() example, _local_url_ matches 
-_url_ because GetDistricts has no optional parameters and there is only one way 
-to call this function. Most other firstapiR functions have many optional 
-parameters and a multitude of possible return values. Since it's not practical 
-to cache the entire FIRST API server, when requesting local data (by setting the
-key parameter to "key"), firstapiR ignores the optional parameters. The local 
-data will be of the same type and format as what was requested. In these 
-situations the _url_ attribute will represent was was requested, and the 
-_local_url_ attribute will describe what was cached and returned.
+constructed from the arguments passed to the firstapiR function. Normally, this
+is the actual URL that is sent to the FIRST API server, but when extracting
+local data, this URL is mostly ignored. In the GetDistricts() example,
+_local_url_ matches _url_ because GetDistricts has no optional parameters and
+there is only one way to call this function. Most other firstapiR functions have
+many optional parameters and a multitude of possible return values. Since it's
+not practical to cache the entire FIRST API server, when requesting local data
+(by setting the key parameter to "key"), firstapiR ignores the optional
+parameters. The local data will be of the same type and format as what was
+requested. In these situations the _url_ attribute will represent was was
+requested, and the _local_url_ attribute will describe what was cached and
+returned.
 
 Use the `attr(object, attribute_name)` function and syntax to retrive an
 attribute from an object.
 
-Open the _data-raw/data.R_ folder to see the firstapiR commands that were used 
-to generate the local data.
+Open the _data-raw/data.R_ folder (only available in the firstapiR github 
+repository) to see the firstapiR commands that were used to generate the local
+data.
 
 ### Testing firstapiR on Your System
 
@@ -273,3 +273,7 @@ all tests. Store your username and key in character vectors named "username" and
 variables username and key exist and will run tests that make actual HTTP calls 
 to the FIRST API server. If either your username or key are incorrect, the tests 
 will fail due to an HTTP 401 error.
+
+## Next Vignette
+
+[Overview of firstapiR Functions](http://irwinsnet.github.io/firstapiR/Functions)

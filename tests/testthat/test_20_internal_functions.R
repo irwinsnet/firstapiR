@@ -66,25 +66,3 @@ test_that(".GetHttp() returns valid JSON and XML", {
                        staging = T)
   expect_equal(class(firstapiR:::.GetHTTP(sn_xml, "districts"))[1], "XMLNode")
 })
-
-test_that("mod_since argument causes old results to not be returned", {
-  if(!sess_http_valid) skip("No username or authorization key")
-
-  mod_date <- httr::http_date(Sys.time())
-
-  events <- GetEvents(sn, district = "PNW", mod_since = mod_date)
-
-  expect_true(is.na(events))
-  expect_equal(attr(events, "mod_since"), mod_date)
-})
-
-test_that("only_mod_since argument returns only recently changed data", {
-  if(!sess_http_valid) skip("No username or authorization key")
-
-  mod_date <- httr::http_date(Sys.time())
-
-  scores <- GetScores(sn, event <- "WAELL", only_mod_since = mod_date)
-
-  expect_true(is.na(scores))
-  expect_equal(attr(scores, "only_mod_since"), mod_date)
-})

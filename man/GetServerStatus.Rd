@@ -2,7 +2,7 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetServerStatus}
 \alias{GetServerStatus}
-\title{Get the status of the FIRST API server.}
+\title{Get the status of the FIRST API server}
 \usage{
 GetServerStatus(session)
 }
@@ -11,28 +11,8 @@ GetServerStatus(session)
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Status").
-
-  \strong{Data Frame Columns}
-  \enumerate{
-    \item \emph{name}: character
-    \item \emph{version}: double
-    \item \emph{status}: character}
-
-  \strong{Data Frame or NA Object Attributes}
-  \itemize{
-    \item \emph{url}: Character vector containing URL submitted to FIRST API
-      server.
-    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.
-    \item \emph{local_url}: Character vector containing URL used to download
-      local data.
-    \item \emph{time_downloaded}: Character vector containing the local
-      system time that the object was downladed from the FIRST API server.
-      Formatted an an http date and time string.
-    \item \emph{last_modified}: Character vector containing the date and time
-      that the data was last modified by the FIRST API server.}
+ XML::XMLDocument object, or a data.frame with class set to
+ c("data.frame, "Status").
 }
 \description{
 See the \emph{API Index} section of the FIRST API documentation at
@@ -42,6 +22,29 @@ See the \emph{API Index} section of the FIRST API documentation at
 The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0}
+}
+\section{Columns}{
+
+\enumerate{
+ \item \emph{name}: character
+ \item \emph{version}: double
+ \item \emph{status}: character}
+}
+
+\section{Attributes}{
+
+\itemize{
+ \item \emph{url}: Character vector containing URL submitted to FIRST API
+   server.
+ \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+   R/sysdata.rda file.
+ \item \emph{local_url}: Character vector containing URL used to download
+   local data.
+ \item \emph{time_downloaded}: Character vector containing the local
+   system time that the object was downladed from the FIRST API server.
+   Formatted an an http date and time string.
+ \item \emph{last_modified}: Character vector containing the date and time
+   that the data was last modified by the FIRST API server.}
 }
 \examples{
 sn <- GetSession("username", "key")

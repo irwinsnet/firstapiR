@@ -5,7 +5,8 @@
 \title{Get match scores and participating teams}
 \usage{
 GetMatchResults(session, event, level = "qual", team = NULL, match = NULL,
-  start = NULL, end = NULL, expand_cols = FALSE, ...)
+  start = NULL, end = NULL, expand_cols = FALSE, mod_since = NULL,
+  only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -26,7 +27,7 @@ qualification match. To get playoff match results, set \code{level} to
 \emph{"playoff"}. Cannot specify \code{team} when \code{match} is
 specified.}
 
-\item{start}{An integer vector containing the earliest match to
+\item{start}{An integer vector containing the earliest match to return.
 Optional.}
 
 \item{end}{An integer vector containing the latest match to return. Optional.}
@@ -47,11 +48,23 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame,
-  "MatchResults").
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "MatchResults"). Returns a logical vector of length one with value
+  \code{NA} if data is unchanged since date and time passed in arguments
+  \code{mod_since} or \code{only_mod_since}.
+}
+\description{
+See the \emph{Match Results} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
+}
+\details{
+The FIRST API URL format is:
 
-  \strong{Data Frame Columns}
+\code{https://frc-api.firstinspires.org/v2.0/season/matches/event
+?tournamentLevel=level&teamNumber=team&matchNumber=match&start=start&end=end}
+}
+\section{Columns}{
+
   \enumerate{
      \item \emph{actualStartTime}: character
      \item \emph{description}: character
@@ -75,8 +88,10 @@ Depending on the \code{session$format} value, returns JSON text, an
          \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
          \item \emph{Blue1.surrogate, Blue2.surrogate,
            Blue3.surrogate}: logical}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -95,16 +110,6 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-See the \emph{Match Results} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
-}
-\details{
-The FIRST API URL format is:
-
-\code{https://frc-api.firstinspires.org/v2.0/season/matches/event
-?tournamentLevel=level&teamNumber=team&matchNumber=match&start=start&end=end}
 }
 \examples{
 sn <- GetSession("username", "key")

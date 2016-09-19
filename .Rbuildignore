@@ -1,5 +1,5 @@
-^.*\.Rproj$          # Ignores RStudio project files.
-^\.Rproj\.user$      # Ignores RStudio project files.
-^\.git               # Ignores git repository files.
-^data-raw            # Ignores files used to create data files.
-^docs$               # Ignores docs folder, which contains github pages.
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.git
+^data-raw
+^docs

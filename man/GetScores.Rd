@@ -5,7 +5,7 @@
 \title{Get detailed match scores}
 \usage{
 GetScores(session, event, level = "qual", team = NULL, match = NULL,
-  start = NULL, end = NULL, ...)
+  start = NULL, end = NULL, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -26,7 +26,7 @@ qualification match. To get playoff match results, set \code{level} to
 \emph{"playoff"}. Cannot specify \code{team} when \code{match} is
 specified.}
 
-\item{start}{An integer vector containing the earliest match to
+\item{start}{An integer vector containing the earliest match to return.
 Optional.}
 
 \item{end}{An integer vector containing the latest match to return. Optional.}
@@ -41,10 +41,36 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Scores").
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "Scores"). Returns a logical vector of length one with value \code{NA} if
+  data is unchanged since date and time passed in arguments \code{mod_since}
+  or \code{only_mod_since}.
+}
+\description{
+The results vary depending on the season requested. The 2016 data fields are
+listed here. See the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for data fields for prior seasons.
+The data frame contains two rows for each match, one for blue and the other
+for red.
+}
+\details{
+\code{GetScores()} contains both the blue and red alliance scores for each
+match, but it does not list the teams assigned to each alliance. Use R's
+\code{merge()} function to merge the data frames returned by
+\code{GetMatchResults} and \code{GetScores()} to create a data frame that
+contains both team numbers and detailed scores:
+\code{merge(match_results_df, scores_df)} should do the trick.
 
-  \strong{Data Frame Columns}
+See the \emph{Detailed Scores} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
+
+The FIRST API URL format is:
+
+\code{https://frc-api.firstinspires.org/v2.0/season/matches/event/level?
+teamNumber=team&matchNumber=match&start=start&end=end}
+}
+\section{Columns}{
+
   \enumerate{
      \item \emph{matchLevel}: character
      \item \emph{matchNumber}: integer
@@ -67,8 +93,10 @@ Depending on the \code{session$format} value, returns JSON text, an
        teleopChallengePoints, teleopScalePoints}: integer
      \item \emph{breachPoints, capturePoints}: integer
      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -87,22 +115,6 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-The results vary depending on the season requested. The 2016 data fields are
-listed here. See the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for data fields for prior seasons.
-The data frame contains two rows for each match, one for blue and the other
-for red.
-}
-\details{
-See the \emph{Detailed Scores} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
-
-The FIRST API URL format is:
-
-\code{https://frc-api.firstinspires.org/v2.0/season/matches/event/level?
-teamNumber=team&matchNumber=match&start=start&end=end}
 }
 \examples{
 sn <- GetSession("username", "key")

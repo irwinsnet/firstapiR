@@ -2,26 +2,48 @@
 % Please edit documentation in R/firstapiR_http.R
 \name{GetAwardsList}
 \alias{GetAwardsList}
-\title{Get a list of all available awards for a season.}
+\title{Get a list of all available awards for a season}
 \usage{
-GetAwardsList(session, ...)
+GetAwardsList(session, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
+
+\item{mod_since}{A character vector containing an HTTP formatted date and
+time. Returns \code{NA} if no changes have been made to the requested data
+since the date and time provided. Optional.}
+
+\item{only_mod_since}{A character vector containing an HTTP formatted date
+and time. This function only returns data that has changed since the date
+and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "AwardsList").
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "AwardsList"). Returns a logical vector of length one with value \code{NA}
+  if data is unchanged since date and time passed in arguments
+  \code{mod_since} or \code{only_mod_since}.
+}
+\description{
+See the \emph{Awards Listing} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
+}
+\details{
+The FIRST API URL format is:
 
-  \strong{Data Frame Columns}
+\code{https://frc-api.firstinspires.org/v2.0/season/awards/list}
+}
+\section{Columns}{
+
   \enumerate{
      \item \emph{awardId}: integer
      \item \emph{eventType}: character
      \item \emph{description}: character
      \item \emph{forPerson}: logical}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -35,20 +57,11 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{last_modified}: Character vector containing the date and time
       that the data was last modified by the FIRST API server.
     \item \emph{mod_since}: Character vector containing the value passed to
-      the \code{mod_since argument}, or NULL if no argument was passed.
+      the \code{mod_since} argument, or NULL if no argument was passed.
       Formatted as an http date and time string.
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-See the \emph{Awards Listing} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
-}
-\details{
-The FIRST API URL format is:
-
-\code{https://frc-api.firstinspires.org/v2.0/season/awards/list}
 }
 \examples{
 sn <- GetSession("username", "key")

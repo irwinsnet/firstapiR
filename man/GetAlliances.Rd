@@ -4,7 +4,7 @@
 \alias{GetAlliances}
 \title{Get teams assigned to playoff alliances}
 \usage{
-GetAlliances(session, event, ...)
+GetAlliances(session, event, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -22,18 +22,35 @@ and time provided. Optional.}
 }
 \value{
 Depending on the \code{session$format} value, returns JSON text, an
-  XML::XMLDocument object, a logical vector of length one with value
-  \code{NA}, or a data.frame with class set to c("data.frame, "Alliances").
+  XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+  "Alliances"). Returns a logical vector of length one with value \code{NA}
+  if data is unchanged since date and time passed in arguments
+  \code{mod_since} or \code{only_mod_since}.
+}
+\description{
+Returns a list of playoff alliances, including the alliance captains and
+teams that were selected for each alliance.
+}
+\details{
+See the \emph{Event Alliances} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
 
-  \strong{Data Frame Columns}
+The FIRST API URL format is:
+
+\code{https://frc-api.firstinspires.org/v2.0/season/alliances/event}
+}
+\section{Columns}{
+
   \enumerate{
      \item \emph{number}: integer
      \item \emph{name}: character
      \item \emph{captain, round1, round2, round3}: integer
      \item \emph{backup, backupReplaced}: integer
      \item \emph{count}: integer}
+}
 
-  \strong{Data Frame or NA Object Attributes}
+\section{Attributes}{
+
   \itemize{
     \item \emph{url}: Character vector containing URL submitted to FIRST API
       server.
@@ -52,18 +69,6 @@ Depending on the \code{session$format} value, returns JSON text, an
     \item \emph{only_mod_since}: Character vector containing the value passed
       to the \code{only_mod_since} argument, or NULL if no argument was
       passed. Formatted as an http date and time string.}
-}
-\description{
-Returns a list of playoff alliances, including the alliance captains and
-teams that were selected for the each alliance.
-}
-\details{
-See the \emph{Event Alliances} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
-
-The FIRST API URL format is:
-
-\code{https://frc-api.firstinspires.org/v2.0/season/alliances/event}
 }
 \examples{
 sn <- GetSession("username", "key")

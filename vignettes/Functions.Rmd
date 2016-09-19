@@ -9,11 +9,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The _Getting Started_ vignette covered how to use the `GetSession()` function
-to create a Session object and how to use that Session object in other
-firstapiR functions. This vignette provides an overview of the remaining
-firstapiR functions. For detailed information on each function, type
-`help(function_name)` at the console or in the RStudio help view search box.
+The [Getting Started](http://irwinsnet.github.io/firstapiR/Getting_Started)
+vignette covered how to use the `GetSession()` function to create a Session
+object and how to use that Session object in other firstapiR functions. This
+vignette provides an overview of the remaining firstapiR functions. For detailed
+information on each function, type `help(function_name)` at the console or in
+the RStudio help view search box.
 
 
 ## Simple Functions

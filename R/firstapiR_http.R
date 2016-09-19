@@ -6,14 +6,14 @@
 #' awards.
 #'
 #' The FIRST API accepts formatted hypertext transfer protocol (HTTP) GET
-#' requests and provides FRC data in either javascript object notation (json) or
-#' extensible markup language (xml) format. Detailed documentation for the FIRST
+#' requests and provides FRC data in either javascript object notation (JSON) or
+#' extensible markup language (XML) format. Detailed documentation for the FIRST
 #' API, including precise rules for constructing the HTTP requests, is available
 #' at \url{http://docs.frcevents2.apiary.io/#}
 #'
-#' A username and authorization key are required for connecting to the FIRST
-#' API and for using the firstapiR. To obtain a username and key, join the FIRST
-#' Community Developers project on TeamForge at
+#' A username and authorization key are required for connecting to the FIRST API
+#' and for using firstapiR. To obtain a username and key, join the \emph{FIRST
+#' Community Developers} project on TeamForge at
 #' \url{https://usfirst.collab.net/sf/projects/first_community_developers/}
 #'
 #' These functions return R dataframes by default. Optionally, the functions
@@ -42,22 +42,23 @@ NULL
 
 
 #  GetSession() ================================================================
-#' Create a FIRST API session
+#' Create a firstapiR session
 #'
-#' Every FIRST API function requires a session as its first parameter.
+#' Every firstapiR function requires a Session object as its first parameter.
 #'
-#' The session is an R list that contains the FIRST API username, authorization
-#' key, season, format, and a boolean value that specifies whether to use
-#' the staging server instead of the production server.
+#' The Session object is an R list that contains the FIRST API username and
+#' authorization key, season, format, and a boolean value that specifies whether
+#' to use the staging server instead of the production server.
 #'
-#' The key field of the Session object may be set to the value "key". If this is
-#' done, the firstapiR functions will skip the HTTP request and will extract
-#' example data from the R/sysdata.rda file. This function is for testing and
-#' demonstrations when no internet connection or valid authorization key is
-#' available. Example data frames returned by firstapiR functions will have
-#' their "local_test_data" attribute set to TRUE and the "time_downloaded"
-#' attribute will be set to the date and time that the example data was
-#' downloaded from the server and stored in the R/sysdata.rda file.
+#' The \code{key} argument may be set to the value "key". If this is done, the
+#' firstapiR functions will skip the HTTP request and will extract example data
+#' from the R/sysdata.rda file, which is included with the firstapiR package.
+#' This function is for testing and demonstrations when no internet connection
+#' or valid authorization key is available. Example data frames returned by
+#' firstapiR functions will have their \emph{local_test_data} attribute set to
+#' \code{TRUE} and the \emph{time_downloaded} attribute will be set to the date
+#' and time that the example data was downloaded from the server and stored in
+#' the R/sysdata.rda file.
 #'
 #' Throws an error if \code{season}, \code{format}, or \code{staging} arguments
 #' are incorrect.
@@ -65,14 +66,14 @@ NULL
 #' @param username A character vector containing the username assigned by FIRST.
 #' @param key A character vector containing the authorization key assigned by
 #'   FIRST, or the value "key".
-#' @param season An integer vector containing the 4-digit year. Defaults to the
-#'   current year. Must be equal to or less than the current season and greater
-#'   than or equal to 2015.
+#' @param season An integer vector containing the 4-digit year. Must be equal to
+#'   or less than the current season and greater than or equal to 2015.
+#'   Optional: defaults to the current year.
 #' @param format A character vector that specifies the data format that will be
-#'   returned by firstapiR functions. Can be "json", "data.frame", or "xml".
-#'   Defaults to "data.frame". Case insensitive.
+#'   returned by firstapiR functions. Can be "json", "data.frame", or "xml"
+#'   (case insensitive). Optional: defaults to "data.frame".
 #' @param staging A logical vector. If set to \code{TRUE}, firstapiR uses the
-#'   staging URL. Defaults to \code{FALSE}.
+#'   staging URL. Optional: defaults to \code{FALSE}.
 #'
 #' @return A Session object containing all GetSession parameters.
 #'   The class attribute is set to c("list", "Session")
@@ -108,7 +109,7 @@ GetSession <- function(username, key,
 
 
 #  GetServerStatus() ===========================================================
-#' Get the status of the FIRST API server.
+#' Get the status of the FIRST API server
 #'
 #' See the \emph{API Index} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -120,28 +121,28 @@ GetSession <- function(username, key,
 #' @param session A Session object created with \code{GetSession()}.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Status").
+#'  XML::XMLDocument object, or a data.frame with class set to
+#'  c("data.frame, "Status").
 #'
-#'   \strong{Data Frame Columns}
-#'   \enumerate{
-#'     \item \emph{name}: character
-#'     \item \emph{version}: double
-#'     \item \emph{status}: character}
+#' @section Columns:
+#' \enumerate{
+#'  \item \emph{name}: character
+#'  \item \emph{version}: double
+#'  \item \emph{status}: character}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.}
+#' @section Attributes:
+#' \itemize{
+#'  \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'    server.
+#'  \item \emph{local_test_data}: \code{TRUE} if data was extracted from
+#'    R/sysdata.rda file.
+#'  \item \emph{local_url}: Character vector containing URL used to download
+#'    local data.
+#'  \item \emph{time_downloaded}: Character vector containing the local
+#'    system time that the object was downladed from the FIRST API server.
+#'    Formatted an an http date and time string.
+#'  \item \emph{last_modified}: Character vector containing the date and time
+#'    that the data was last modified by the FIRST API server.}
 #'
 #' @export
 #'
@@ -181,10 +182,12 @@ GetServerStatus <- function(session) {
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Season").
+#'   XML::XMLDocument object, or a data.frame with class set to
+#'   c("data.frame, "Season"). Returns a logical vector of length one with value
+#'   \code{NA} if data is unchanged since date and time passed in arguments
+#'   \code{mod_since} or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'     \item \emph{eventCount}: integer
 #'     \item \emph{gameName}: factor
@@ -195,7 +198,7 @@ GetServerStatus <- function(session) {
 #'     \item \emph{FRCChampionships.startDate}: character
 #'     \item \emph{FRCChampionships.location}: character}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -220,8 +223,8 @@ GetServerStatus <- function(session) {
 #' @examples
 #' sn <- GetSession("username", "key", season = 2015, staging = TRUE)
 #' summary <- GetSeason(sn)
-GetSeason <- function(session, ...) {
-  season <- .GetHTTP(session, "", ...)
+GetSeason <- function(session, mod_since = NULL, only_mod_since = NULL) {
+  season <- .GetHTTP(session, "", mod_since, only_mod_since)
 
   # Skip rest of function for empty, XML, or JSON results
   if(is.na(season) || session$format != "data.frame") return(season)
@@ -254,16 +257,18 @@ GetSeason <- function(session, ...) {
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Districts").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "Districts"). Returns a logical vector of length one with value \code{NA}
+#'   if data is unchanged since date and time passed in arguments
+#'   \code{mod_since} or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'     \item \emph{code}: character
 #'     \item \emph{name}: character
 #'     \item \emph{districtCount}: integer}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -288,9 +293,9 @@ GetSeason <- function(session, ...) {
 #' @examples
 #' sn <- GetSession("username", "key")
 #' districts <- GetDistricts(sn)
-GetDistricts <- function(session, ...) {
+GetDistricts <- function(session, mod_since = NULL, only_mod_since = NULL) {
   url <- "districts"
-  districts <- .GetHTTP(session, url, ...)
+  districts <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip rest of function for empty, XML, or JSON results
   if(is.na(districts) || session$format != "data.frame") return(districts)
@@ -347,10 +352,12 @@ GetDistricts <- function(session, ...) {
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Events").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "Events"). Returns a logical vector of length one with value \code{NA} if
+#'   data is unchanged since date and time passed in arguments \code{mod_since}
+#'   or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'     \item \emph{code}: character
 #'     \item \emph{divisionCode}: character
@@ -369,7 +376,7 @@ GetDistricts <- function(session, ...) {
 #'     \item \emph{dateEnd}: character
 #'     \item \emph{eventCount}: integer}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -384,10 +391,10 @@ GetDistricts <- function(session, ...) {
 #'       that the data was last modified by the FIRST API server.
 #'     \item \emph{mod_since}: Character vector containing the value passed to
 #'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
+#'       Formatted as an HTTP date and time string.
 #'     \item \emph{only_mod_since}: Character vector containing the value passed
 #'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#'       passed. Formatted as an HTTP date and time string.}
 #'
 #' @export
 #'
@@ -397,7 +404,8 @@ GetDistricts <- function(session, ...) {
 #' frc_data <- GetEvents(sn, district = 'PNW')
 #' frc_data <- GetEvents(sn, team = 360, exclude_district = TRUE)
 GetEvents <- function(session, event = NULL, team = NULL,
-                      district = NULL, exclude_district = NULL, ...) {
+                      district = NULL, exclude_district = NULL,
+                      mod_since = NULL, only_mod_since = NULL) {
   # Check for unallowed combinations of arguments.
   if(!is.null(event) && (!is.null(team) || !is.null(district) ||
                               !is.null(exclude_district)))
@@ -411,7 +419,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
   url <- .AddHTTPArgs("events", event_args)
 
   # Send HTTP request
-  events <- .GetHTTP(session, url, ...)
+  events <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip rest of function for empty, XML, or JSON results
   if(is.na(events) || session$format != "data.frame") return(events)
@@ -441,7 +449,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' format, \code{GetTeams} will send a request to the FIRST API server and
 #' determine from the first response whether additional HTTP requests are
 #' necessary to retrieve all requested data. \code{GetTeams} will then merge all
-#' responses into a single data frame. For xml and json formats, the user will
+#' responses into a single data frame. For XML and JSON formats, the user will
 #' have to call \code{GetTeams} for each page of data, specifying the page with
 #' the \code{page} argument.
 #'
@@ -465,7 +473,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'   (i.e., 'Idaho', \emph{not} 'ID'). If state is specified, \code{GetTeams()}
 #'   will filter results to all teams in the specified state. Optional.
 #' @param page An integer vector that specifyies which page of results should be
-#'   returned. Optional. Use only for xml or json formats.
+#'   returned. Optional. Use only for XML or JSON formats.
 #' @param mod_since A character vector containing an HTTP formatted date and
 #'   time. Returns \code{NA} if no changes have been made to the requested data
 #'   since the date and time provided. Optional.
@@ -474,10 +482,12 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Teams").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "Teams"). Returns a logical vector of length one with value \code{NA} if
+#'   data is unchanged since date and time passed in arguments \code{mod_since}
+#'   or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'     \item \emph{teamNumber}: character
 #'     \item \emph{nameFull}: character
@@ -494,7 +504,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'     \item \emph{pageCurrent}: integer
 #'     \item \emph{pageTotal}: integer}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -522,7 +532,8 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' GetTeams(sn, district = "FIM")
 #' GetTeams(sn, event = "CMP-CARVER")
 GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
-                      state = NULL, page = NULL, ...) {
+                      state = NULL, page = NULL, mod_since = NULL,
+                      only_mod_since = NULL) {
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && (!is.null(event) || !is.null(district) ||
                          !is.null(state)))
@@ -543,7 +554,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
   teams <- list()
 
   # Send HTTP request and get first page of data.
-  teams[[1]] <- .GetHTTP(session, url, ...)
+  teams[[1]] <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(teams) || session$format != "data.frame") return(teams[[1]])
@@ -623,7 +634,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' @param level A character vector containing either \emph{"qual"} or
 #'   \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.
 #' @param team An integer vector containing a team number. Optional.
-#' @param start An integer vector containing the earliest match to
+#' @param start An integer vector containing the earliest match to return.
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
 #' @param expand_cols A logical value that defaults to \code{FALSE}. If
@@ -639,10 +650,12 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Schedule").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "Schedule"). Returns a logical vector of length one with value \code{NA} if
+#'   data is unchanged since date and time passed in arguments \code{mod_since}
+#'   or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'     \item \emph{description}: character
 #'     \item \emph{field}: character
@@ -665,13 +678,25 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'         \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
 #'           logical}
 #'
-#'   \strong{Data Frame Attributes}
-#'     \itemize{
-#'     \item \emph{url}: URL submitted to FIRST API
-#'     \item \emph{time_downloaded}: Local System time that the object was
-#'     downladed from the FIRST API server.
+#' @section Attributes:
+#'  \enumerate{
+#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
+#'       server.
 #'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.}
+#'       R/sysdata.rda file.
+#'     \item \emph{local_url}: Character vector containing URL used to download
+#'       local data.
+#'     \item \emph{time_downloaded}: Character vector containing the local
+#'       system time that the object was downladed from the FIRST API server.
+#'       Formatted an an http date and time string.
+#'     \item \emph{last_modified}: Character vector containing the date and time
+#'       that the data was last modified by the FIRST API server.
+#'     \item \emph{mod_since}: Character vector containing the value passed to
+#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       Formatted as an http date and time string.
+#'     \item \emph{only_mod_since}: Character vector containing the value passed
+#'       to the \code{only_mod_since} argument, or NULL if no argument was
+#'       passed. Formatted as an http date and time string.}
 #'
 #' @export
 #'
@@ -682,7 +707,8 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' GetSchedule(sn, "WAAMV", level='playoff')
 #' GetSchedule(sn, "PNCMP", team=4911, end=25)
 GetSchedule <- function (session, event, level = "qual", team = NULL,
-                         start = NULL, end = NULL, expand_cols = FALSE, ...) {
+                         start = NULL, end = NULL, expand_cols = FALSE,
+                         mod_since = NULL, only_mod_since = NULL) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
 
@@ -692,7 +718,7 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
   url <- .AddHTTPArgs(paste("schedule", event, sep = "/"), sched_args)
 
   # Send HTTP request
-  sched <- .GetHTTP(session, url, ...)
+  sched <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(sched) || session$format != "data.frame") return(sched)
@@ -774,7 +800,7 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 
 
 #  GetHybridSchedule() =========================================================
-#' Get the match schedule and results.
+#' Get the match schedule and results
 #'
 #' For matches that have been played, \code{GetHybridSchedule} returns the teams
 #' assigned to the match and the match results. If the mtach has not yet been
@@ -803,8 +829,8 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' @param event A character vector containing a FIRST API event code
 #'   (see \code{GetEvents}).
 #' @param level A character vector containing either \emph{"qual"} or
-#'   \emph{"playoff"}. Defaults to \emph{"qual"}. Optional.
-#' @param start An integer vector containing the earliest match to
+#'   \emph{"playoff"}. Optional: defaults to \emph{"qual"}.
+#' @param start An integer vector containing the earliest match to return.
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
 #' @param expand_cols A logical value that defaults to \code{FALSE}. If
@@ -820,11 +846,12 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame,
-#'   "HybridSchedule").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "HybridSchedule"). Returns a logical vector of length one with value
+#'   \code{NA} if data is unchanged since date and time passed in arguments
+#'   \code{mod_since} or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'      \item \emph{description}: character
 #'      \item \emph{tournamentLevel}: factor
@@ -852,7 +879,7 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'          \item \emph{Red1.dq, Red2.dq, Red3.dq}: logical
 #'          \item \emph{Blue1.dq, Blue2.dq, Blue3.dq}: logical}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -879,7 +906,8 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' GetHybridSchedule(sn, event = "ORPHI")
 #' GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
 GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
-                              end = NULL, expand_cols = FALSE, ...) {
+                              end = NULL, expand_cols = FALSE,
+                              mod_since = NULL, only_mod_since = NULL) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
 
@@ -889,7 +917,7 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
                       sched_args)
 
   # Send HTTP request
-  sched <- .GetHTTP(session, url, ...)
+  sched <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(sched) || session$format != "data.frame") return(sched)
@@ -1019,7 +1047,7 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'   qualification match. To get playoff match results, set \code{level} to
 #'   \emph{"playoff"}. Cannot specify \code{team} when \code{match} is
 #'   specified.
-#' @param start An integer vector containing the earliest match to
+#' @param start An integer vector containing the earliest match to return.
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
 #' @param expand_cols A logical value that defaults to \code{FALSE}. If
@@ -1035,11 +1063,12 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame,
-#'   "MatchResults").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "MatchResults"). Returns a logical vector of length one with value
+#'   \code{NA} if data is unchanged since date and time passed in arguments
+#'   \code{mod_since} or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'      \item \emph{actualStartTime}: character
 #'      \item \emph{description}: character
@@ -1064,7 +1093,7 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'          \item \emph{Blue1.surrogate, Blue2.surrogate,
 #'            Blue3.surrogate}: logical}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -1094,7 +1123,8 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #' GetMatchResults(sn, "CMP-ARCHIMEDES", level="qual", start=10, end=20)
 GetMatchResults <- function(session, event, level = "qual", team = NULL,
                             match = NULL, start = NULL, end = NULL,
-                            expand_cols = FALSE, ...) {
+                            expand_cols = FALSE, mod_since = NULL,
+                            only_mod_since = NULL) {
   # Check for unallowed combinations of arguments.
   if((!is.null(match) || !is.null(start) || !is.null(end)) && is.null(level))
     stop("You must specify the level when you specify match, start, or end.")
@@ -1109,7 +1139,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   url <- .AddHTTPArgs(paste("matches", event, sep = "/"), result_args)
 
   # Send HTTP request and get data.
-  matches <- .GetHTTP(session, url, ...)
+  matches <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(matches) || session$format != "data.frame") return(matches)
@@ -1217,6 +1247,13 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' The data frame contains two rows for each match, one for blue and the other
 #' for red.
 #'
+#' \code{GetScores()} contains both the blue and red alliance scores for each
+#' match, but it does not list the teams assigned to each alliance. Use R's
+#' \code{merge()} function to merge the data frames returned by
+#' \code{GetMatchResults} and \code{GetScores()} to create a data frame that
+#' contains both team numbers and detailed scores:
+#' \code{merge(match_results_df, scores_df)} should do the trick.
+#'
 #' See the \emph{Detailed Scores} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
 #'
@@ -1238,7 +1275,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'   qualification match. To get playoff match results, set \code{level} to
 #'   \emph{"playoff"}. Cannot specify \code{team} when \code{match} is
 #'   specified.
-#' @param start An integer vector containing the earliest match to
+#' @param start An integer vector containing the earliest match to return.
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
 #' @param mod_since A character vector containing an HTTP formatted date and
@@ -1249,10 +1286,12 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Scores").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "Scores"). Returns a logical vector of length one with value \code{NA} if
+#'   data is unchanged since date and time passed in arguments \code{mod_since}
+#'   or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'      \item \emph{matchLevel}: character
 #'      \item \emph{matchNumber}: integer
@@ -1276,7 +1315,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{breachPoints, capturePoints}: integer
 #'      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -1304,7 +1343,8 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' GetScores(sn, event = "WAELL", start = 1, end = 10)
 #' GetScores(sn, event = "WAELL", match = 15)
 GetScores <- function(session, event, level = "qual", team = NULL,
-                              match = NULL, start = NULL, end = NULL, ...) {
+                              match = NULL, start = NULL, end = NULL,
+                              mod_since = NULL, only_mod_since = NULL) {
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && !is.null(match))
     stop("You cannot specify both a team and match number")
@@ -1317,7 +1357,7 @@ GetScores <- function(session, event, level = "qual", team = NULL,
   url <- .AddHTTPArgs(paste("scores", event, level, sep = "/"), score_args)
 
   # Send HTTP request and get data.
-  scores <- .GetHTTP(session, url, ...)
+  scores <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(scores) || session$format != "data.frame") return(scores)
@@ -1369,7 +1409,7 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #' Get teams assigned to playoff alliances
 #'
 #' Returns a list of playoff alliances, including the alliance captains and
-#' teams that were selected for the each alliance.
+#' teams that were selected for each alliance.
 #'
 #' See the \emph{Event Alliances} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -1389,10 +1429,12 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Alliances").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "Alliances"). Returns a logical vector of length one with value \code{NA}
+#'   if data is unchanged since date and time passed in arguments
+#'   \code{mod_since} or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'      \item \emph{number}: integer
 #'      \item \emph{name}: character
@@ -1400,7 +1442,7 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{backup, backupReplaced}: integer
 #'      \item \emph{count}: integer}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -1425,12 +1467,13 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #' @examples
 #' sn <- GetSession("username", "key")
 #' GetAlliances(sn, "WAAMV")
-GetAlliances <- function (session, event, ...) {
+GetAlliances <- function (session, event, mod_since = NULL,
+                          only_mod_since = NULL) {
   # Assemble URL
   url <- paste("alliances/", event, sep="")
 
   # Send HTTP request
-  alliances <- .GetHTTP(session, url, ...)
+  alliances <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(alliances) || session$format != "data.frame") return(alliances)
@@ -1471,10 +1514,12 @@ GetAlliances <- function (session, event, ...) {
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Rankings").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "Rankings"). Returns a logical vector of length one with value \code{NA} if
+#'   data is unchanged since date and time passed in arguments \code{mod_since}
+#'   or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'      \item \emph{rank}: integer
 #'      \item \emph{teamNumber}: integer
@@ -1485,7 +1530,7 @@ GetAlliances <- function (session, event, ...) {
 #'      \item \emph{dq}: integer
 #'      \item \emph{matchesPlayed}: integer}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -1512,7 +1557,8 @@ GetAlliances <- function (session, event, ...) {
 #' GetRankings(sn, "WAAMV")
 #' GetRankings(sn, "PNCMP", team = 1983)
 #' GetRankings(sn, "ARCHIMEDES", top = 5)
-GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
+GetRankings <- function (session, event, team = NULL, top = NULL,
+                         mod_since = NULL, only_mod_since = NULL) {
   # Check for unallowed combinations of arguments.
   if(!is.null(team) && !is.null(top))
     stop("You cannot specify both the team and top argument")
@@ -1522,7 +1568,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
   url <- .AddHTTPArgs(paste("rankings", event, sep = "/"), rank_args)
 
   # Send HTTP request and get data.
-  rankings <- .GetHTTP(session, url, ...)
+  rankings <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(rankings) || session$format != "data.frame") return(rankings)
@@ -1536,7 +1582,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
 
 
 #  GetAwards() =================================================================
-#' Get the awards that were presented to a team or at an event.
+#' Get the awards that were presented at an event
 #'
 #' See the \emph{Event Awards} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -1558,10 +1604,12 @@ GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
 #'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "Awards").
+#'   XML::XMLDocument object or a data.frame with class set to c("data.frame,
+#'   "Awards"). Returns a logical vector of length one with value \code{NA} if
+#'   data is unchanged since date and time passed in arguments \code{mod_since}
+#'   or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'      \item \emph{awardId}: integer
 #'      \item \emph{teamId}: integer
@@ -1574,7 +1622,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
 #'      \item \emph{fullTeamName}: character
 #'      \item \emph{person}: character}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -1601,7 +1649,8 @@ GetRankings <- function (session, event, team = NULL, top = NULL, ...) {
 #' GetAwards(sn, "PNCMP")
 #' GetAwards(sn, team = 360)
 #' GetAwards(sn, "PNCMP", 360)
-GetAwards <- function(session, event = NULL, team = NULL, ...) {
+GetAwards <- function(session, event = NULL, team = NULL,
+                      mod_since = NULL, only_mod_since = NULL) {
   # Check for incorrect combinations of arguments.
   if(is.null(event) && is.null(team))
     stop("You must specify either a team number or event code")
@@ -1614,7 +1663,7 @@ GetAwards <- function(session, event = NULL, team = NULL, ...) {
     url <- paste(url, team, sep = "/")
 
   # Send HTTP request
-  awards <- .GetHTTP(session, url, ...)
+  awards <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(awards) || session$format != "data.frame") return(awards)
@@ -1628,7 +1677,7 @@ GetAwards <- function(session, event = NULL, team = NULL, ...) {
 
 
 #  GetAwardsList() =============================================================
-#' Get a list of all available awards for a season.
+#' Get a list of all available awards for a season
 #'
 #' See the \emph{Awards Listing} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -1638,19 +1687,27 @@ GetAwards <- function(session, event = NULL, team = NULL, ...) {
 #' \code{https://frc-api.firstinspires.org/v2.0/season/awards/list}
 #'
 #' @param session A Session object created with \code{GetSession()}.
+#' @param mod_since A character vector containing an HTTP formatted date and
+#'   time. Returns \code{NA} if no changes have been made to the requested data
+#'   since the date and time provided. Optional.
+#' @param only_mod_since A character vector containing an HTTP formatted date
+#'   and time. This function only returns data that has changed since the date
+#'   and time provided. Optional.
 #'
 #' @return Depending on the \code{session$format} value, returns JSON text, an
-#'   XML::XMLDocument object, a logical vector of length one with value
-#'   \code{NA}, or a data.frame with class set to c("data.frame, "AwardsList").
+#'   XML::XMLDocument object, or a data.frame with class set to c("data.frame,
+#'   "AwardsList"). Returns a logical vector of length one with value \code{NA}
+#'   if data is unchanged since date and time passed in arguments
+#'   \code{mod_since} or \code{only_mod_since}.
 #'
-#'   \strong{Data Frame Columns}
+#' @section Columns:
 #'   \enumerate{
 #'      \item \emph{awardId}: integer
 #'      \item \emph{eventType}: character
 #'      \item \emph{description}: character
 #'      \item \emph{forPerson}: logical}
 #'
-#'   \strong{Data Frame or NA Object Attributes}
+#' @section Attributes:
 #'   \itemize{
 #'     \item \emph{url}: Character vector containing URL submitted to FIRST API
 #'       server.
@@ -1664,7 +1721,7 @@ GetAwards <- function(session, event = NULL, team = NULL, ...) {
 #'     \item \emph{last_modified}: Character vector containing the date and time
 #'       that the data was last modified by the FIRST API server.
 #'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
+#'       the \code{mod_since} argument, or NULL if no argument was passed.
 #'       Formatted as an http date and time string.
 #'     \item \emph{only_mod_since}: Character vector containing the value passed
 #'       to the \code{only_mod_since} argument, or NULL if no argument was
@@ -1675,12 +1732,12 @@ GetAwards <- function(session, event = NULL, team = NULL, ...) {
 #' @examples
 #' sn <- GetSession("username", "key")
 #' GetAwardsList(sn)
-GetAwardsList <- function(session, ...) {
+GetAwardsList <- function(session, mod_since = NULL, only_mod_since = NULL) {
   # Assemble URL
   url <- "awards/list"
 
   # Send HTTP request
-  alist <- .GetHTTP(session, url, ...)
+  alist <- .GetHTTP(session, url, mod_since, only_mod_since)
 
   # Skip remainder of function for empty, XML, or JSON formats.
   if(is.na(alist) || session$format != "data.frame") return(alist)
