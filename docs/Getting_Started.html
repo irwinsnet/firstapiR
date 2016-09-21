@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stacy Irwin" />
 
-<meta name="date" content="2016-09-18" />
+<meta name="date" content="2016-09-20" />
 
 <title>Getting Started with firstapiR</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Getting Started with firstapiR</h1>
 <h4 class="author"><em>Stacy Irwin</em></h4>
-<h4 class="date"><em>2016-09-18</em></h4>
+<h4 class="date"><em>2016-09-20</em></h4>
 
 
 
@@ -256,6 +256,10 @@ dist$name[dist$code ==<span class="st"> &quot;PNW&quot;</span>]</code></pre></di
 <p>If you run the <code>test_dir</code> command, you’ll probably notice that several tests are skipped. The tests are set up such that most of them can run without an internet connection or a FIRST API account. This is OK because local data requests use almost all of the firstapiR code that would be used for an actual HTTP request, including evaluation of the function arguments, constructing the URL and HTTP headers, and creating and formatting the data frame from JSON text. (If you specify the data frame format, firstapiR actually requests JSON text from the FIRST API server, because JSON is more compact than XML.) Only the actual HTTP request is skipped.</p>
 <p>If you have a username and authorization key assigned by FIRST, then you can run all tests. Store your username and key in character vectors named “username” and “key”. Then run <code>test_dir</code> from the R console. The tests will detect that the variables username and key exist and will run tests that make actual HTTP calls to the FIRST API server. If either your username or key are incorrect, the tests will fail due to an HTTP 401 error.</p>
 </div>
+</div>
+<div id="ask-questions" class="section level2">
+<h2>Ask Questions</h2>
+<p>Post an issue on the <a href="https://github.com/irwinsnet/firstapiR">firstapiR github repository</a> if you have questions, find bugs or have recommendations for the next version.</p>
 </div>
 <div id="next-vignette" class="section level2">
 <h2>Next Vignette</h2>

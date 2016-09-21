@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stacy Irwin" />
 
-<meta name="date" content="2016-09-18" />
+<meta name="date" content="2016-09-20" />
 
 <title>Overview of firstapiR Functions</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Overview of firstapiR Functions</h1>
 <h4 class="author"><em>Stacy Irwin</em></h4>
-<h4 class="date"><em>2016-09-18</em></h4>
+<h4 class="date"><em>2016-09-20</em></h4>
 
 
 
@@ -260,6 +260,10 @@ match_results &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetMatch
 <span class="kw">print</span>(<span class="kw">attr</span>(match_results, <span class="st">&quot;only_mod_since&quot;</span>))</code></pre></div>
 <p>If the <code>mod_since</code> or <code>only_mod_since</code> arguments are not specified, the corresponding <code>mod_since</code> or only_mod_since<code>attribute attached to the return value will be set to</code>NULL`.</p>
 <p>Users can keep track of the date and time provided in the <code>last_modified</code> attribute, which corresponds to the most recent date and time that the information changed on the FIRST API server, and use this date and time to request only new data from the server. If a user repeats a firstapiR function call with the same arguments and sets the <code>mod_since</code> or <code>only_mod_since</code> argument to the <code>last_modified</code> attribute value from the intial firstapiR function call, the FIRST API server will return all requested data – the same data that was provided in the first function call. Users who would rather receive a 304 response in this situation should either add at least a second to the <code>last_modified</code> value, or should instead use the <code>time_downloaded</code> attribute value to set the <code>mod_since</code> or <code>only_mod_since</code> arguments.</p>
+</div>
+<div id="ask-questions" class="section level2">
+<h2>Ask Questions</h2>
+<p>Post an issue on the <a href="https://github.com/irwinsnet/firstapiR">firstapiR github repository</a> if you have questions, find bugs or have recommendations for the next version.</p>
 </div>
 
 
