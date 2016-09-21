@@ -274,6 +274,10 @@ variables username and key exist and will run tests that make actual HTTP calls
 to the FIRST API server. If either your username or key are incorrect, the tests 
 will fail due to an HTTP 401 error.
 
+
+## Ask Questions
+Post an issue on the [firstapiR github repository](https://github.com/irwinsnet/firstapiR) if you have questions, find bugs or have recommendations for the next version.
+
 ## Next Vignette
 
 [Overview of firstapiR Functions](http://irwinsnet.github.io/firstapiR/Functions)

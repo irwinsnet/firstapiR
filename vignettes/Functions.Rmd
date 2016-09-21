@@ -244,3 +244,7 @@ data that was provided in the first function call. Users who would rather
 receive a 304 response in this situation should either add at least a second to
 the `last_modified` value, or should instead use the `time_downloaded` attribute
 value to set the `mod_since` or `only_mod_since` arguments.
+
+
+## Ask Questions
+Post an issue on the [firstapiR github repository](https://github.com/irwinsnet/firstapiR) if you have questions, find bugs or have recommendations for the next version.
