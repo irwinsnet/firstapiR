@@ -38,7 +38,7 @@ NULL
 .production_url <- "https://frc-api.firstinspires.org"
 .version <- "v2.0"
 .default_season <- as.integer(format(Sys.Date(), "%Y"))
-.package_version <- "1.0.0"
+.package_version <- "1.0.1"
 
 
 #  GetSession() ================================================================
@@ -637,11 +637,13 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' @param start An integer vector containing the earliest match to return.
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
-#' @param expand_cols A logical value that defaults to \code{FALSE}. If
-#'   \code{TRUE}, the dataframe will include one row for each scheduled match,
-#'   with a different column for each team. If \code{FALSE}, there will be six
-#'   rows for each match, with each row listing one assigned team and their
-#'   station. Optional.
+#' @param shape A character vector that sets the shape of the resulting data
+#'   frame. If set to \emph{team}, then the resulting data frame will have one
+#'   row per team (six rows per match). If set to \emph{alliance} the data
+#'   frame will have one row per alliance (two rows per match, with three teams
+#'   listed in each row), and if set to \emph{match} the data frame will have
+#'   one row per match, with results for six teams on each row. Defaults to
+#'   \emph{team}. Case insensitive.
 #' @param mod_since A character vector containing an HTTP formatted date and
 #'   time. Returns \code{NA} if no changes have been made to the requested data
 #'   since the date and time provided. Optional.
@@ -707,11 +709,8 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' GetSchedule(sn, "WAAMV", level='playoff')
 #' GetSchedule(sn, "PNCMP", team=4911, end=25)
 GetSchedule <- function (session, event, level = "qual", team = NULL,
-                         start = NULL, end = NULL, expand_cols = FALSE,
-                         mod_since = NULL, only_mod_since = NULL) {
-  # Check for prohibited combinations of arguments
-  # Not required because GetSchedule has no prohibited combinations.
-
+                         start = NULL, end = NULL, mod_since = NULL,
+                         only_mod_since = NULL) {
   # Build URL
   sched_args <- list(tournamentLevel = level, teamNumber = team, start = start,
                      end = end)
@@ -720,7 +719,7 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
   # Send HTTP request
   sched <- .GetHTTP(session, url, mod_since, only_mod_since)
 
-  # Skip remainder of function for empty, XML, or JSON formats.
+  # Skip remainder of function for empty results or XML, and JSON formats.
   if(is.na(sched) || session$format != "data.frame") return(sched)
 
   # Delete 'Schedule.' from the beginning of column names.
@@ -730,72 +729,130 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
   # this function is necessary to either extract the nested data into new
   # columns or to add rows so that the scheule data can be saved as csv data.
 
-  if(expand_cols) {
-    # Add columns for each operating station
-    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      sched[cname.team] <- vector(mode = "character",
-                                  length = length(sched$matchNumber))
-      cname.surr <- paste(col, "surrogate", sep = ".")
-      sched[cname.surr] <- vector(mode = "logical",
-                                  length = length(sched$matchNumber))
+  # Add columns for team number, station, and surrogate
+  sched["team"] <- vector(mode = "integer", length = nrow(sched))
+  sched["alliance"] <- vector(mode = "character", length = nrow(sched))
+  sched["station"] <- vector(mode = "character", length = nrow(sched))
+  sched["surrogate"] <- vector(mode = "logical", length = nrow(sched))
+
+  # Extract teams and delete nested teams column.
+  teams <- sched$Teams
+  sched$Teams <- NULL
+
+  # Expand the matches data frame so there are six rows per match.
+  sched <- sched[sort(rep(1:nrow(sched), 6)), ]
+
+  # Fill in team and station data.
+  for(mtch in 1:length(teams)) {
+    for(tm in 1:6) {
+      mrow <- (mtch-1)*6 + tm
+      sched$team[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
+      sched$station[[mrow]] <- tolower(teams[[mtch]][["station"]][[tm]])
+      sched$surrogate[[mrow]] <- teams[[mtch]][["surrogate"]][[tm]]
+      row.names(sched)[mrow] <- paste(mtch, sched$station[[mrow]], sep = ".")
     }
-
-    # Extract data from nested Teams column and insert into new operating station
-    # columns
-    for(mtch in 1:length(sched$matchNumber)){
-      for(tm in 1:6){
-        station <- sched$Teams[[mtch]][["station"]][[tm]]
-        team <- sched$Teams[[mtch]][["teamNumber"]][[tm]]
-        surrogate <- sched$Teams[[mtch]][["surrogate"]][[tm]]
-
-        cname.team <- paste(station, "team", sep = ".")
-        cname.surrogate <- paste(station, "surrogate", sep = ".")
-
-        sched[mtch, cname.team] <- team
-        sched[mtch, cname.surrogate] <- surrogate
-      }
-    }
-    sched$Teams <- NULL
-
-    # Convert categorical data to factors
-    sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team",
-                                     "Blue1.team", "Blue2.team", "Blue3.team",
-                                     "field", "tournamentLevel"))
-  } else {
-    # Add columns for team number, station, and surrogate
-    sched["teamNumber"] <- vector(mode = "integer", length = nrow(sched))
-    sched["alliance"] <- vector(mode = "character", length = nrow(sched))
-    sched["station"] <- vector(mode = "character", length = nrow(sched))
-    sched["surrogate"] <- vector(mode = "logical", length = nrow(sched))
-
-    # Extract teams and delete nested teams column.
-    teams <- sched$Teams
-    sched$Teams <- NULL
-
-    # Expand the matches data frame so there are six rows per match.
-    sched <- sched[sort(rep(1:nrow(sched), 6)), ]
-
-    # Fill in team and station data.
-    for(mtch in 1:length(teams)) {
-      for(tm in 1:6) {
-        mrow <- (mtch-1)*6 + tm
-        sched$teamNumber[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
-        sched$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
-        sched$surrogate[[mrow]] <- teams[[mtch]][["surrogate"]][[tm]]
-      }
-    }
-
-    # Fill in alliance data
-    sched$alliance <- substr(sched$station, 1, nchar(sched$station) - 1)
-
-    # Transform categorical columns into factors.
-    sched <- .FactorColumns(sched, c("teamNumber", "station", "field",
-                                     "tournamentLevel", "alliance"))
   }
+
+  # Set column names
+  names(sched)[3] <- "level"
+  names(sched)[4] <- "start"
+  names(sched)[5] <- "match"
+
+  # Fill in alliance data
+  sched$station <- tolower(sched$station)
+  sched$alliance <- substr(sched$station, 1, nchar(sched$station) - 1)
+
+  # Transform categorical columns into factors.
+  sched <- .FactorColumns(sched, c("team", "station", "field",
+                                   "level", "alliance"))
+
+  sched <- sched[order(sched$match, sched$station), ]
+  attr(sched, "shape") <- "team"
   class(sched) <- append(class(sched), "Schedule")
   return(sched)
+}
+
+
+#' Transform a data frame so there is one row per team.
+#'
+#' @export
+ToTeamShape <- function(df) {
+  # from alliance to team format
+  if(attr(df, "shape") == "match") {
+    team.df <- reshape(df)
+    al <- as.character(team.df$station)
+    team.df$alliance <- substr(al, 1, nchar(al) - 1)
+    attr(team.df, "shape") <- "team"
+    team.df <- .PreserveAttributes(team.df, attributes(df))
+    team.df <- team.df[order(team.df$match, team.df$station), ]
+  } else if(attr(df, "shape") == "alliance") {
+    team.df <- reshape(df)
+    stations <- sub("^\\d+\\.\\D+\\.", "", row.names(team.df))
+    team.df$station <- paste(df$alliance, stations, sep = "")
+    row.names(team.df) <- paste(team.df$match, team.df$station, sep = ".")
+    team.df <- team.df[order(team.df$match, team.df$station), ]
+  }
+  return(team.df)
+}
+
+
+#' Transform a data frame so there is one row per alliance.
+#'
+#' @export
+ToMatchShape <- function(df, revert.team = FALSE) {
+  # From team to alliance format for a schedule
+  df$alliance <- NULL
+  alli.df <- reshape(df, direction = "wide", idvar = "match",
+                         timevar = "station",
+                         v.names = c("team", "surrogate"))
+  row.names(alli.df) <- as.character(alli.df$match)
+  attr(alli.df, "shape") <- "alliance"
+  alli.df <- .PreserveAttributes(alli.df, attributes(df))
+  return(alli.df)
+}
+
+
+#' Transform a data frame so there is one row per match.
+#'
+#' @export
+ToAllianceShape <- function(df) {
+  # Verify input data frame in team format
+  if(attr(df, "shape") != "team") stop("df must be in team shape.")
+
+  # Strip 'Red' or 'Blue' from values in station column.
+  stn <- as.character(df$station)
+  df$station <- substr(stn, nchar(stn), nchar(stn))
+
+  # Check type of input data frame
+  if(inherits(df, "Schedule")) var.cols <- c("team", "surrogate")
+  if(inherits(df, "MatchResults")) var.cols <- c("team", "disqualified")
+
+  # Create output data frame in match (wide) format.
+  mtch.df <- reshape(df, direction = "wide", idvar = c("match", "alliance"),
+                     timevar = "station", v.names = var.cols)
+
+  # Set row names to m.color where m is match number is color is red or blue.
+  rm <- regmatches(row.names(mtch.df),
+                   regexec("(\\d+)\\.(\\D+)", row.names(mtch.df), perl = TRUE))
+  row.names(mtch.df) <- lapply(rm, function(mtch){
+    paste(mtch[[2]], mtch[[3]], sep = ".")
+  })
+
+  # Set shape attribute and copy attributes from input data frame.
+  attr(mtch.df, "shape") <- "alliance"
+  mtch.df <- .PreserveAttributes(mtch.df, attributes(df))
+
+  # Set the row order of the data frame.
+  mtch.df <- mtch.df[order(mtch.df$match, mtch.df$alliance), ]
+  return(mtch.df)
+}
+
+.PreserveAttributes <- function(df, att){
+  attr(df, "url") <- att$url
+  attr(df, "local_test_data") <- att$local_test_data
+  attr(df, "time_downloaded") <- att$time_downloaded
+  attr(df, "last_modified") <- att$last_modified
+  return(df)
 }
 
 
@@ -1233,6 +1290,17 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   # Convert categorical data into factors
   matches$tournamentLevel <- factor(matches$tournamentLevel)
 
+  # Set column names to shorter, easier to type values.
+  names(matches)[3] <- "level"
+  names(matches)[4] <- "match"
+  names(matches)[6] <- "team"
+
+  # Fill in alliance data
+  matches$station <- tolower(matches$station)
+  matches$alliance <- substr(matches$station, 1, nchar(matches$station) - 1)
+
+  matches <- matches[order(matches$match, matches$station), ]
+  attr(matches, "shape") <- "team"
   class(matches) <- append(class(matches), "MatchResults")
   return(matches)
 }
