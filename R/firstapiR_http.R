@@ -777,21 +777,34 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'
 #' @export
 ToTeamShape <- function(df) {
-  # from alliance to team format
+  # Check for valid input
+    if(!(attr(df, "shape") %in% c("alliance", "match")))
+      stop("df argument must be a data frame in alliance or match shape")
+
+  # Reshape data frame. Assumes df has reshapeWide attribute from prior call to
+  #   reshape() function.
+  team.df <- reshape(df)
+
   if(attr(df, "shape") == "match") {
-    team.df <- reshape(df)
+    # Rebuild alliance column
     al <- as.character(team.df$station)
     team.df$alliance <- substr(al, 1, nchar(al) - 1)
-    attr(team.df, "shape") <- "team"
-    team.df <- .PreserveAttributes(team.df, attributes(df))
-    team.df <- team.df[order(team.df$match, team.df$station), ]
+
   } else if(attr(df, "shape") == "alliance") {
-    team.df <- reshape(df)
+    # Rebuild station column
     stations <- sub("^\\d+\\.\\D+\\.", "", row.names(team.df))
     team.df$station <- paste(df$alliance, stations, sep = "")
-    row.names(team.df) <- paste(team.df$match, team.df$station, sep = ".")
-    team.df <- team.df[order(team.df$match, team.df$station), ]
   }
+
+  # Set row names to [match].[station]
+  row.names(team.df) <- paste(team.df$match, team.df$station, sep = ".")
+
+  # Retrieve attributes from input data frame
+  team.df <- .PreserveAttributes(team.df, attributes(df))
+
+  # Sort, assign shape attribute, and return result.
+  team.df <- team.df[order(team.df$match, team.df$station), ]
+  attr(team.df, "shape") <- "team"
   return(team.df)
 }
 
@@ -831,12 +844,8 @@ ToAllianceShape <- function(df) {
   mtch.df <- reshape(df, direction = "wide", idvar = c("match", "alliance"),
                      timevar = "station", v.names = var.cols)
 
-  # Set row names to m.color where m is match number is color is red or blue.
-  rm <- regmatches(row.names(mtch.df),
-                   regexec("(\\d+)\\.(\\D+)", row.names(mtch.df), perl = TRUE))
-  row.names(mtch.df) <- lapply(rm, function(mtch){
-    paste(mtch[[2]], mtch[[3]], sep = ".")
-  })
+  # Set row names to m.color where m is match number, color is red or blue.
+  row.names(mtch.df) <- paste(mtch.df$match, mtch.df$alliance, sep = ".")
 
   # Set shape attribute and copy attributes from input data frame.
   attr(mtch.df, "shape") <- "alliance"
@@ -1270,6 +1279,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
           score <- "scoreRed"
         else
           score <- "scoreBlue"
+
         xMatches$scoreFinal[[mrow]] <- xMatches[[paste(score, 'Final', sep="")]][[mrow]]
         xMatches$scoreFoul[[mrow]] <- xMatches[[paste(score, 'Foul', sep = "")]][[mrow]]
         xMatches$scoreAuto[[mrow]] <- xMatches[[paste(score, 'Auto', sep = "")]][[mrow]]
@@ -1298,6 +1308,9 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   # Fill in alliance data
   matches$station <- tolower(matches$station)
   matches$alliance <- substr(matches$station, 1, nchar(matches$station) - 1)
+
+  # Set row names to match.station
+  row.names(matches) <- paste(matches$match, matches$station, sep = ".")
 
   matches <- matches[order(matches$match, matches$station), ]
   attr(matches, "shape") <- "team"
