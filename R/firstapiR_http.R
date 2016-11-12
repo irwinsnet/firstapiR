@@ -40,6 +40,9 @@ NULL
 .default_season <- as.integer(format(Sys.Date(), "%Y"))
 .package_version <- "1.0.1"
 
+# TODO: Revise lines for changing column names so they don't depend on column
+#   order.
+# TODO: Vectorize setting of row names.
 
 #  GetSession() ================================================================
 #' Create a firstapiR session
@@ -773,98 +776,6 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 }
 
 
-#' Transform a data frame so there is one row per team.
-#'
-#' @export
-ToTeamShape <- function(df) {
-  # Check for valid input
-    if(!(attr(df, "shape") %in% c("alliance", "match")))
-      stop("df argument must be a data frame in alliance or match shape")
-
-  # Reshape data frame. Assumes df has reshapeWide attribute from prior call to
-  #   reshape() function.
-  team.df <- reshape(df)
-
-  if(attr(df, "shape") == "match") {
-    # Rebuild alliance column
-    al <- as.character(team.df$station)
-    team.df$alliance <- substr(al, 1, nchar(al) - 1)
-
-  } else if(attr(df, "shape") == "alliance") {
-    # Rebuild station column
-    stations <- sub("^\\d+\\.\\D+\\.", "", row.names(team.df))
-    team.df$station <- paste(df$alliance, stations, sep = "")
-  }
-
-  # Set row names to [match].[station]
-  row.names(team.df) <- paste(team.df$match, team.df$station, sep = ".")
-
-  # Retrieve attributes from input data frame
-  team.df <- .PreserveAttributes(team.df, attributes(df))
-
-  # Sort, assign shape attribute, and return result.
-  team.df <- team.df[order(team.df$match, team.df$station), ]
-  attr(team.df, "shape") <- "team"
-  return(team.df)
-}
-
-
-#' Transform a data frame so there is one row per alliance.
-#'
-#' @export
-ToMatchShape <- function(df, revert.team = FALSE) {
-  # From team to alliance format for a schedule
-  df$alliance <- NULL
-  alli.df <- reshape(df, direction = "wide", idvar = "match",
-                         timevar = "station",
-                         v.names = c("team", "surrogate"))
-  row.names(alli.df) <- as.character(alli.df$match)
-  attr(alli.df, "shape") <- "alliance"
-  alli.df <- .PreserveAttributes(alli.df, attributes(df))
-  return(alli.df)
-}
-
-
-#' Transform a data frame so there is one row per match.
-#'
-#' @export
-ToAllianceShape <- function(df) {
-  # Verify input data frame in team format
-  if(attr(df, "shape") != "team") stop("df must be in team shape.")
-
-  # Strip 'Red' or 'Blue' from values in station column.
-  stn <- as.character(df$station)
-  df$station <- substr(stn, nchar(stn), nchar(stn))
-
-  # Check type of input data frame
-  if(inherits(df, "Schedule")) var.cols <- c("team", "surrogate")
-  if(inherits(df, "MatchResults")) var.cols <- c("team", "disqualified")
-
-  # Create output data frame in match (wide) format.
-  mtch.df <- reshape(df, direction = "wide", idvar = c("match", "alliance"),
-                     timevar = "station", v.names = var.cols)
-
-  # Set row names to m.color where m is match number, color is red or blue.
-  row.names(mtch.df) <- paste(mtch.df$match, mtch.df$alliance, sep = ".")
-
-  # Set shape attribute and copy attributes from input data frame.
-  attr(mtch.df, "shape") <- "alliance"
-  mtch.df <- .PreserveAttributes(mtch.df, attributes(df))
-
-  # Set the row order of the data frame.
-  mtch.df <- mtch.df[order(mtch.df$match, mtch.df$alliance), ]
-  return(mtch.df)
-}
-
-.PreserveAttributes <- function(df, att){
-  attr(df, "url") <- att$url
-  attr(df, "local_test_data") <- att$local_test_data
-  attr(df, "time_downloaded") <- att$time_downloaded
-  attr(df, "last_modified") <- att$last_modified
-  return(df)
-}
-
-
 #  GetHybridSchedule() =========================================================
 #' Get the match schedule and results
 #'
@@ -1084,6 +995,21 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
     sched <- .FactorColumns(sched, c("teamNumber", "station",
                                      "tournamentLevel"))
   }
+
+  # Set column names
+  names(sched)[names(sched) == "tournamentLevel"] = "level"
+  names(sched)[names(sched) == "matchNumber"] <- "match"
+  names(sched)[names(sched) == "teamNumber"] <- "team"
+
+  # Fill in alliance data
+  sched$station <- tolower(sched$station)
+  sched$alliance <- substr(sched$station, 1, nchar(sched$station) - 1)
+
+  # Set row names
+  row.names(sched)<- paste(sched$match, sched$station, sep = ".")
+
+  attr(sched, "shape") <- "team"
+  sched <- sched[order(sched$match, sched$station), ]
   class(sched) <- append(class(sched), "HybridSchedule")
   return(sched)
 }
@@ -2141,3 +2067,4 @@ GetAwardsList <- function(session, mod_since = NULL, only_mod_since = NULL) {
   attr(content, "time_downloaded") <- data_time
   return(content)
 }
+
