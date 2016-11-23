@@ -32,12 +32,6 @@ Optional.}
 
 \item{end}{An integer vector containing the latest match to return. Optional.}
 
-\item{expand_cols}{A logical value that defaults to \code{FALSE}. If
-\code{TRUE}, the dataframe will include one row for each scheduled match,
-with a different column for each team. If \code{FALSE}, there will be six
-rows for each match, with each row listing one assigned team and their
-station. Optional.}
-
 \item{mod_since}{A character vector containing an HTTP formatted date and
 time. Returns \code{NA} if no changes have been made to the requested data
 since the date and time provided. Optional.}
@@ -54,10 +48,15 @@ Depending on the \code{session$format} value, returns JSON text, an
   \code{mod_since} or \code{only_mod_since}.
 }
 \description{
-See the \emph{Match Results} section of the FIRST API documentation at
-\url{http://docs.frcevents2.apiary.io/#} for more details.
+The data frame returned by \code{GetMatchResults()} is in team shape,
+i.e., each ' row contains data for a single team and there are six rows per
+match. Use ' \code{ToAllianceShape()} or \code{ToMatchShape} to convert the
+data frame to ' a three-teams-per-row shape or a six-teams-per-row shape.
 }
 \details{
+See the \emph{Match Results} section of the FIRST API documentation at
+\url{http://docs.frcevents2.apiary.io/#} for more details.
+
 The FIRST API URL format is:
 
 \code{https://frc-api.firstinspires.org/v2.0/season/matches/event
@@ -66,28 +65,15 @@ The FIRST API URL format is:
 \section{Columns}{
 
   \enumerate{
-     \item \emph{actualStartTime}: character
+     \item \emph{actualStart}: character
      \item \emph{description}: character
-     \item \emph{tournamentLevel}: factor
-     \item \emph{matchNumber}: integer
-     \item \emph{postResultTime}: character}
-
-     If expand_cols == \emph{FALSE}
-       \enumerate{
-         \item \emph{teamNumber}: factor
-         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-         \item \emph{surrogate}: logical
-         \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
-
-     If expand_cols == \emph{TRUE}
-       \enumerate{
-         \item \emph{scoreRedFinal, scoreRedAuto, scoreRedFoul}: integer
-         \item \emph{scoreBlueFinal, scoreBlueAuto, scoreBlueFoul}: integer
-         \item \emph{Red1.team, Red2.team, Red3.team}: factor
-         \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
-         \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
-         \item \emph{Blue1.surrogate, Blue2.surrogate,
-           Blue3.surrogate}: logical}
+     \item \emph{level}: factor
+     \item \emph{match}: integer
+     \item \emph{postResult}: character
+     \item \emph{teamr}: factor
+     \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+     \item \emph{surrogate}: logical
+     \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 }
 
 \section{Attributes}{
@@ -99,6 +85,13 @@ The FIRST API URL format is:
       R/sysdata.rda file.
     \item \emph{local_url}: Character vector containing URL used to download
       local data.
+    \item \emph{shape}: Character vector that specifies the row and column
+      arrangement of the data frame. Initially set to \emph{team},
+      indicating there is one team per row and six rows per match. The
+      functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
+      the data frame to have either three teams per row or six teams per row
+      and will set the \emph{shape} attribute to \emph{alliance} or
+      \emph{match}.
     \item \emph{time_downloaded}: Character vector containing the local
       system time that the object was downladed from the FIRST API server.
       Formatted an an http date and time string.

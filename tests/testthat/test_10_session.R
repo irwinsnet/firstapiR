@@ -1,9 +1,8 @@
 # test_10_session.R
-#
-# Tests GetSession() function and internal package variables.
+# Version 2.0.0
 
 
-context("FIRST R Sessions and Variables")
+context("firstapiR Sessions and Variables")
 
 test_username <- "username"
 test_key <- "key"

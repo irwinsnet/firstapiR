@@ -1,6 +1,15 @@
 # test_50_score_data.R
+# Version 2.0.0
+#
+# Tests firstapiR functions that retrieve season data.
+# By default, these tests run locally, without making HTTP connections to the
+# FIRST API server. To run test that firstapiR connects to the FIRST API
+# server, create character vectors named "username" and "key" in the console
+# and set their values to the username and key assigned to you by FIRST. Then
+# run the tests from the console using testthat::test_dir() or
+# testthat::test_file().
 
-context("FIRST_R Match Results and Score Functions")
+context("firstapiR Match Results and Score Functions")
 
 
 sess_http_valid <- FALSE
@@ -19,19 +28,11 @@ test_that("GetMatchResults() returns a local data frame", {
             paste("https://frc-api.firstinspires.org/v2.0/2016/matches/PNCMP",
                   "?tournamentLevel=qual", sep = ""))
   expect_equal(nrow(mr), 768)
-  expect_equal(length(mr), 11)
-  expect_equal(names(mr), c("actualStartTime", "description", "tournamentLevel",
-                            "matchNumber", "postResultTime", "teamNumber",
-                            "station", "disqualified", "scoreFinal",
-                            "scoreFoul", "scoreAuto"))
-})
-
-
-test_that("For GetMatchResults returns an expanded local data frame", {
-  mr <- GetMatchResults(sess_local, event = "PNCMP", expand_cols = TRUE)
-
-  expect_equal(nrow(mr), 128)
-  expect_equal(length(mr), 23)
+  expect_equal(length(mr), 12)
+  expect_equal(names(mr), c("match", "description", "level", "actualStart",
+                            "postResult", "team", "alliance", "station",
+                            "disqualified", "scoreFinal", "scoreAuto",
+                            "scoreFoul" ))
 })
 
 
@@ -39,12 +40,11 @@ test_that("For GetMatchResults start, end, and match args via HTTP", {
   if(!sess_http_valid) skip("No username or authorization key")
 
   mr <- GetMatchResults(sess_http, event = "PNCMP", level = "playoff",
-                        start = 2, end = 5, expand_cols = TRUE)
-  expect_equal(nrow(mr), 4)
+                        start = 2, end = 5)
+  expect_equal(nrow(mr), 24)
 
-  mr <- GetMatchResults(sess_http, event = "WAAMV", level = "qual", match = 10,
-                        expand_cols = TRUE)
-  expect_equal(nrow(mr), 1)
+  mr <- GetMatchResults(sess_http, event = "WAAMV", level = "qual", match = 10)
+  expect_equal(nrow(mr), 6)
 })
 
 test_that("only_mod_since and mod_since return NA when set to current time", {

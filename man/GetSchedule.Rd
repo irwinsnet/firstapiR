@@ -5,8 +5,7 @@
 \title{Get the match schedule for a specific event}
 \usage{
 GetSchedule(session, event, level = "qual", team = NULL, start = NULL,
-  end = NULL, expand_cols = FALSE, mod_since = NULL,
-  only_mod_since = NULL)
+  end = NULL, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -23,12 +22,6 @@ GetSchedule(session, event, level = "qual", team = NULL, start = NULL,
 Optional.}
 
 \item{end}{An integer vector containing the latest match to return. Optional.}
-
-\item{expand_cols}{A logical value that defaults to \code{FALSE}. If
-\code{TRUE}, the dataframe will include one row for each scheduled match,
-with a different column for each team. If \code{FALSE}, there will be six
-rows for each match, with each row listing one assigned team and their
-station. Optional.}
 
 \item{mod_since}{A character vector containing an HTTP formatted date and
 time. Returns \code{NA} if no changes have been made to the requested data
@@ -51,15 +44,10 @@ the value of the \code{level} argument. The \code{start} and \code{end}
 arguments allow filtering of results to specific matches.
 }
 \details{
-Depending on the \code{expand_cols} argument, \code{GetSchedule} can
-structure the resulting data frame two diferent ways. When \code{expand_cols}
-is set to \emph{FALSE} the data frame will contain six rows for every match
-returned. Each row will include data on one team that participates in the
-match. This narrow (i.e., fewer columns) structure is useful when filtering
-results to specific teams, because only one column, \emph{teamNumber}, must
-be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
-will have one row per match, with all six participating teams listed in one
-row. This wide format is useful for displaying the schedule in a table.
+The data frame returned by \code{GetSchedule()} is in team shape, i.e., each
+row contains data for a single team and there are six rows per match. Use
+\code{ToAllianceShape()} or \code{ToMatchShape} to convert the data frame to
+a three-teams-per-row shape or a six-teams-per-row shape.
 
 See the \emph{Event Schedule} section of the FIRST API documentation at
 \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -74,24 +62,13 @@ tournamentLevel=level&teamNumber=team&start=start&end=end}
   \enumerate{
     \item \emph{description}: character
     \item \emph{field}: character
-    \item \emph{tournamentLevel}: factor
-    \item \emph{matchNumber}: integer
-    \item \emph{startTime}: character}
-
-     If expand_cols == \emph{FALSE}
-       \enumerate{
-         \item \emph{teamNumber}: factor
-         \item \emph{alliance}: factor (Red, Blue)
-         \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-         \item \emph{surrogate}: logical}
-
-    If expand_cols == \emph{TRUE}
-      \enumerate{
-        \item \emph{Red1.team, Red2.team, Red3.team}: factor
-        \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
-        \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
-        \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
-          logical}
+    \item \emph{level}: factor
+    \item \emph{match}: integer
+    \item \emph{start}: character
+    \item \emph{team}: factor
+    \item \emph{alliance}: factor (Red, Blue)
+    \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+    \item \emph{surrogate}: logical}
 }
 
 \section{Attributes}{
@@ -103,6 +80,13 @@ tournamentLevel=level&teamNumber=team&start=start&end=end}
       R/sysdata.rda file.
     \item \emph{local_url}: Character vector containing URL used to download
       local data.
+    \item \emph{shape}: Character vector that specifies the row and column
+      arrangement of the data frame. Initially set to \emph{team},
+      indicating there is one team per row and six rows per match. The
+      functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
+      the data frame to have either three teams per row or six teams per row
+      and will set the \emph{shape} attribute to \emph{alliance} or
+      \emph{match}.
     \item \emph{time_downloaded}: Character vector containing the local
       system time that the object was downladed from the FIRST API server.
       Formatted an an http date and time string.

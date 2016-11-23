@@ -69,7 +69,7 @@ The FIRST API URL format is:
 \section{Columns}{
 
   \enumerate{
-    \item \emph{teamNumber}: character
+    \item \emph{team}: character
     \item \emph{nameFull}: character
     \item \emph{nameShort}: character
     \item \emph{city}: character
@@ -79,7 +79,7 @@ The FIRST API URL format is:
     \item \emph{rookieYear}: integer
     \item \emph{robotName}: character
     \item \emph{districtCode}: factor
-    \item \emph{eamCountTotal}: integer
+    \item \emph{teamCountTotal}: integer
     \item \emph{teamCountPage}: integer
     \item \emph{pageCurrent}: integer
     \item \emph{pageTotal}: integer}

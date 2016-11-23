@@ -1,48 +1,30 @@
-#  firstapiR_http.R FIRST API R Toolbox ========================================
-#' firstapiR: R Functions for the FIRST API Server
-#'
-#' The R Toolbox functions will connect to the FIRST API server and download
-#' data on FIRST Robotics Competition (FRC) teams, events, match results, and
-#' awards.
-#'
-#' The FIRST API accepts formatted hypertext transfer protocol (HTTP) GET
-#' requests and provides FRC data in either javascript object notation (JSON) or
-#' extensible markup language (XML) format. Detailed documentation for the FIRST
-#' API, including precise rules for constructing the HTTP requests, is available
-#' at \url{http://docs.frcevents2.apiary.io/#}
-#'
-#' A username and authorization key are required for connecting to the FIRST API
-#' and for using firstapiR. To obtain a username and key, join the \emph{FIRST
-#' Community Developers} project on TeamForge at
-#' \url{https://usfirst.collab.net/sf/projects/first_community_developers/}
-#'
-#' These functions return R dataframes by default. Optionally, the functions
-#' can also return the raw JSON or XML that is provided by the FIRST API. See
-#' the apiary documentation (\url{http://docs.frcevents2.apiary.io/#}) for a
-#' detailed description of all response data fields.
-#'
-#' These functions use version 2.0 of the FIRST API. They have not been tested
-#' with version 1.0.
-#'
-#'@name firstapiR
-NULL
+#  firstapiR_http.R version 2.0.0===============================================
+#  Contains functions that retrieve data from the FIRST API server and format
+#  the data as either XML, JSON, or as R data frames.
 
-# The firstapiR package requires the following R packages.
-# base64enc
-# httr
-# jsonlite
-# XML
+# TODO: Revise lines for changing column names so they don't depend on column
+#   order.
+# TODO: Vectorize setting of row names.
+# TODO: Remove expand_cols arg form all functions.
+# TODO: Shorten column names where applicable.
+# TODO: Add Shape attribute.
+# TODO: Document shape attribute
+# TODO: Reorder attribute documentation to match data frame order
+# TODO: Add function to download entire event
+# TODO: Add function to save data to files
+# TODO: Add function to merge hybridSchedule and DetailedScores
+# TODO: Document all functions
+# TODO: Move .PreserveAttributes function from firstapiR_util to firstapiR_http
+# TODO: Make sure .PreserverColumns is setting the attributes correctly.
+
 
 # Server URLs and other parameters
 .staging_url <- "https://frc-staging-api.firstinspires.org"
 .production_url <- "https://frc-api.firstinspires.org"
 .version <- "v2.0"
 .default_season <- as.integer(format(Sys.Date(), "%Y"))
-.package_version <- "1.0.1"
+.package_version <- "2.0.0"
 
-# TODO: Revise lines for changing column names so they don't depend on column
-#   order.
-# TODO: Vectorize setting of row names.
 
 #  GetSession() ================================================================
 #' Create a firstapiR session
@@ -492,7 +474,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'
 #' @section Columns:
 #'   \enumerate{
-#'     \item \emph{teamNumber}: character
+#'     \item \emph{team}: character
 #'     \item \emph{nameFull}: character
 #'     \item \emph{nameShort}: character
 #'     \item \emph{city}: character
@@ -502,7 +484,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'     \item \emph{rookieYear}: integer
 #'     \item \emph{robotName}: character
 #'     \item \emph{districtCode}: factor
-#'     \item \emph{eamCountTotal}: integer
+#'     \item \emph{teamCountTotal}: integer
 #'     \item \emph{teamCountPage}: integer
 #'     \item \emph{pageCurrent}: integer
 #'     \item \emph{pageTotal}: integer}
@@ -597,6 +579,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 
   # Shorten the column names to reduce amount of typing required.
   names(teams) <- .TrimColNames(names(teams))
+  names(teams)[names(teams == "teamNumber")] <- "team"
 
   # Convert categorical coluns to factor data types.
   teams <- .FactorColumns(teams, c("districtCode", "stateProv", "country"))
@@ -613,15 +596,10 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' the value of the \code{level} argument. The \code{start} and \code{end}
 #' arguments allow filtering of results to specific matches.
 #'
-#' Depending on the \code{expand_cols} argument, \code{GetSchedule} can
-#' structure the resulting data frame two diferent ways. When \code{expand_cols}
-#' is set to \emph{FALSE} the data frame will contain six rows for every match
-#' returned. Each row will include data on one team that participates in the
-#' match. This narrow (i.e., fewer columns) structure is useful when filtering
-#' results to specific teams, because only one column, \emph{teamNumber}, must
-#' be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
-#' will have one row per match, with all six participating teams listed in one
-#' row. This wide format is useful for displaying the schedule in a table.
+#' The data frame returned by \code{GetSchedule()} is in team shape, i.e., each
+#' row contains data for a single team and there are six rows per match. Use
+#' \code{ToAllianceShape()} or \code{ToMatchShape} to convert the data frame to
+#' a three-teams-per-row shape or a six-teams-per-row shape.
 #'
 #' See the \emph{Event Schedule} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -640,13 +618,6 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' @param start An integer vector containing the earliest match to return.
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
-#' @param shape A character vector that sets the shape of the resulting data
-#'   frame. If set to \emph{team}, then the resulting data frame will have one
-#'   row per team (six rows per match). If set to \emph{alliance} the data
-#'   frame will have one row per alliance (two rows per match, with three teams
-#'   listed in each row), and if set to \emph{match} the data frame will have
-#'   one row per match, with results for six teams on each row. Defaults to
-#'   \emph{team}. Case insensitive.
 #' @param mod_since A character vector containing an HTTP formatted date and
 #'   time. Returns \code{NA} if no changes have been made to the requested data
 #'   since the date and time provided. Optional.
@@ -664,24 +635,13 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'   \enumerate{
 #'     \item \emph{description}: character
 #'     \item \emph{field}: character
-#'     \item \emph{tournamentLevel}: factor
-#'     \item \emph{matchNumber}: integer
-#'     \item \emph{startTime}: character}
-#'
-#'      If expand_cols == \emph{FALSE}
-#'        \enumerate{
-#'          \item \emph{teamNumber}: factor
-#'          \item \emph{alliance}: factor (Red, Blue)
-#'          \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-#'          \item \emph{surrogate}: logical}
-#'
-#'     If expand_cols == \emph{TRUE}
-#'       \enumerate{
-#'         \item \emph{Red1.team, Red2.team, Red3.team}: factor
-#'         \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
-#'         \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
-#'         \item \emph{Blue1.surrogate, Blue2.surrogate, Blue3.surrogate}:
-#'           logical}
+#'     \item \emph{level}: factor
+#'     \item \emph{match}: integer
+#'     \item \emph{start}: character
+#'     \item \emph{team}: factor
+#'     \item \emph{alliance}: factor (Red, Blue)
+#'     \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+#'     \item \emph{surrogate}: logical}
 #'
 #' @section Attributes:
 #'  \enumerate{
@@ -691,6 +651,13 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'       R/sysdata.rda file.
 #'     \item \emph{local_url}: Character vector containing URL used to download
 #'       local data.
+#'     \item \emph{shape}: Character vector that specifies the row and column
+#'       arrangement of the data frame. Initially set to \emph{team},
+#'       indicating there is one team per row and six rows per match. The
+#'       functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
+#'       the data frame to have either three teams per row or six teams per row
+#'       and will set the \emph{shape} attribute to \emph{alliance} or
+#'       \emph{match}.
 #'     \item \emph{time_downloaded}: Character vector containing the local
 #'       system time that the object was downladed from the FIRST API server.
 #'       Formatted an an http date and time string.
@@ -756,10 +723,10 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
     }
   }
 
-  # Set column names
-  names(sched)[3] <- "level"
-  names(sched)[4] <- "start"
-  names(sched)[5] <- "match"
+  # Set column names to shorter, easier to type values
+  names(sched)[names(sched) == "tournamentLevel"] <- "level"
+  names(sched)[names(sched) == "startTime"] <- "start"
+  names(sched)[names(sched) == "matchNumber"] <- "match"
 
   # Fill in alliance data
   sched$station <- tolower(sched$station)
@@ -768,8 +735,13 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
   # Transform categorical columns into factors.
   sched <- .FactorColumns(sched, c("team", "station", "field",
                                    "level", "alliance"))
-
+  # Set row and column order
   sched <- sched[order(sched$match, sched$station), ]
+  cols.order <- c("match", "description", "level", "field", "start",
+                 "team", "alliance", "station", "surrogate")
+  sched <- .SetColumnOrder(sched, cols.order)
+
+
   attr(sched, "shape") <- "team"
   class(sched) <- append(class(sched), "Schedule")
   return(sched)
@@ -784,15 +756,10 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' played, the assigned teams and schedule data are returned, but the result
 #' fields are blank.
 #'
-#' Depending on the \code{expand_cols} argument, \code{GetHybridSchedule} can
-#' structure the resulting data frame two diferent ways. When \code{expand_cols}
-#' is set to \emph{FALSE} the data frame will contain six rows for every match
-#' returned. Each row will include data on one team that participates in the
-#' match. This narrow (i.e., fewer columns) structure is useful when filtering
-#' results to specific teams, because only one column, \emph{teamNumber}, must
-#' be filtered. When \code{expand_cols} is set to \emph{TRUE} the data frame
-#' will have one row per match, with all six participating teams listed in one
-#' row. This wide format is useful for displaying the schedule in a table.
+#' The data frame returned by \code{GetHybridSchedule()} is in team shape,
+#' i.e., each ' row contains data for a single team and there are six rows per
+#' match. Use ' \code{ToAllianceShape()} or \code{ToMatchShape} to convert the
+#' data frame to ' a three-teams-per-row shape or a six-teams-per-row shape.
 #'
 #' See the \emph{Hybrid Schedule} section of the FIRST API documentation for
 #' more details.
@@ -810,11 +777,6 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' @param start An integer vector containing the earliest match to return.
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
-#' @param expand_cols A logical value that defaults to \code{FALSE}. If
-#'   \code{TRUE}, the dataframe will include one row for each scheduled match,
-#'   with a different column for each team. If \code{FALSE}, there will be six
-#'   rows for each match, with each row listing one assigned team and their
-#'   station. Optional.
 #' @param mod_since A character vector containing an HTTP formatted date and
 #'   time. Returns \code{NA} if no changes have been made to the requested data
 #'   since the date and time provided. Optional.
@@ -831,30 +793,15 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' @section Columns:
 #'   \enumerate{
 #'      \item \emph{description}: character
-#'      \item \emph{tournamentLevel}: factor
-#'      \item \emph{matchNumber}: integer
-#'      \item \emph{startTime}: character
-#'      \item \emph{actualStartTime}: character}
-#'
-#'      If expand_cols == \emph{FALSE}
-#'        \enumerate{
-#'          \item \emph{teamNumber}: factor
-#'          \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-#'          \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer
-#'          \item \emph{surrogate}: logical
-#'          \item \emph{dq}: logical}
-#'
-#'      If expand_cols == \emph{TRUE}
-#'        \enumerate{
-#'          \item \emph{scoreRedFoul, scoreRedAuto, scoreRedFinal}: integer
-#'          \item \emph{scoreBlueFoul, scoreBlueAuto, scoreBlueFinal}: integer
-#'          \item \emph{Red1.team, Red2.team, Red3.team}: factor
-#'          \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
-#'          \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
-#'          \item \emph{Blue1.surrogate, Blue2.surrogate,
-#'            Blue3.surrogate}: logical
-#'          \item \emph{Red1.dq, Red2.dq, Red3.dq}: logical
-#'          \item \emph{Blue1.dq, Blue2.dq, Blue3.dq}: logical}
+#'      \item \emph{[evel}: factor
+#'      \item \emph{match}: integer
+#'      \item \emph{start}: character
+#'      \item \emph{actualStart}: character
+#'      \item \emph{team}: factor
+#'      \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+#'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer
+#'      \item \emph{surrogate}: logical
+#'      \item \emph{dq}: logical}
 #'
 #' @section Attributes:
 #'   \itemize{
@@ -864,6 +811,13 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'       R/sysdata.rda file.
 #'     \item \emph{local_url}: Character vector containing URL used to download
 #'       local data.
+#'     \item \emph{shape}: Character vector that specifies the row and column
+#'       arrangement of the data frame. Initially set to \emph{team},
+#'       indicating there is one team per row and six rows per match. The
+#'       functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
+#'       the data frame to have either three teams per row or six teams per row
+#'       and will set the \emph{shape} attribute to \emph{alliance} or
+#'       \emph{match}.
 #'     \item \emph{time_downloaded}: Character vector containing the local
 #'       system time that the object was downladed from the FIRST API server.
 #'       Formatted an an http date and time string.
@@ -906,100 +860,62 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
   # this function is necessary to either extract the nested data into new
   # columns or to add rows so that the scheule data can be saved as csv data.
 
-  if(expand_cols) {
-    # Add columns for each operating station
-    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      sched[cname.team] <- vector(mode = "character",
-                                  length = length(sched$matchNumber))
-      cname.surr <- paste(col, "surrogate", sep = ".")
-      sched[cname.surr] <- vector(mode = "logical",
-                                  length = length(sched$matchNumber))
-      cname.dq <- paste(col, "dq", sep = ".")
-      sched[cname.dq] <- vector(mode = "logical", length = nrow(sched))
+  # Add columns for team number, station, and surrogate
+  sched["teamNumber"] <- vector(mode = "integer", length = nrow(sched))
+  sched["station"] <- vector(mode = "character", length = nrow(sched))
+  sched["surrogate"] <- vector(mode = "logical", length = nrow(sched))
+  sched["disqualified"] <- vector(mode = "logical", length = nrow(sched))
+
+  # Add combined scores columns
+  sched["scoreFinal"] <- vector(mode = "integer", length = nrow(sched))
+  sched["scoreFoul"] <- vector(mode = "integer", length = nrow(sched))
+  sched["scoreAuto"] <- vector(mode = "integer", length = nrow(sched))
+
+  # Extract teams and delete nested teams column.
+  teams <- sched$Teams
+  sched$Teams <- NULL
+
+  # Expand the matches data frame so there are six rows per match.
+  sched <- sched[sort(rep(1:nrow(sched), 6)), ]
+
+  # Fill in team and station data.
+  for(mtch in 1:length(teams)) {
+    for(tm in 1:6) {
+      mrow <- (mtch-1)*6 + tm
+      sched$teamNumber[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
+      sched$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
+      sched$surrogate[[mrow]] <- teams[[mtch]][["surrogate"]][[tm]]
+      sched$surrogate[[mrow]] <- teams[[mtch]][["dq"]][[tm]]
+
+      # Extract red and blue scores into combined scoreing columns
+      if(substr(sched$station[mrow], 1, 1) == 'R')
+        score <- "scoreRed"
+      else
+        score <- "scoreBlue"
+      sched$scoreFinal[[mrow]] <- sched[[paste(score, "Final", sep="")]][[mrow]]
+      sched$scoreFoul[[mrow]] <- sched[[paste(score, "Foul", sep = "")]][[mrow]]
+      sched$scoreAuto[[mrow]] <- sched[[paste(score, "Auto", sep = "")]][[mrow]]
     }
-
-    # Extract data from nested Teams column and insert into new operating station
-    # columns
-    for(mtch in 1:length(sched$matchNumber)){
-      for(tm in 1:6){
-        station <- sched$Teams[[mtch]][["station"]][[tm]]
-        team <- sched$Teams[[mtch]][["teamNumber"]][[tm]]
-        surrogate <- sched$Teams[[mtch]][["surrogate"]][[tm]]
-        dq <- sched$Teams[[mtch]][["dq"]][[tm]]
-
-        cname.team <- paste(station, "team", sep = ".")
-        cname.surrogate <- paste(station, "surrogate", sep = ".")
-        cname.dq <- paste(station, "dq", sep = ".")
-
-        sched[mtch, cname.team] <- team
-        sched[mtch, cname.surrogate] <- surrogate
-        sched[mtch, cname.dq] <- dq
-      }
-    }
-    sched$Teams <- NULL
-
-    # Convert categorical data to factors
-    sched <- .FactorColumns(sched, c("Red1.team", "Red2.team", "Red3.team",
-                                     "Blue1.team", "Blue2.team", "Blue3.team",
-                                     "tournamentLevel"))
-  } else {
-    # Add columns for team number, station, and surrogate
-    sched["teamNumber"] <- vector(mode = "integer", length = nrow(sched))
-    sched["station"] <- vector(mode = "character", length = nrow(sched))
-    sched["surrogate"] <- vector(mode = "logical", length = nrow(sched))
-    sched["disqualified"] <- vector(mode = "logical", length = nrow(sched))
-
-    # Add combined scores columns
-    sched["scoreFinal"] <- vector(mode = "integer", length = nrow(sched))
-    sched["scoreFoul"] <- vector(mode = "integer", length = nrow(sched))
-    sched["scoreAuto"] <- vector(mode = "integer", length = nrow(sched))
-
-    # Extract teams and delete nested teams column.
-    teams <- sched$Teams
-    sched$Teams <- NULL
-
-    # Expand the matches data frame so there are six rows per match.
-    sched <- sched[sort(rep(1:nrow(sched), 6)), ]
-
-    # Fill in team and station data.
-    for(mtch in 1:length(teams)) {
-      for(tm in 1:6) {
-        mrow <- (mtch-1)*6 + tm
-        sched$teamNumber[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
-        sched$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
-        sched$surrogate[[mrow]] <- teams[[mtch]][["surrogate"]][[tm]]
-        sched$surrogate[[mrow]] <- teams[[mtch]][["dq"]][[tm]]
-
-        # Extract red and blue scores into combined scoreing columns
-        if(substr(sched$station[mrow], 1, 1) == 'R')
-          score <- "scoreRed"
-        else
-          score <- "scoreBlue"
-        sched$scoreFinal[[mrow]] <- sched[[paste(score, "Final", sep="")]][[mrow]]
-        sched$scoreFoul[[mrow]] <- sched[[paste(score, "Foul", sep = "")]][[mrow]]
-        sched$scoreAuto[[mrow]] <- sched[[paste(score, "Auto", sep = "")]][[mrow]]
-      }
-    }
-
-    # Remove redundent score columns
-    sched$scoreRedFinal <- NULL
-    sched$scoreBlueFinal <- NULL
-    sched$scoreRedFoul <- NULL
-    sched$scoreBlueFoul <- NULL
-    sched$scoreRedAuto <- NULL
-    sched$scoreBlueAuto <- NULL
-
-    # Transform categorical columns into factors.
-    sched <- .FactorColumns(sched, c("teamNumber", "station",
-                                     "tournamentLevel"))
   }
+
+  # Remove redundent score columns
+  sched$scoreRedFinal <- NULL
+  sched$scoreBlueFinal <- NULL
+  sched$scoreRedFoul <- NULL
+  sched$scoreBlueFoul <- NULL
+  sched$scoreRedAuto <- NULL
+  sched$scoreBlueAuto <- NULL
+
+  # Transform categorical columns into factors.
+  sched <- .FactorColumns(sched, c("teamNumber", "station",
+                                   "tournamentLevel"))
 
   # Set column names
   names(sched)[names(sched) == "tournamentLevel"] = "level"
   names(sched)[names(sched) == "matchNumber"] <- "match"
   names(sched)[names(sched) == "teamNumber"] <- "team"
+  names(sched)[names(sched) == "startTime"] <- "start"
+  names(sched)[names(sched) == "actualStartTime"] <- "actualStart"
 
   # Fill in alliance data
   sched$station <- tolower(sched$station)
@@ -1007,6 +923,12 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 
   # Set row names
   row.names(sched)<- paste(sched$match, sched$station, sep = ".")
+
+  # Set column order
+  cols.order <- c("match", "description", "level", "start", "actualStart",
+                  "team", "alliance", "station", "surrogate", "disqualified",
+                  "scoreFinal", "scoreAuto", "scoreFoul")
+  sched <- .SetColumnOrder(sched, cols.order)
 
   attr(sched, "shape") <- "team"
   sched <- sched[order(sched$match, sched$station), ]
@@ -1017,6 +939,11 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 
 #  GetMatchResults() ===========================================================
 #' Get match scores and participating teams
+#'
+#' The data frame returned by \code{GetMatchResults()} is in team shape,
+#' i.e., each ' row contains data for a single team and there are six rows per
+#' match. Use ' \code{ToAllianceShape()} or \code{ToMatchShape} to convert the
+#' data frame to ' a three-teams-per-row shape or a six-teams-per-row shape.
 #'
 #' See the \emph{Match Results} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -1042,11 +969,6 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #' @param start An integer vector containing the earliest match to return.
 #'   Optional.
 #' @param end An integer vector containing the latest match to return. Optional.
-#' @param expand_cols A logical value that defaults to \code{FALSE}. If
-#'   \code{TRUE}, the dataframe will include one row for each scheduled match,
-#'   with a different column for each team. If \code{FALSE}, there will be six
-#'   rows for each match, with each row listing one assigned team and their
-#'   station. Optional.
 #' @param mod_since A character vector containing an HTTP formatted date and
 #'   time. Returns \code{NA} if no changes have been made to the requested data
 #'   since the date and time provided. Optional.
@@ -1062,28 +984,15 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'
 #' @section Columns:
 #'   \enumerate{
-#'      \item \emph{actualStartTime}: character
+#'      \item \emph{actualStart}: character
 #'      \item \emph{description}: character
-#'      \item \emph{tournamentLevel}: factor
-#'      \item \emph{matchNumber}: integer
-#'      \item \emph{postResultTime}: character}
-#'
-#'      If expand_cols == \emph{FALSE}
-#'        \enumerate{
-#'          \item \emph{teamNumber}: factor
-#'          \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
-#'          \item \emph{surrogate}: logical
-#'          \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
-#'
-#'      If expand_cols == \emph{TRUE}
-#'        \enumerate{
-#'          \item \emph{scoreRedFinal, scoreRedAuto, scoreRedFoul}: integer
-#'          \item \emph{scoreBlueFinal, scoreBlueAuto, scoreBlueFoul}: integer
-#'          \item \emph{Red1.team, Red2.team, Red3.team}: factor
-#'          \item \emph{Blue1.team, Blue2.team, Blue3.team}: factor
-#'          \item \emph{Red1.surrogate, Red2.surrogate, Red3.surrogate}: logical
-#'          \item \emph{Blue1.surrogate, Blue2.surrogate,
-#'            Blue3.surrogate}: logical}
+#'      \item \emph{level}: factor
+#'      \item \emph{match}: integer
+#'      \item \emph{postResult}: character
+#'      \item \emph{teamr}: factor
+#'      \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+#'      \item \emph{surrogate}: logical
+#'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 #'
 #' @section Attributes:
 #'   \itemize{
@@ -1093,6 +1002,13 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'       R/sysdata.rda file.
 #'     \item \emph{local_url}: Character vector containing URL used to download
 #'       local data.
+#'     \item \emph{shape}: Character vector that specifies the row and column
+#'       arrangement of the data frame. Initially set to \emph{team},
+#'       indicating there is one team per row and six rows per match. The
+#'       functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
+#'       the data frame to have either three teams per row or six teams per row
+#'       and will set the \emph{shape} attribute to \emph{alliance} or
+#'       \emph{match}.
 #'     \item \emph{time_downloaded}: Character vector containing the local
 #'       system time that the object was downladed from the FIRST API server.
 #'       Formatted an an http date and time string.
@@ -1142,75 +1058,43 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   # The FIRST API returns nested schedule data. The remainder of this function
   # is necessary to extract the nested data into new rows so that the scheule
   # data can be saved as csv data.
-  if(expand_cols) {
-    # Add columns for each operating station
-    cols <- c("Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3")
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      matches[cname.team] <- vector(mode = "integer", length = nrow(matches))
-      cname.dq <- paste(col, "dq", sep = ".")
-      matches[cname.dq] <- vector(mode = "logical", length = nrow(matches))
+
+  # Add columns for each operating station
+  matches["teamNumber"] <- vector(mode = "integer", length = nrow(matches))
+  matches["station"] <- vector(mode = "character", length = nrow(matches))
+  matches["disqualified"] <- vector(mode = "logical", length = nrow(matches))
+
+  # Add combined scores columns
+  matches["scoreFinal"] <- vector(mode = "integer", length = nrow(matches))
+  matches["scoreFoul"] <- vector(mode = "integer", length = nrow(matches))
+  matches["scoreAuto"] <- vector(mode = "integer", length = nrow(matches))
+
+  # Extract teams and delete nested teams column.
+  teams <- matches$Teams
+  matches$Teams <- NULL
+
+  # Expand the matches data frame so there are six rows per match.
+  xMatches <- matches[sort(rep(1:nrow(matches), 6)), ]
+
+  # Fill in team and station data.
+  for(mtch in 1:length(teams)) {
+    for(tm in 1:6) {
+      mrow <- (mtch-1)*6 + tm
+      xMatches$teamNumber[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
+      xMatches$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
+      xMatches$disqualified[[mrow]] <- teams[[mtch]][["dq"]][[tm]]
+
+      # Extract red and blue scores into combined scoreing columns
+      if(substr(xMatches$station[mrow], 1, 1) == 'R')
+        score <- "scoreRed"
+      else
+        score <- "scoreBlue"
+
+      xMatches$scoreFinal[[mrow]] <- xMatches[[paste(score, 'Final', sep="")]][[mrow]]
+      xMatches$scoreFoul[[mrow]] <- xMatches[[paste(score, 'Foul', sep = "")]][[mrow]]
+      xMatches$scoreAuto[[mrow]] <- xMatches[[paste(score, 'Auto', sep = "")]][[mrow]]
     }
-
-    # Extract data from nested Teams column and insert into new operating
-    # station columns
-    for(mtch in 1:nrow(matches)){
-      for(tm in 1:6){
-        station <- matches$Teams[[mtch]][["station"]][[tm]]
-        team <- matches$Teams[[mtch]][["teamNumber"]][[tm]]
-        dq <- matches$Teams[[mtch]][["dq"]][[tm]]
-
-        cname.team <- paste(station, "team", sep = ".")
-        cname.dq <- paste(station, "dq", sep = ".")
-
-        matches[mtch, cname.team] <- team
-        matches[mtch, cname.dq] <- dq
-      }
-    }
-    matches$Teams <- NULL
-
-    # Convert categorical data to factors
-    for(col in cols) {
-      cname.team <- paste(col, "team", sep = ".")
-      matches[[cname.team]] <- factor(matches[[cname.team]])
-    }
-  } else {
-    # Add columns for each operating station
-    matches["teamNumber"] <- vector(mode = "integer", length = nrow(matches))
-    matches["station"] <- vector(mode = "character", length = nrow(matches))
-    matches["disqualified"] <- vector(mode = "logical", length = nrow(matches))
-
-    # Add combined scores columns
-    matches["scoreFinal"] <- vector(mode = "integer", length = nrow(matches))
-    matches["scoreFoul"] <- vector(mode = "integer", length = nrow(matches))
-    matches["scoreAuto"] <- vector(mode = "integer", length = nrow(matches))
-
-    # Extract teams and delete nested teams column.
-    teams <- matches$Teams
-    matches$Teams <- NULL
-
-    # Expand the matches data frame so there are six rows per match.
-    xMatches <- matches[sort(rep(1:nrow(matches), 6)), ]
-
-    # Fill in team and station data.
-    for(mtch in 1:length(teams)) {
-      for(tm in 1:6) {
-        mrow <- (mtch-1)*6 + tm
-        xMatches$teamNumber[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
-        xMatches$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
-        xMatches$disqualified[[mrow]] <- teams[[mtch]][["dq"]][[tm]]
-
-        # Extract red and blue scores into combined scoreing columns
-        if(substr(xMatches$station[mrow], 1, 1) == 'R')
-          score <- "scoreRed"
-        else
-          score <- "scoreBlue"
-
-        xMatches$scoreFinal[[mrow]] <- xMatches[[paste(score, 'Final', sep="")]][[mrow]]
-        xMatches$scoreFoul[[mrow]] <- xMatches[[paste(score, 'Foul', sep = "")]][[mrow]]
-        xMatches$scoreAuto[[mrow]] <- xMatches[[paste(score, 'Auto', sep = "")]][[mrow]]
-      }
-    }
+  }
 
     # Remove redundent score columns
     xMatches$scoreRedFinal <- NULL
@@ -1221,15 +1105,17 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
     xMatches$scoreBlueAuto <- NULL
 
     matches <- xMatches
-  }
+
 
   # Convert categorical data into factors
   matches$tournamentLevel <- factor(matches$tournamentLevel)
 
   # Set column names to shorter, easier to type values.
-  names(matches)[3] <- "level"
-  names(matches)[4] <- "match"
-  names(matches)[6] <- "team"
+  names(matches)[names(matches) == "tournamentLevel"] <- "level"
+  names(matches)[names(matches) == "matchNumber"] <- "match"
+  names(matches)[names(matches) == "teamNumber"] <- "team"
+  names(matches)[names(matches) == "actualStartTime"] <- "actualStart"
+  names(matches)[names(matches) == "postResultTime"] <- "postResult"
 
   # Fill in alliance data
   matches$station <- tolower(matches$station)
@@ -1237,6 +1123,12 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 
   # Set row names to match.station
   row.names(matches) <- paste(matches$match, matches$station, sep = ".")
+
+  # Set column order
+  cols.order <- c("match", "description", "level", "actualStart", "postResult",
+                  "team", "alliance", "station", "disqualified",
+                  "scoreFinal", "scoreAuto", "scoreFoul")
+  matches <- .SetColumnOrder(matches, cols.order)
 
   matches <- matches[order(matches$match, matches$station), ]
   attr(matches, "shape") <- "team"
@@ -2068,3 +1960,32 @@ GetAwardsList <- function(session, mod_since = NULL, only_mod_since = NULL) {
   return(content)
 }
 
+
+#  .SetColumnOrder() ===========================================================
+#' Set the column order of a data frame.
+#'
+#' \code{.SetColumnOrder()} is an internal function that is not intended to be
+#' called by the user. It is called by other FIRST API methods.
+#'
+#' @param df A data frame
+#' @param col.order A character vector containing the names of the columns in
+#'   \code{df}, in the desired column order.
+#'
+#' @return A data frame identical to the the data frame provided in the
+#'   \code{df} argument, except with the columns in the order specified in the
+#'   \code{col.order} argument. The returned data frame will ahve the same
+#'   attributes as the data frame provided in the \code{df} argument.
+#'
+#' @examples
+#' my.df <- data.frame(col3 = 1:3, col1 = 4:6, col2: 7:9)
+#' ordered.df <- .SetColumnOrder(my.df, c("col1", "col2", "col3"))
+.SetColumnOrder <- function(df, col.order) {
+  df.att <- attributes(df)
+  df.att$names <- NULL
+  df.att$row.names <- NULL
+  df.att$class <- NULL
+  df.sorted <- df[, col.order]
+  for(idx in 1:length(df.att))
+    attr(df.sorted, names(df.att)[[idx]]) <- df.att[[idx]]
+  return(df.sorted)
+}

@@ -1,5 +1,15 @@
+# test_70_awards.R
+# Version 2.0.0
+#
+# By default, these tests run locally, without making HTTP connections to the
+# FIRST API server. To run test that firstapiR connects to the FIRST API
+# server, create character vectors named "username" and "key" in the console
+# and set their values to the username and key assigned to you by FIRST. Then
+# run the tests from the console using testthat::test_dir() or
+# testthat::test_file().
 
-context("FIRST_R Awards")
+
+context("firstapiR Awards Functions")
 
 sess_http_valid <- FALSE
 sess_local <- GetSession("username", "key")
