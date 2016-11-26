@@ -38,7 +38,7 @@
 #'   the shape attribute set to "team".
 #'
 #' @return A data frame of class schedule, hybridSchedule, or matchResults
-#'   (depending on the class of the df argument) in match shape, with the match
+#'   (depending on the class of the df argument) in match shape, with the shape
 #'   attribute set to "match".
 #'
 #' @export
@@ -163,8 +163,8 @@ ToMatchShape <- function(df) {
 #'   the shape attribute set to "team".
 #'
 #' @return A data frame of class schedule, hybridSchedule, or matchResults
-#'   (depending on the class of the df argument) in match shape, with the match
-#'   attribute set to "match".
+#'   (depending on the class of the df argument) in match shape, with the shape
+#'   attribute set to "alliance".
 #'
 #' @export
 #'
@@ -242,7 +242,7 @@ ToAllianceShape <- function(df) {
 #'   the shape attribute set to "team".
 #'
 #' @return A data frame of class schedule, hybridSchedule, or matchResults
-#'   (depending on the class of the df argument) in match shape, with the match
+#'   (depending on the class of the df argument) in match shape, with the shape
 #'   attribute set to "match".
 #'
 #' @export

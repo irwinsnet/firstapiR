@@ -3,13 +3,13 @@
 #  the data as either XML, JSON, or as R data frames.
 
 # TODO: Revise lines for changing column names so they don't depend on column
-#   order.
+#   order. DONE
 # TODO: Vectorize setting of row names.
-# TODO: Remove expand_cols arg form all functions.
-# TODO: Shorten column names where applicable.
-# TODO: Add Shape attribute.
-# TODO: Document shape attribute
-# TODO: Reorder attribute documentation to match data frame order
+# TODO: Remove expand_cols arg form all functions. DONE.
+# TODO: Shorten column names where applicable. DONE
+# TODO: Add Shape attribute. DONE
+# TODO: Document shape attribute. DONE
+# TODO: Reorder attribute documentation to match data frame order. DONE
 # TODO: Add function to download entire event
 # TODO: Add function to save data to files
 # TODO: Add function to merge hybridSchedule and DetailedScores
@@ -633,10 +633,10 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'
 #' @section Columns:
 #'   \enumerate{
-#'     \item \emph{description}: character
-#'     \item \emph{field}: character
-#'     \item \emph{level}: factor
 #'     \item \emph{match}: integer
+#'     \item \emph{description}: character
+#'     \item \emph{level}: factor
+#'     \item \emph{field}: character
 #'     \item \emph{start}: character
 #'     \item \emph{team}: factor
 #'     \item \emph{alliance}: factor (Red, Blue)
@@ -792,16 +792,16 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'
 #' @section Columns:
 #'   \enumerate{
-#'      \item \emph{description}: character
-#'      \item \emph{[evel}: factor
 #'      \item \emph{match}: integer
+#'      \item \emph{description}: character
+#'      \item \emph{level}: factor
 #'      \item \emph{start}: character
 #'      \item \emph{actualStart}: character
 #'      \item \emph{team}: factor
 #'      \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
-#'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer
 #'      \item \emph{surrogate}: logical
-#'      \item \emph{dq}: logical}
+#'      \item \emph{disqualified}: logical}
+#'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer
 #'
 #' @section Attributes:
 #'   \itemize{
@@ -837,8 +837,8 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' GetHybridSchedule(sn, event = "ORPHI")
 #' GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
 GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
-                              end = NULL, expand_cols = FALSE,
-                              mod_since = NULL, only_mod_since = NULL) {
+                              end = NULL, mod_since = NULL,
+                              only_mod_since = NULL) {
   # Check for prohibited combinations of arguments
   # Not required because GetSchedule has no prohibited combinations.
 
@@ -984,14 +984,15 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'
 #' @section Columns:
 #'   \enumerate{
-#'      \item \emph{actualStart}: character
+#'      \item \emph{match}: integer
 #'      \item \emph{description}: character
 #'      \item \emph{level}: factor
-#'      \item \emph{match}: integer
+#'      \item \emph{actualStart}: character
 #'      \item \emph{postResult}: character
-#'      \item \emph{teamr}: factor
+#'      \item \emph{team}: factor
+#'      \item \emph{alliance}: factor
 #'      \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
-#'      \item \emph{surrogate}: logical
+#'      \item \emph{disqualified}: logical
 #'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 #'
 #' @section Attributes:
@@ -1031,8 +1032,7 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #' GetMatchResults(sn, "CMP-ARCHIMEDES", level="qual", start=10, end=20)
 GetMatchResults <- function(session, event, level = "qual", team = NULL,
                             match = NULL, start = NULL, end = NULL,
-                            expand_cols = FALSE, mod_since = NULL,
-                            only_mod_since = NULL) {
+                            mod_since = NULL, only_mod_since = NULL) {
   # Check for unallowed combinations of arguments.
   if((!is.null(match) || !is.null(start) || !is.null(end)) && is.null(level))
     stop("You must specify the level when you specify match, start, or end.")
@@ -1192,8 +1192,8 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'
 #' @section Columns:
 #'   \enumerate{
-#'      \item \emph{matchLevel}: character
-#'      \item \emph{matchNumber}: integer
+#'      \item \emph{level}: character
+#'      \item \emph{match}: integer
 #'      \item \emph{audienceGroup}: character
 #'      \item \emph{alliance}: character
 #'      \item \emph{robot1Auto, robot2Auto, robot3Auto}: character
@@ -1296,8 +1296,14 @@ GetScores <- function(session, event, level = "qual", team = NULL,
       scores[[col_name]] <- factor(scores[[col_name]])
   }
 
+  # Set column names to shorter, easier to type values.
+  names(scores)[names(scores) == "matchLevel"] <- "level"
+  names(scores)[names(scores) == "matchNumber"] <- "match"
+
   # Set row names to be integers.
-  row.names(scores) <- 1:nrow(scores)
+  scores$alliance <- tolower(as.character(scores$alliance))
+  row.names(scores) <- paste(scores$match, scores$alliance, sep = ".")
+  scores$alliance <- factor(scores$alliance)
 
   class(scores) <- append(class(scores), "Scores")
   return(scores)
@@ -1475,6 +1481,9 @@ GetRankings <- function (session, event, team = NULL, top = NULL,
   # Delete 'Rankings.' from the beginning of column names.
   names(rankings) <- .TrimColNames(names(rankings))
 
+  # Standardize column names across different firstapiR functions
+  names(rankings)[names(rankings) == "teamNumber"] <- "team"
+
   class(rankings) <- append(class(rankings), "Rankings")
   return(rankings)
 }
@@ -1569,6 +1578,9 @@ GetAwards <- function(session, event = NULL, team = NULL,
 
   # Remove column name prefix
   names(awards) <- .TrimColNames(names(awards))
+
+  # Standardize column names across different firstapiR functions
+  names(awards)[names(awards) == "teamNumber"] <- "team"
 
   class(awards) <- append(class(awards), "Awards")
   return(awards)

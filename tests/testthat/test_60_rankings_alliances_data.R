@@ -50,7 +50,7 @@ test_that("GetRankings() returns a data frame", {
   expect_is(rks, "Rankings")
   expect_equal(nrow(rks), 39)
   expect_equal(length(rks), 14)
-  expect_equal(names(rks), c("rank", "teamNumber", "sortOrder1", "sortOrder2",
+  expect_equal(names(rks), c("rank", "team", "sortOrder1", "sortOrder2",
                             "sortOrder3", "sortOrder4", "sortOrder5",
                             "sortOrder6", "wins", "losses", "ties",
                             "qualAverage", "dq", "matchesPlayed"))
@@ -62,7 +62,7 @@ test_that("GetRankings() team and top arguments via HTTP", {
 
   rks <- GetRankings(sess_http, "PNCMP", team = 5803)
   expect_equal(nrow(rks), 1)
-  expect_equal(rks$teamNumber[[1]], 5803)
+  expect_equal(rks$team[[1]], 5803)
 
   rks <- GetRankings(sess_http, "PNCMP", top = 5)
   expect_equal(nrow(rks), 5)

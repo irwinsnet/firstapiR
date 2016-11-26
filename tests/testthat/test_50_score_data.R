@@ -56,7 +56,7 @@ test_that("only_mod_since and mod_since return NA when set to current time", {
   expect_true(is.na(results))
   expect_equal(attr(results, "mod_since"), mod_date)
 
-  results <- GetMatchResults(sess_http, event = "ORPHI", expand_cols = TRUE,
+  results <- GetMatchResults(sess_http, event = "ORPHI",
                              only_mod_since = mod_date)
   expect_true(is.na(results))
   expect_equal(attr(results, "only_mod_since"), mod_date)

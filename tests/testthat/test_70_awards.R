@@ -29,7 +29,7 @@ test_that("GetAwards() returns a local data frame", {
   expect_equal(length(awards), 10)
   expect_equal(names(awards), c("awardId", "teamId", "eventId",
                                 "eventDivisionId", "eventCode", "name",
-                                "series", "teamNumber", "fullTeamName",
+                                "series", "team", "fullTeamName",
                                 "person"))
 })
 

@@ -5,8 +5,7 @@
 \title{Get the match schedule and results}
 \usage{
 GetHybridSchedule(session, event, level = "qual", start = NULL,
-  end = NULL, expand_cols = FALSE, mod_since = NULL,
-  only_mod_since = NULL)
+  end = NULL, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -61,7 +60,7 @@ hybrid?start=start&end=end}
 
   \enumerate{
      \item \emph{description}: character
-     \item \emph{[evel}: factor
+     \item \emph{level}: factor
      \item \emph{match}: integer
      \item \emph{start}: character
      \item \emph{actualStart}: character

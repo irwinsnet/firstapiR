@@ -5,8 +5,7 @@
 \title{Get match scores and participating teams}
 \usage{
 GetMatchResults(session, event, level = "qual", team = NULL, match = NULL,
-  start = NULL, end = NULL, expand_cols = FALSE, mod_since = NULL,
-  only_mod_since = NULL)
+  start = NULL, end = NULL, mod_since = NULL, only_mod_since = NULL)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -70,7 +69,7 @@ The FIRST API URL format is:
      \item \emph{level}: factor
      \item \emph{match}: integer
      \item \emph{postResult}: character
-     \item \emph{teamr}: factor
+     \item \emph{team}: factor
      \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
      \item \emph{surrogate}: logical
      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}

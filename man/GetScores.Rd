@@ -72,8 +72,8 @@ teamNumber=team&matchNumber=match&start=start&end=end}
 \section{Columns}{
 
   \enumerate{
-     \item \emph{matchLevel}: character
-     \item \emph{matchNumber}: integer
+     \item \emph{level}: character
+     \item \emph{match}: integer
      \item \emph{audienceGroup}: character
      \item \emph{alliance}: character
      \item \emph{robot1Auto, robot2Auto, robot3Auto}: character
