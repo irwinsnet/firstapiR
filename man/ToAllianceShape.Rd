@@ -14,8 +14,8 @@ the shape attribute set to "team".}
 }
 \value{
 A data frame of class schedule, hybridSchedule, or matchResults
-  (depending on the class of the df argument) in match shape, with the match
-  attribute set to "match".
+  (depending on the class of the df argument) in match shape, with the shape
+  attribute set to "alliance".
 }
 \description{
 The firstapiR functions \code{GetSchedule()}, \code{GetHybridSchedule()}, and

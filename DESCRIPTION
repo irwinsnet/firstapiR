@@ -17,6 +17,7 @@ Imports:
 RoxygenNote: 5.0.1
 Suggests: testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    tcltk
 LazyData: true
 VignetteBuilder: knitr

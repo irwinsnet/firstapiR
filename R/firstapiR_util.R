@@ -260,25 +260,18 @@ ToTeamShape <- function(df) {
     stop("df argument must be a data frame in alliance or match shape")
 
   # Replace columns for data frames in match shape.
-  if(attr(df, "shape") == "match") {
-    names(df)[names(df) == "scoreFinal.blue"] <- "scoreFinal.blue1"
-    names(df)[names(df) == "scoreAuto.blue"] <- "scoreAuto.blue1"
-    names(df)[names(df) == "scoreFoul.blue"] <- "scoreFoul.blue1"
-    names(df)[names(df) == "scoreFinal.red"] <- "scoreFinal.red1"
-    names(df)[names(df) == "scoreFoul.red"] <- "scoreFoul.red1"
-    names(df)[names(df) == "scoreAuto.red"] <- "scoreAuto.red1"
-    df$scoreFinal.blue2 <- df$scoreFinal.blue1
-    df$scoreFinal.blue3 <- df$scoreFinal.blue1
-    df$scoreAuto.blue2 <- df$scoreAuto.blue1
-    df$scoreAuto.blue3 <- df$scoreAuto.blue1
-    df$scoreFoul.blue2 <- df$scoreFoul.blue1
-    df$scoreFoul.blue3 <- df$scoreFoul.blue1
-    df$scoreFinal.red2 <- df$scoreFinal.red1
-    df$scoreFinal.red3 <- df$scoreFinal.red1
-    df$scoreAuto.red2 <- df$scoreAuto.red1
-    df$scoreAuto.red3 <- df$scoreAuto.red1
-    df$scoreFoul.red2 <- df$scoreFoul.red1
-    df$scoreFoul.red3 <- df$scoreFoul.red1
+  if((attr(df, "shape") == "match") & (!inherits(df, "Schedule"))) {
+    # Add the digit 1 to the end of each score column name.
+    score.cols <- grep("score\\w+\\.(blue|red)", names(df))
+    names(df)[score.cols] <- paste(names(df)[score.cols], 1, sep = "")
+
+    # Add new score columns for stations red2/3 and blue2/3 and copy data from
+    #   red1 and blue1 score columns.
+    new.cols <- c(sub("(score\\D+)\\d", "\\12" , names(df[score.cols])),
+                  sub("(score\\D+)\\d", "\\13" , names(df[score.cols])))
+    for(new.col in new.cols) {
+      df[[new.col]] <- df[[sub("(score\\D+)[23]", "\\11", new.col)]]
+    }
   }
 
   # Reshape data frame. Assumes df has reshapeWide attribute from prior call to
@@ -327,33 +320,62 @@ ToTeamShape <- function(df) {
 }
 
 
-#  .PreserveAttributes()===============================================================
-#' Reassign firstapiR attributes to a data frame.
+# GetAll() =====================================================================
+#' Download all data for a competition, including schedules, scores, and awards.
 #'
-#' This is an internal function. Many actions in R will strip attributes from
-#' data frames. This helper function replaces those attributes.
+#' @param session A Session object created with \code{GetSession()}.
+#' @param event A character vector containing a FIRST API event code
+#'   (see \code{GetEvents}).
 #'
-#' This function throws an error if the list passed via the \emph{att} argument
-#' does not contain elements named \emph{local_test_data},
-#' \emph{time_downloaded}, or \emph{last_modified}.
+#' @return A list containing the following firstapiR data frames:
+#'   \enumerate{
+#'     \item \emph{season}: Season class
+#'     \item \emph{event}: Events class
+#'     \item \emph{teams}: Teams class, listing all teams in the competition
+#'     \item \emph{matches_qual}: MatchResults class, for qualification matches
+#'     \item \emph{matches_playoff}: MatchResults class, for playoffs
+#'     \item \emph{schedule_qual}: Schedule class, for qualification matches
+#'     \item \emph{schedule_playoff}: Schedule class, for playoffs
+#'     \item \emph{scores_qual}: Scores class, for qualification matches
+#'     \item \emph{scores_playoff}: Scores class, for playoffs
+#'     \item \emph{rankings}: Rankings class
+#'     \item \emph{alliances}: Alliances class
+#'     \item \emph{awards}: Awards class}
 #'
-#' @param df A data frame that may have had its attributes removed.
-#' @param att A list containing the attributes from the data frame before the
-#'   attributes were stripped. This character vector should be created by
-#'   calling \code{attribues} on the original data frame.
-#'
-#' @return A data frame with the attributes \emph{local_test_data},
-#' \emph{time_downloaded}, and \emph{last_modified}.
+#' @export
 #'
 #' @examples
-#' new.df <- .PreserveAttributes(old.df)
-.PreserveAttributes <- function(df, att){
-  attr(df, "url") <- att$url
-  attr(df, "local_test_data") <- att$local_test_data
-  attr(df, "time_downloaded") <- att$time_downloaded
-  attr(df, "last_modified") <- att$last_modified
+#' \dontrun{
+#' sn <- GetSession("myUserName", "key")
+#' archimedes <- GetAll(sn, "ARCHIMEDES")
+#' SaveData(ARCHIMEDES)
+#' }
+GetAll <- function(session, event) {
+  evt <- list()
+  evt$season <- GetSeason(session)
+  evt$event <- GetEvents(session, event)
+  evt$teams <- GetTeams(session, event = event)
+  evt$matches_qual <- GetMatchResults(session, event, level = "qual")
+  evt$matches_playoff <- GetMatchResults(session, event, level = "playoff")
+  evt$schedule_qual <- GetSchedule(session, event, level = "qual")
+  evt$schedule_playoff <- GetSchedule(session, event, level = "playoff")
+  evt$scores_qual <- GetScores(session, event, level = "qual")
+  evt$scores_playoff <- GetScores(session, event, level = "playoff")
+  evt$rankings <- GetRankings(session, event)
+  evt$alliances <- GetAlliances(session, event)
+  evt$awards <- GetAwards(session, event)
 
-  if("local_url" %in% names(att))
-    attr(df, "local_url") <- att$local_url
-  return(df)
+  return(evt)
 }
+
+
+
+
+
+
+
+
+
+
+
+
