@@ -2,20 +2,6 @@
 #  Contains functions that retrieve data from the FIRST API server and format
 #  the data as either XML, JSON, or as R data frames.
 
-# TODO: Revise lines for changing column names so they don't depend on column
-#   order. DONE
-# TODO: Remove expand_cols arg form all functions. DONE.
-# TODO: Shorten column names where applicable. DONE
-# TODO: Add Shape attribute. DONE
-# TODO: Document shape attribute. DONE
-# TODO: Reorder attribute documentation to match data frame order. DONE
-# TODO: Add function to download entire event
-# TODO: Add function to save data to files
-# TODO: Add function to merge hybridSchedule and DetailedScores
-# TODO: Document all functions
-# TODO: Move .PreserveAttributes function from firstapiR_util to firstapiR_http
-# TODO: Make sure .PreserverColumns is setting the attributes correctly.
-
 
 # Server URLs and other parameters
 .staging_url <- "https://frc-staging-api.firstinspires.org"
@@ -716,9 +702,9 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
     for(tm in 1:6) {
       mrow <- (mtch-1)*6 + tm
       sched$team[[mrow]] <- teams[[mtch]][["teamNumber"]][[tm]]
-      sched$station[[mrow]] <- tolower(teams[[mtch]][["station"]][[tm]])
+      sched$station[[mrow]] <- teams[[mtch]][["station"]][[tm]]
       sched$surrogate[[mrow]] <- teams[[mtch]][["surrogate"]][[tm]]
-      row.names(sched)[mrow] <- paste(mtch, sched$station[[mrow]], sep = ".")
+      #Vrow.names(sched)[mrow] <- paste(mtch, sched$station[[mrow]], sep = ".")
     }
   }
 
@@ -728,7 +714,6 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
   names(sched)[names(sched) == "matchNumber"] <- "match"
 
   # Fill in alliance data
-  sched$station <- tolower(sched$station)
   sched$alliance <- substr(sched$station, 1, nchar(sched$station) - 1)
 
   # Transform categorical columns into factors.
@@ -740,6 +725,7 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
                  "team", "alliance", "station", "surrogate")
   sched <- .SetColumnOrder(sched, cols.order)
 
+  row.names(sched) <- tolower(paste(sched$match, sched$station, sep = "."))
 
   attr(sched, "shape") <- "team"
   class(sched) <- append(class(sched), "Schedule")
@@ -905,10 +891,6 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
   sched$scoreRedAuto <- NULL
   sched$scoreBlueAuto <- NULL
 
-  # Transform categorical columns into factors.
-  sched <- .FactorColumns(sched, c("teamNumber", "station",
-                                   "tournamentLevel"))
-
   # Set column names
   names(sched)[names(sched) == "tournamentLevel"] = "level"
   names(sched)[names(sched) == "matchNumber"] <- "match"
@@ -917,11 +899,13 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
   names(sched)[names(sched) == "actualStartTime"] <- "actualStart"
 
   # Fill in alliance data
-  sched$station <- tolower(sched$station)
   sched$alliance <- substr(sched$station, 1, nchar(sched$station) - 1)
 
+  # Transform categorical columns into factors.
+  sched <- .FactorColumns(sched, c("team", "station", "level"))
+
   # Set row names
-  row.names(sched)<- paste(sched$match, sched$station, sep = ".")
+  row.names(sched)<- tolower(paste(sched$match, sched$station, sep = "."))
 
   # Set column order
   cols.order <- c("match", "description", "level", "start", "actualStart",
@@ -1117,11 +1101,11 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   names(matches)[names(matches) == "postResultTime"] <- "postResult"
 
   # Fill in alliance data
-  matches$station <- tolower(matches$station)
   matches$alliance <- substr(matches$station, 1, nchar(matches$station) - 1)
 
   # Set row names to match.station
-  row.names(matches) <- paste(matches$match, matches$station, sep = ".")
+  row.names(matches) <- tolower(paste(matches$match,
+                                      matches$station, sep = "."))
 
   # Set column order
   cols.order <- c("match", "description", "level", "actualStart", "postResult",
@@ -1300,8 +1284,8 @@ GetScores <- function(session, event, level = "qual", team = NULL,
   names(scores)[names(scores) == "matchNumber"] <- "match"
 
   # Set row names to be integers.
-  scores$alliance <- tolower(as.character(scores$alliance))
-  row.names(scores) <- paste(scores$match, scores$alliance, sep = ".")
+  scores$alliance <- as.character(scores$alliance)
+  row.names(scores) <- tolower(paste(scores$match, scores$alliance, sep = "."))
   scores$alliance <- factor(scores$alliance)
 
   class(scores) <- append(class(scores), "Scores")

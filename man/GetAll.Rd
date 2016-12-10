@@ -35,7 +35,7 @@ Download all data for a competition, including schedules, scores, and awards.
 \dontrun{
 sn <- GetSession("myUserName", "key")
 archimedes <- GetAll(sn, "ARCHIMEDES")
-SaveData(ARCHIMEDES)
+SaveData(archimedes)
 }
 }
 

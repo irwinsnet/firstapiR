@@ -40,3 +40,22 @@ NULL
 #   * httr
 #   * jsonlite
 #   * XML
+
+
+# TODO: Revise lines for changing column names so they don't depend on column
+#   order. DONE
+# TODO: Remove expand_cols arg form all functions. DONE.
+# TODO: Shorten column names where applicable. DONE
+# TODO: Add Shape attribute. DONE
+# TODO: Document shape attribute. DONE
+# TODO: Reorder attribute documentation to match data frame order. DONE
+# TODO: Add function to download entire event. DONE
+# TODO: Add function to save data to files. DONE
+# TODO: Add function to merge MatchResults and DetailedScores. DONE
+# TODO: Document all functions
+# TODO: Move .PreserveAttributes function from firstapiR_util to firstapiR_http
+# TODO: Make sure .PreserverColumns is setting the attributes correctly.
+# TODO: Add data from 2016 championships
+# TODO: modify GetAll test to use local data.
+# TODO: Finish url checking on Merge function.
+# TODO: Alliance and Station columns back to title case.

@@ -85,33 +85,33 @@ ToMatchShape <- function(df) {
   att.reshape <- attr(alli.df, "reshapeWide")
   if(inherits(df, "MatchResults"))
     alli.df <- alli.df[, c("match", "description", "level", "actualStart",
-                           "postResult", "scoreFinal.blue",
-                           "scoreAuto.blue", "scoreFoul.blue", "scoreFinal.red",
-                           "scoreAuto.red", "scoreFoul.red", "team.blue1",
-                           "disqualified.blue1", "team.blue2",
-                           "disqualified.blue2", "team.blue3",
-                           "disqualified.blue3", "team.red1",
-                           "disqualified.red1", "team.red2",
-                           "disqualified.red2", "team.red3",
-                           "disqualified.red3")]
+                           "postResult", "scoreFinal.Blue",
+                           "scoreAuto.Blue", "scoreFoul.Blue", "scoreFinal.Red",
+                           "scoreAuto.Red", "scoreFoul.Red", "team.Blue1",
+                           "disqualified.Blue1", "team.Blue2",
+                           "disqualified.Blue2", "team.Blue3",
+                           "disqualified.Blue3", "team.Red1",
+                           "disqualified.Red1", "team.Red2",
+                           "disqualified.Red2", "team.Red3",
+                           "disqualified.Red3")]
   if(inherits(df, "HybridSchedule"))
     alli.df <- alli.df[, c("match", "description", "level", "start",
-                           "actualStart", "scoreFinal.blue",
-                           "scoreAuto.blue", "scoreFoul.blue", "scoreFinal.red",
-                           "scoreAuto.red", "scoreFoul.red", "team.blue1",
-                           "surrogate.blue1", "disqualified.blue1","team.blue2",
-                           "surrogate.blue2", "disqualified.blue2",
-                           "team.blue3", "surrogate.blue3",
-                           "disqualified.blue3",  "team.red1", "surrogate.red1",
-                           "disqualified.red1",  "team.red2",
-                           "surrogate.red2", "disqualified.red2", "team.red3",
-                           "surrogate.red3", "disqualified.red3")]
+                           "actualStart", "scoreFinal.Blue",
+                           "scoreAuto.Blue", "scoreFoul.Blue", "scoreFinal.Red",
+                           "scoreAuto.Red", "scoreFoul.Red", "team.Blue1",
+                           "surrogate.Blue1", "disqualified.Blue1","team.Blue2",
+                           "surrogate.Blue2", "disqualified.Blue2",
+                           "team.Blue3", "surrogate.Blue3",
+                           "disqualified.Blue3",  "team.Red1", "surrogate.Red1",
+                           "disqualified.Red1",  "team.Red2",
+                           "surrogate.Red2", "disqualified.Red2", "team.Red3",
+                           "surrogate.Red3", "disqualified.Red3")]
   if(inherits(df, "Schedule"))
     alli.df <- alli.df[, c("match", "description", "level", "field", "start",
-                           "team.blue1", "surrogate.blue1", "team.blue2",
-                           "surrogate.blue2", "team.blue3", "surrogate.blue3",
-                           "team.red1", "surrogate.red1", "team.red2",
-                           "surrogate.red2", "team.red3", "surrogate.red3")]
+                           "team.Blue1", "surrogate.Blue1", "team.Blue2",
+                           "surrogate.Blue2", "team.Blue3", "surrogate.Blue3",
+                           "team.Red1", "surrogate.Red1", "team.Red2",
+                           "surrogate.Red2", "team.Red3", "surrogate.Red3")]
   attr(alli.df, "reshapeWide") <- att.reshape
 
   # Set row names to match number
@@ -195,7 +195,8 @@ ToAllianceShape <- function(df) {
                      timevar = "station", v.names = var.cols)
 
   # Set row names to m.color where m is match number, color is red or blue.
-  row.names(mtch.df) <- paste(mtch.df$match, mtch.df$alliance, sep = ".")
+  row.names(mtch.df) <- tolower(paste(mtch.df$match,
+                                      mtch.df$alliance, sep = "."))
 
   # Set shape attribute and copy attributes from input data frame.
   attr(mtch.df, "shape") <- "alliance"
@@ -262,7 +263,7 @@ ToTeamShape <- function(df) {
   # Replace columns for data frames in match shape.
   if((attr(df, "shape") == "match") & (!inherits(df, "Schedule"))) {
     # Add the digit 1 to the end of each score column name.
-    score.cols <- grep("score\\w+\\.(blue|red)", names(df))
+    score.cols <- grep("score\\w+\\.(Blue|Red)", names(df))
     names(df)[score.cols] <- paste(names(df)[score.cols], 1, sep = "")
 
     # Add new score columns for stations red2/3 and blue2/3 and copy data from
@@ -290,7 +291,8 @@ ToTeamShape <- function(df) {
   }
 
   # Set row names to [match].[station]
-  row.names(team.df) <- paste(team.df$match, team.df$station, sep = ".")
+  row.names(team.df) <- tolower(paste(team.df$match,
+                                      team.df$station, sep = "."))
 
   # Retrieve attributes from input data frame
   team.df <- .PreserveAttributes(team.df, attributes(df))
@@ -323,6 +325,8 @@ ToTeamShape <- function(df) {
 # GetAll() =====================================================================
 #' Download all data for a competition, including schedules, scores, and awards.
 #'
+#'
+#'
 #' @param session A Session object created with \code{GetSession()}.
 #' @param event A character vector containing a FIRST API event code
 #'   (see \code{GetEvents}).
@@ -348,19 +352,24 @@ ToTeamShape <- function(df) {
 #' \dontrun{
 #' sn <- GetSession("myUserName", "key")
 #' archimedes <- GetAll(sn, "ARCHIMEDES")
-#' SaveData(ARCHIMEDES)
+#' SaveData(archimedes)
 #' }
 GetAll <- function(session, event) {
   evt <- list()
   evt$season <- GetSeason(session)
   evt$event <- GetEvents(session, event)
   evt$teams <- GetTeams(session, event = event)
-  evt$matches_qual <- GetMatchResults(session, event, level = "qual")
-  evt$matches_playoff <- GetMatchResults(session, event, level = "playoff")
-  evt$schedule_qual <- GetSchedule(session, event, level = "qual")
-  evt$schedule_playoff <- GetSchedule(session, event, level = "playoff")
-  evt$scores_qual <- GetScores(session, event, level = "qual")
-  evt$scores_playoff <- GetScores(session, event, level = "playoff")
+  evt$schedule.qual <- GetSchedule(session, event, level = "qual")
+  evt$schedule.playoff <- GetSchedule(session, event, level = "playoff")
+  evt$hybrid.qual <- GetHybridSchedule(session, event, level = "qual")
+  evt$hybrid.playoff <- GetHybridSchedule(session, event, level = "playoff")
+  evt$matches.qual <- GetMatchResults(session, event, level = "qual")
+  evt$matches.playoff <- GetMatchResults(session, event, level = "playoff")
+  evt$scores.qual <- GetScores(session, event, level = "qual")
+  evt$scores.playoff <- GetScores(session, event, level = "playoff")
+  evt$results.qual <- MergeResults(evt$hybrid.qual, evt$scores.qual)
+  evt$results.playoff <- MergeResults(evt$hybrid.playoff,
+                                             evt$scores.playoff)
   evt$rankings <- GetRankings(session, event)
   evt$alliances <- GetAlliances(session, event)
   evt$awards <- GetAwards(session, event)
@@ -369,13 +378,76 @@ GetAll <- function(session, event) {
 }
 
 
+# MergeScores() ================================================================
+#' Merge MatchResults and Scores data frames into a single data frame.
+#'
+#' @param hybrid.df A HybridSchedule class data frame.
+#' @param scores.df A Scores class data frame.
+#'
+#' @return A Results class data frame containing both the teams assigned to a
+#'   match and their detailed scores.
+#'
+#' @export
+MergeResults <- function(hybrid.df, scores.df) {
 
+  # Check arguments
+  urls <- character(2)
 
+  if(!inherits(hybrid.df, "HybridSchedule"))
+    stop("hybrid.df argument must be data frame of class 'HybridSchedule'")
+  else
+    urls[1] <- attr(hybrid.df, "url")
+    if(attr(hybrid.df, "shape") != "team")
+      stop("hybrid.df argument must be in team shape.")
+  if(!inherits(scores.df, "Scores"))
+    stop("scores.df argument must be data frame of class 'Scores'")
+  else
+    urls[2] <- attr(scores.df, "url")
 
+  # Verify data frames are from single compeition.
 
+  # URLs have valid format
+  if(!all(grepl(paste("^https://\\.*frc-api.firstinspires.org/v2.0/20\\d\\d/",
+                      "(schedule|scores)/[^/]+/(qual|playoff)(/hybrid)?$",
+                      sep = ""),
+                urls)))
+     stop("Data frames have invalid url parameters.")
 
+  # Data frames are from same season
+  urls_season <- regmatches(urls, regexpr("\\d{4}", urls))
+  if(urls_season[1] != urls_season[2])
+    stop("Data frames are from different seasons.")
 
+  # Data frames are from same event
+  urls_event <- sub(".*/(schedule|scores)/([^/]+)/.*", "\\2", urls)
+  if(urls_event[1] != urls_event[2])
+    stop("Data frames are from different events.")
 
+  # Data frames are from same match level
+  urls_lvl <- sub(".*/(schedule|scores)/[^/]+/(qual|playoff).*", "\\2", urls)
+  if(urls_lvl[1] != urls_lvl[2])
+    stop("Data frames are not from same match level (qual or playoff).")
 
+  # Remove duplicate columns from MatchResults data frame
+  hybrid.df$scoreAuto <- NULL
+  hybrid.df$scoreFoul <- NULL
+  hybrid.df$scoreFinal <- NULL
 
+  # Merge data frames
+  merged.df <- merge(hybrid.df, scores.df)
 
+  # Convert columns to factors
+  merged.df$alliance <- factor(merged.df$alliance)
+  merged.df$station <- factor(merged.df$station)
+
+  # Sort results and set row names to lvl.match.station
+  merged.df <- merged.df[order(merged.df$match, merged.df$station), ]
+  row.names(merged.df) <- tolower(paste(tolower(substr(levels(merged.df$level[1]),
+                                        1, 1)),
+                                merged.df$match, merged.df$station, sep="."))
+
+  # Add attributes
+  attr(merged.df, "url") <- urls
+  append(class(merged.df), "MergedResults")
+  return(merged.df)
+}

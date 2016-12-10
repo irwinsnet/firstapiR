@@ -115,10 +115,10 @@ test_that("ToMatchShape converts a Schedule data frame", {
   sched.t.m <- ToMatchShape(sched.t)
   expect_equal(nrow(sched.t.m), 60)
   expect_named(sched.t.m, c("match", "description", "level", "field", "start",
-                            "team.blue1", "surrogate.blue1", "team.blue2",
-                            "surrogate.blue2", "team.blue3", "surrogate.blue3",
-                            "team.red1", "surrogate.red1", "team.red2",
-                            "surrogate.red2", "team.red3", "surrogate.red3"))
+                            "team.Blue1", "surrogate.Blue1", "team.Blue2",
+                            "surrogate.Blue2", "team.Blue3", "surrogate.Blue3",
+                            "team.Red1", "surrogate.Red1", "team.Red2",
+                            "surrogate.Red2", "team.Red3", "surrogate.Red3"))
   expect_equal(row.names(sched.t.m)[1:6], c("1", "2", "3", "4", "5", "6"))
   expect_named(attributes(sched.t.m), c("names", "reshapeWide", "shape", "url",
                                         "local_test_data", "time_downloaded",
@@ -132,17 +132,17 @@ test_that("ToMatchShape converts a HybridSchedule data frame", {
   hybrid.t.m <- ToMatchShape(hybrid.t)
   expect_equal(nrow(hybrid.t.m), 78)
   expect_named(hybrid.t.m, c("match", "description", "level", "start",
-                             "actualStart", "scoreFinal.blue", "scoreAuto.blue",
-                             "scoreFoul.blue", "scoreFinal.red",
-                             "scoreAuto.red", "scoreFoul.red", "team.blue1",
-                             "surrogate.blue1", "disqualified.blue1",
-                             "team.blue2", "surrogate.blue2",
-                             "disqualified.blue2", "team.blue3",
-                             "surrogate.blue3", "disqualified.blue3",
-                             "team.red1", "surrogate.red1", "disqualified.red1",
-                             "team.red2", "surrogate.red2", "disqualified.red2",
-                             "team.red3", "surrogate.red3",
-                             "disqualified.red3"))
+                             "actualStart", "scoreFinal.Blue", "scoreAuto.Blue",
+                             "scoreFoul.Blue", "scoreFinal.Red",
+                             "scoreAuto.Red", "scoreFoul.Red", "team.Blue1",
+                             "surrogate.Blue1", "disqualified.Blue1",
+                             "team.Blue2", "surrogate.Blue2",
+                             "disqualified.Blue2", "team.Blue3",
+                             "surrogate.Blue3", "disqualified.Blue3",
+                             "team.Red1", "surrogate.Red1", "disqualified.Red1",
+                             "team.Red2", "surrogate.Red2", "disqualified.Red2",
+                             "team.Red3", "surrogate.Red3",
+                             "disqualified.Red3"))
   expect_equal(row.names(hybrid.t.m)[1:6], c("1", "2", "3", "4", "5", "6"))
   expect_named(attributes(hybrid.t.m), c("names", "reshapeWide", "shape", "url",
                                          "local_test_data", "time_downloaded",
@@ -156,15 +156,15 @@ test_that("ToMatchShape converts a MatchResults data frame", {
   matches.t.m <- ToMatchShape(matches.t)
   expect_equal(nrow(matches.t.m), 128)
   expect_named(matches.t.m, c("match", "description", "level", "actualStart",
-                              "postResult", "scoreFinal.blue", "scoreAuto.blue",
-                              "scoreFoul.blue", "scoreFinal.red",
-                              "scoreAuto.red", "scoreFoul.red", "team.blue1",
-                              "disqualified.blue1", "team.blue2",
-                              "disqualified.blue2", "team.blue3",
-                              "disqualified.blue3", "team.red1",
-                              "disqualified.red1", "team.red2",
-                              "disqualified.red2", "team.red3",
-                              "disqualified.red3"))
+                              "postResult", "scoreFinal.Blue", "scoreAuto.Blue",
+                              "scoreFoul.Blue", "scoreFinal.Red",
+                              "scoreAuto.Red", "scoreFoul.Red", "team.Blue1",
+                              "disqualified.Blue1", "team.Blue2",
+                              "disqualified.Blue2", "team.Blue3",
+                              "disqualified.Blue3", "team.Red1",
+                              "disqualified.Red1", "team.Red2",
+                              "disqualified.Red2", "team.Red3",
+                              "disqualified.Red3"))
   expect_equal(row.names(matches.t.m)[1:6], c("1", "2", "3", "4", "5", "6"))
   expect_named(attributes(matches.t.m), c("names", "reshapeWide", "shape",
                                           "url", "local_test_data",
