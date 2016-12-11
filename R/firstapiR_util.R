@@ -448,6 +448,6 @@ MergeResults <- function(hybrid.df, scores.df) {
 
   # Add attributes
   attr(merged.df, "url") <- urls
-  append(class(merged.df), "MergedResults")
+  class(merged.df) <- append(class(merged.df), "Results")
   return(merged.df)
 }

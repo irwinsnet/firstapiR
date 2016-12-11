@@ -6,9 +6,11 @@
 # Server URLs and other parameters
 .staging_url <- "https://frc-staging-api.firstinspires.org"
 .production_url <- "https://frc-api.firstinspires.org"
-.version <- "v2.0"
-.default_season <- as.integer(format(Sys.Date(), "%Y"))
+.first_http_api_version <- "v2.0"
 .package_version <- "2.0.0"
+.user_agent_name <- paste("firstapiR: Version", .package_version)
+.default_season <- as.integer(format(Sys.Date(), "%Y"))
+
 
 
 #  GetSession() ================================================================

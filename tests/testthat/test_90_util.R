@@ -14,12 +14,16 @@ if(exists("username") & exists("key")) {
 test_that("GetAll via HTTP", {
   if(!sess_http_valid) skip("No username or authorization key")
 
-  archimedes <- GetAll(sn, "ARCHIMEDES")
+  archimedes <- GetAll(sess_http, "ARCHIMEDES")
   expect_length(archimedes, 16)
-  expect_named(arch, c("season", "event", "teams", "schedule.qual",
+  expect_named(archimedes, c("season", "event", "teams", "schedule.qual",
                        "schedule.playoff", "hybrid.qual", "hybrid.playoff",
                        "matches.qual", "matches.playoff", "scores.qual",
-                       "scores.playoff", "merged.results.qual",
-                       "merged.results.playoff", "rankings", "alliances",
+                       "scores.playoff", "results.qual",
+                       "results.playoff", "rankings", "alliances",
                        "awards"))
+  expect_is(archimedes$results.qual, "Results")
+  expect_is(archimedes$results.playoff, "Results")
+  expect_length(archimedes$results.qual, 49)
+  expect_equal(nrow(archimedes$results.qual), 750)
 })

@@ -31,5 +31,5 @@ test_that("Version and URL variables are correct", {
   expect_equal(firstapiR:::.staging_url,
                "https://frc-staging-api.firstinspires.org")
   expect_equal(firstapiR:::.production_url, "https://frc-api.firstinspires.org")
-  expect_equal(firstapiR:::.version, "v2.0")
+  expect_equal(firstapiR:::.package_version, "2.0.0")
 })

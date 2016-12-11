@@ -103,7 +103,7 @@
 
   # Build Full URL
   full_url <- paste(if(session$staging) .staging_url else .production_url,
-                    .version, sep="/")
+                    .first_http_api_version, sep="/")
   if(url != "status")
     full_url <- paste(full_url, session$season, url, sep="/")
 
@@ -130,9 +130,8 @@
     no_results <- FALSE
   } else {
     # Send GET request to FIRST API server
-    user_agent <- paste("firstapiR: Version ", .package_version)
     r <- httr::GET(full_url, httr::add_headers(.headers = headers),
-                   httr::user_agent(user_agent))
+                   httr::user_agent(.user_agent_name))
 
     # Check HTTP Response Status Code
     if(!(httr::status_code(r) %in% c(200, 304)))

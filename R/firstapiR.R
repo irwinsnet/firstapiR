@@ -54,8 +54,7 @@ NULL
 # TODO: Add function to merge MatchResults and DetailedScores. DONE
 # TODO: Document all functions
 # TODO: Move .PreserveAttributes function from firstapiR_util to firstapiR_http
-# TODO: Make sure .PreserverColumns is setting the attributes correctly.
+# TODO: Make sure .PreserveColumns is setting the attributes correctly.
 # TODO: Add data from 2016 championships
 # TODO: modify GetAll test to use local data.
-# TODO: Finish url checking on Merge function.
-# TODO: Alliance and Station columns back to title case.
+# TODO: Finish url checking on Merge function. DONE
