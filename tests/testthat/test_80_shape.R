@@ -63,10 +63,10 @@ test_that("ToAllianceShape converts a Schedule data frame", {
                             "surrogate.2", "team.3", "surrogate.3"))
   expect_equal(row.names(sched.t.a)[1:6], c("1.blue", "1.red", "2.blue",
                                             "2.red", "3.blue", "3.red"))
-  expect_named(attributes(sched.t.a), c("names", "reshapeWide", "shape", "url",
-                                        "local_test_data", "time_downloaded",
-                                        "last_modified", "local_url",
-                                       "row.names", "class"))
+  expect_named(attributes(sched.t.a)[order(names(attributes(sched.t.a)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeWide", "row.names", "shape",
+                 "time_downloaded", "url"))
 
   CheckAttValues(sched.t.a, "Schedule")
 })
@@ -83,10 +83,10 @@ test_that("ToAllianceShape converts a HybridSchedule data frame", {
                              "disqualified.3"))
   expect_equal(row.names(hybrid.t.a)[1:6], c("1.blue", "1.red", "2.blue",
                                             "2.red", "3.blue", "3.red"))
-  expect_named(attributes(hybrid.t.a), c("names", "reshapeWide", "shape", "url",
-                                        "local_test_data", "time_downloaded",
-                                        "last_modified", "local_url",
-                                        "row.names", "class"))
+  expect_named(attributes(hybrid.t.a)[order(names(attributes(hybrid.t.a)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeWide", "row.names", "shape",
+                 "time_downloaded", "url"))
 
   CheckAttValues(hybrid.t.a, "HybridSchedule")
 })
@@ -102,10 +102,10 @@ test_that("ToAllianceShape converts a MatchResults data frame", {
                               "team.3", "disqualified.3"))
   expect_equal(row.names(matches.t.a)[1:6], c("1.blue", "1.red", "2.blue",
                                              "2.red", "3.blue", "3.red"))
-  expect_named(attributes(matches.t.a), c("names", "reshapeWide", "shape",
-                                          "url", "local_test_data",
-                                          "time_downloaded", "last_modified",
-                                          "local_url", "row.names", "class"))
+  expect_named(attributes(matches.t.a)[order(names(attributes(matches.t.a)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeWide", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(matches.t.a, "MatchResults")
 })
 
@@ -120,10 +120,10 @@ test_that("ToMatchShape converts a Schedule data frame", {
                             "team.Red1", "surrogate.Red1", "team.Red2",
                             "surrogate.Red2", "team.Red3", "surrogate.Red3"))
   expect_equal(row.names(sched.t.m)[1:6], c("1", "2", "3", "4", "5", "6"))
-  expect_named(attributes(sched.t.m), c("names", "reshapeWide", "shape", "url",
-                                        "local_test_data", "time_downloaded",
-                                        "last_modified", "local_url",
-                                        "row.names", "class"))
+  expect_named(attributes(sched.t.m)[order(names(attributes(sched.t.m)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeWide", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(sched.t.m, "Schedule")
 })
 
@@ -144,10 +144,10 @@ test_that("ToMatchShape converts a HybridSchedule data frame", {
                              "team.Red3", "surrogate.Red3",
                              "disqualified.Red3"))
   expect_equal(row.names(hybrid.t.m)[1:6], c("1", "2", "3", "4", "5", "6"))
-  expect_named(attributes(hybrid.t.m), c("names", "reshapeWide", "shape", "url",
-                                         "local_test_data", "time_downloaded",
-                                         "last_modified", "local_url",
-                                         "row.names", "class"))
+  expect_named(attributes(hybrid.t.m)[order(names(attributes(hybrid.t.m)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeWide", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(hybrid.t.m, "HybridSchedule")
 })
 
@@ -166,10 +166,10 @@ test_that("ToMatchShape converts a MatchResults data frame", {
                               "disqualified.Red2", "team.Red3",
                               "disqualified.Red3"))
   expect_equal(row.names(matches.t.m)[1:6], c("1", "2", "3", "4", "5", "6"))
-  expect_named(attributes(matches.t.m), c("names", "reshapeWide", "shape",
-                                          "url", "local_test_data",
-                                          "time_downloaded", "last_modified",
-                                          "local_url", "row.names", "class"))
+  expect_named(attributes(matches.t.m)[order(names(attributes(matches.t.m)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeWide", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(matches.t.m, "MatchResults")
 })
 
@@ -183,10 +183,10 @@ test_that("ToTeamShape converts Schedule data frame", {
                               "team", "alliance", "station", "surrogate"))
   expect_equal(row.names(sched.t.a.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
                                           "1.red1", "1.red2", "1.red3"))
-  expect_named(attributes(sched.t.a.t), c("names", "reshapeLong", "url",
-                                          "local_test_data", "time_downloaded",
-                                          "last_modified", "local_url",
-                                          "row.names", "class", "shape"))
+  expect_named(attributes(sched.t.a.t)[order(names(attributes(sched.t.a.t)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeLong", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(sched.t.a.t, "Schedule")
 
   # Convert from match shape.
@@ -196,10 +196,10 @@ test_that("ToTeamShape converts Schedule data frame", {
                               "team", "alliance", "station", "surrogate"))
   expect_equal(row.names(sched.t.m.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
                                               "1.red1", "1.red2", "1.red3"))
-  expect_named(attributes(sched.t.m.t), c("names", "reshapeLong", "url",
-                                          "local_test_data", "time_downloaded",
-                                          "last_modified", "local_url",
-                                          "row.names", "class", "shape"))
+  expect_named(attributes(sched.t.m.t)[order(names(attributes(sched.t.m.t)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeLong", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(sched.t.m.t, "Schedule")
 })
 
@@ -214,10 +214,10 @@ test_that("ToTeamShape converts a HybridSchedule data frame", {
                                "scoreAuto", "scoreFoul"))
   expect_equal(row.names(hybrid.t.a.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
                                               "1.red1", "1.red2", "1.red3"))
-  expect_named(attributes(hybrid.t.a.t), c("names", "reshapeLong", "url",
-                                          "local_test_data", "time_downloaded",
-                                          "last_modified", "local_url",
-                                          "row.names", "class", "shape"))
+  expect_named(attributes(hybrid.t.a.t)[order(names(attributes(hybrid.t.a.t)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeLong", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(hybrid.t.a.t, "HybridSchedule")
 
   # Convert from match shape
@@ -229,10 +229,10 @@ test_that("ToTeamShape converts a HybridSchedule data frame", {
                                "scoreAuto", "scoreFoul"))
   expect_equal(row.names(hybrid.t.m.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
                                                "1.red1", "1.red2", "1.red3"))
-  expect_named(attributes(hybrid.t.m.t), c("names", "reshapeLong", "url",
-                                           "local_test_data", "time_downloaded",
-                                           "last_modified", "local_url",
-                                           "row.names", "class", "shape"))
+  expect_named(attributes(hybrid.t.m.t)[order(names(attributes(hybrid.t.m.t)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeLong", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(hybrid.t.m.t, "HybridSchedule")
 })
 
@@ -247,10 +247,10 @@ test_that("ToTeamShape converts a MatchResults data frame", {
                                 "scoreFoul"))
   expect_equal(row.names(matches.t.a.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
                                                "1.red1", "1.red2", "1.red3"))
-  expect_named(attributes(matches.t.a.t), c("names", "reshapeLong", "url",
-                                           "local_test_data", "time_downloaded",
-                                           "last_modified", "local_url",
-                                           "row.names", "class", "shape"))
+  expect_named(attributes(matches.t.a.t)[order(names(attributes(matches.t.a.t)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeLong", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(matches.t.a.t, "MatchResults")
 
   # Convert from match shape
@@ -262,10 +262,10 @@ test_that("ToTeamShape converts a MatchResults data frame", {
                                 "scoreFoul"))
   expect_equal(row.names(matches.t.m.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
                                                "1.red1", "1.red2", "1.red3"))
-  expect_named(attributes(matches.t.m.t), c("names", "reshapeLong", "url",
-                                           "local_test_data", "time_downloaded",
-                                           "last_modified", "local_url",
-                                           "row.names", "class", "shape"))
+  expect_named(attributes(matches.t.m.t)[order(names(attributes(matches.t.m.t)))],
+               c("class", "last_modified", "local_test_data", "local_url",
+                 "names", "reshapeLong", "row.names", "shape",
+                 "time_downloaded", "url"))
   CheckAttValues(matches.t.m.t, "MatchResults")
 })
 

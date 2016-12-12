@@ -53,9 +53,9 @@ NULL
 # TODO: Add function to save data to files. DONE
 # TODO: Add function to merge MatchResults and DetailedScores. DONE
 # TODO: Document all functions
-# TODO: Move .PreserveAttributes function from firstapiR_util to firstapiR_http
-# TODO: Make sure .PreserveColumns is setting the attributes correctly.
-# TODO: Add data from 2016 championships
+# TODO: Move .PreserveAttributes function DONE
+# TODO: Make sure .PreserveColumns is setting the attributes correctly. DONE
+# TODO: Add data from 2016 championships DONE
 # TODO: modify GetAll test to use local data.
 # TODO: Finish url checking on Merge function. DONE
 

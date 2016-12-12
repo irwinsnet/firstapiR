@@ -364,12 +364,10 @@
 #' @examples
 #' new.df <- .PreserveAttributes(old.df)
 .PreserveAttributes <- function(df, att){
-  attr(df, "url") <- att$url
-  attr(df, "local_test_data") <- att$local_test_data
-  attr(df, "time_downloaded") <- att$time_downloaded
-  attr(df, "last_modified") <- att$last_modified
-
-  if("local_url" %in% names(att))
-    attr(df, "local_url") <- att$local_url
+  # Remove names, class, and row.names attributes
+  strip.names <- append(names(attributes(df)), c("reshapeLong", "reshapeWide"))
+  att <- att[!(names(att) %in% strip.names)]
+  # Append remaining attributes to data frame attributes.
+  attributes(df) <- append(attributes(df), att)
   return(df)
 }
