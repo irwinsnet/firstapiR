@@ -66,38 +66,9 @@ tournamentLevel=level&teamNumber=team&start=start&end=end}
     \item \emph{field}: character
     \item \emph{start}: character
     \item \emph{team}: factor
-    \item \emph{alliance}: factor (Red, Blue)
-    \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+    \item \emph{alliance}: factor (Blue, Red)
+    \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
     \item \emph{surrogate}: logical}
-}
-
-\section{Attributes}{
-
- \enumerate{
-    \item \emph{url}: Character vector containing URL submitted to FIRST API
-      server.
-    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.
-    \item \emph{local_url}: Character vector containing URL used to download
-      local data.
-    \item \emph{shape}: Character vector that specifies the row and column
-      arrangement of the data frame. Initially set to \emph{team},
-      indicating there is one team per row and six rows per match. The
-      functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
-      the data frame to have either three teams per row or six teams per row
-      and will set the \emph{shape} attribute to \emph{alliance} or
-      \emph{match}.
-    \item \emph{time_downloaded}: Character vector containing the local
-      system time that the object was downladed from the FIRST API server.
-      Formatted an an http date and time string.
-    \item \emph{last_modified}: Character vector containing the date and time
-      that the data was last modified by the FIRST API server.
-    \item \emph{mod_since}: Character vector containing the value passed to
-      the \code{mod_since argument}, or NULL if no argument was passed.
-      Formatted as an http date and time string.
-    \item \emph{only_mod_since}: Character vector containing the value passed
-      to the \code{only_mod_since} argument, or NULL if no argument was
-      passed. Formatted as an http date and time string.}
 }
 \examples{
 sn <- GetSession("username", "key")
@@ -105,5 +76,9 @@ GetSchedule(sn, "PNCMP")
 GetSchedule(sn, "PNCMP", start=5, end=10)
 GetSchedule(sn, "WAAMV", level='playoff')
 GetSchedule(sn, "PNCMP", team=4911, end=25)
+}
+\seealso{
+Refer to \code{\link{Standard firstapiR Attributes}} for data
+attributes returned by this function.
 }
 

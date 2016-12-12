@@ -69,7 +69,7 @@ test_that("GetDistricts() returns a local data frame", {
   expect_is(dst, "Districts")
   expect_equal(attr(dst, "url"),
                "https://frc-api.firstinspires.org/v2.0/2016/districts")
-  expect_equal(nrow(dst), 8)
+  expect_equal(nrow(dst), 10)
   expect_equal(length(dst), 3)
   expect_equal(names(dst), c("code", "name", "districtCount"))
 })

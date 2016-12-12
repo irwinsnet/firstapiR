@@ -35,7 +35,7 @@ test_that(".TrimColNames removes column prefixes", {
 test_that(".GetHTTP() returns a non-empty local data frame", {
   dst <- firstapiR:::.GetHTTP(sess_local, "districts")
   expect_equal(class(dst), "data.frame")
-  expect_equal(nrow(dst), 8)
+  expect_equal(nrow(dst), 10)
   expect_equal(length(dst), 3)
 })
 

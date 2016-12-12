@@ -74,16 +74,16 @@ teamNumber=team&matchNumber=match&start=start&end=end}
   \enumerate{
      \item \emph{level}: character
      \item \emph{match}: integer
-     \item \emph{audienceGroup}: character
-     \item \emph{alliance}: character
-     \item \emph{robot1Auto, robot2Auto, robot3Auto}: character
+     \item \emph{audienceGroup}: factor
+     \item \emph{alliance}: factor
+     \item \emph{robot1Auto, robot2Auto, robot3Auto}: factor
      \item \emph{autoBouldersLow, autoBouldersHigh}: integer
      \item \emph{teleopBouldersLow, teleopBouldersHigh}: integer
-     \item \emph{towerFaceA, towerFaceB, towerFaceC}: character
+     \item \emph{towerFaceA, towerFaceB, towerFaceC}: factor
      \item \emph{towerEndStrength}: integer
      \item \emph{teleopTowerCaptured, teleopDefensesBreached}: logical
      \item \emph{position1, position2, position3, position4,
-       position5}: character
+       position5}: factor
      \item \emph{position1Crossings, position2Crossings, position3Crossings,
        position4Crossings, position5Crossings}: integer
      \item \emph{foulCount, techFoulCount}: integer
@@ -94,32 +94,14 @@ teamNumber=team&matchNumber=match&start=start&end=end}
      \item \emph{breachPoints, capturePoints}: integer
      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
 }
-
-\section{Attributes}{
-
-  \itemize{
-    \item \emph{url}: Character vector containing URL submitted to FIRST API
-      server.
-    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.
-    \item \emph{local_url}: Character vector containing URL used to download
-      local data.
-    \item \emph{time_downloaded}: Character vector containing the local
-      system time that the object was downladed from the FIRST API server.
-      Formatted an an http date and time string.
-    \item \emph{last_modified}: Character vector containing the date and time
-      that the data was last modified by the FIRST API server.
-    \item \emph{mod_since}: Character vector containing the value passed to
-      the \code{mod_since argument}, or NULL if no argument was passed.
-      Formatted as an http date and time string.
-    \item \emph{only_mod_since}: Character vector containing the value passed
-      to the \code{only_mod_since} argument, or NULL if no argument was
-      passed. Formatted as an http date and time string.}
-}
 \examples{
 sn <- GetSession("username", "key")
 GetScores(sn, event = "ARCHIMEDES")
 GetScores(sn, event = "WAELL", start = 1, end = 10)
 GetScores(sn, event = "WAELL", match = 15)
+}
+\seealso{
+Refer to \code{\link{Standard firstapiR Attributes}} for data
+attributes returned by this function.
 }
 

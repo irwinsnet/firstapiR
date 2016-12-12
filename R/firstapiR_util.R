@@ -345,6 +345,10 @@ ToTeamShape <- function(df) {
 #'     \item \emph{rankings}: Rankings class
 #'     \item \emph{alliances}: Alliances class
 #'     \item \emph{awards}: Awards class}
+#' \code{GetAll} will omit qualification-level elements and rankings if the
+#' \code{event} argument is set to "CMP", which corresponds to the finals on
+#' Einstein.
+#'
 #'
 #' @export
 #'
@@ -355,22 +359,23 @@ ToTeamShape <- function(df) {
 #' SaveData(archimedes)
 #' }
 GetAll <- function(session, event) {
+  cmp <- (event == "CMP")
   evt <- list()
   evt$season <- GetSeason(session)
   evt$event <- GetEvents(session, event)
   evt$teams <- GetTeams(session, event = event)
-  evt$schedule.qual <- GetSchedule(session, event, level = "qual")
+  if(!cmp) evt$schedule.qual <- GetSchedule(session, event, level = "qual")
   evt$schedule.playoff <- GetSchedule(session, event, level = "playoff")
-  evt$hybrid.qual <- GetHybridSchedule(session, event, level = "qual")
+  if(!cmp) evt$hybrid.qual <- GetHybridSchedule(session, event, level = "qual")
   evt$hybrid.playoff <- GetHybridSchedule(session, event, level = "playoff")
-  evt$matches.qual <- GetMatchResults(session, event, level = "qual")
+  if(!cmp) evt$matches.qual <- GetMatchResults(session, event, level = "qual")
   evt$matches.playoff <- GetMatchResults(session, event, level = "playoff")
-  evt$scores.qual <- GetScores(session, event, level = "qual")
+  if(!cmp) evt$scores.qual <- GetScores(session, event, level = "qual")
   evt$scores.playoff <- GetScores(session, event, level = "playoff")
-  evt$results.qual <- MergeResults(evt$hybrid.qual, evt$scores.qual)
+  if(!cmp) evt$results.qual <- MergeResults(evt$hybrid.qual, evt$scores.qual)
   evt$results.playoff <- MergeResults(evt$hybrid.playoff,
                                              evt$scores.playoff)
-  evt$rankings <- GetRankings(session, event)
+  if(!cmp) evt$rankings <- GetRankings(session, event)
   evt$alliances <- GetAlliances(session, event)
   evt$awards <- GetAwards(session, event)
 

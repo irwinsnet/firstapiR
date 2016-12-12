@@ -41,30 +41,12 @@ The FIRST API URL format is:
      \item \emph{description}: character
      \item \emph{forPerson}: logical}
 }
-
-\section{Attributes}{
-
-  \itemize{
-    \item \emph{url}: Character vector containing URL submitted to FIRST API
-      server.
-    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.
-    \item \emph{local_url}: Character vector containing URL used to download
-      local data.
-    \item \emph{time_downloaded}: Character vector containing the local
-      system time that the object was downladed from the FIRST API server.
-      Formatted an an http date and time string.
-    \item \emph{last_modified}: Character vector containing the date and time
-      that the data was last modified by the FIRST API server.
-    \item \emph{mod_since}: Character vector containing the value passed to
-      the \code{mod_since} argument, or NULL if no argument was passed.
-      Formatted as an http date and time string.
-    \item \emph{only_mod_since}: Character vector containing the value passed
-      to the \code{only_mod_since} argument, or NULL if no argument was
-      passed. Formatted as an http date and time string.}
-}
 \examples{
 sn <- GetSession("username", "key")
 GetAwardsList(sn)
+}
+\seealso{
+Refer to \code{\link{Standard firstapiR Attributes}} for data
+attributes returned by this function.
 }
 

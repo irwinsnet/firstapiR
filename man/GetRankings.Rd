@@ -50,7 +50,7 @@ The FIRST API URL format is:
 
   \enumerate{
      \item \emph{rank}: integer
-     \item \emph{teamNumber}: integer
+     \item \emph{team}: integer
      \item \emph{sortOrder1, sortOrder2, sortOrder3, sortOrder4, sortOrder5,
        sortOrder6}: integer or numeric.
      \item \emph{wins, losses, ties}: integer
@@ -58,32 +58,14 @@ The FIRST API URL format is:
      \item \emph{dq}: integer
      \item \emph{matchesPlayed}: integer}
 }
-
-\section{Attributes}{
-
-  \itemize{
-    \item \emph{url}: Character vector containing URL submitted to FIRST API
-      server.
-    \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-      R/sysdata.rda file.
-    \item \emph{local_url}: Character vector containing URL used to download
-      local data.
-    \item \emph{time_downloaded}: Character vector containing the local
-      system time that the object was downladed from the FIRST API server.
-      Formatted an an http date and time string.
-    \item \emph{last_modified}: Character vector containing the date and time
-      that the data was last modified by the FIRST API server.
-    \item \emph{mod_since}: Character vector containing the value passed to
-      the \code{mod_since argument}, or NULL if no argument was passed.
-      Formatted as an http date and time string.
-    \item \emph{only_mod_since}: Character vector containing the value passed
-      to the \code{only_mod_since} argument, or NULL if no argument was
-      passed. Formatted as an http date and time string.}
-}
 \examples{
 sn <- GetSession("username", "key")
 GetRankings(sn, "WAAMV")
 GetRankings(sn, "PNCMP", team = 1983)
 GetRankings(sn, "ARCHIMEDES", top = 5)
+}
+\seealso{
+Refer to \code{\link{Standard firstapiR Attributes}} for data
+attributes returned by this function.
 }
 

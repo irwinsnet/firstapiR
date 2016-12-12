@@ -4,10 +4,10 @@
 \alias{MergeResults}
 \title{Merge MatchResults and Scores data frames into a single data frame.}
 \usage{
-MergeResults(matchresults.df, scores.df)
+MergeResults(hybrid.df, scores.df)
 }
 \arguments{
-\item{matchresults.df}{A MatchResults class data frame.}
+\item{hybrid.df}{A HybridSchedule class data frame.}
 
 \item{scores.df}{A Scores class data frame.}
 }

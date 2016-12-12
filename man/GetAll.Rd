@@ -27,6 +27,9 @@ A list containing the following firstapiR data frames:
     \item \emph{rankings}: Rankings class
     \item \emph{alliances}: Alliances class
     \item \emph{awards}: Awards class}
+\code{GetAll} will omit qualification-level elements and rankings if the
+\code{event} argument is set to "CMP", which corresponds to the finals on
+Einstein.
 }
 \description{
 Download all data for a competition, including schedules, scores, and awards.

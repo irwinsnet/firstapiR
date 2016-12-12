@@ -170,25 +170,8 @@ GetServerStatus <- function(session) {
 #'     \item \emph{FRCChampionships.startDate}: character
 #'     \item \emph{FRCChampionships.location}: character}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -240,25 +223,8 @@ GetSeason <- function(session, mod_since = NULL, only_mod_since = NULL) {
 #'     \item \emph{name}: character
 #'     \item \emph{districtCount}: integer}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -348,25 +314,8 @@ GetDistricts <- function(session, mod_since = NULL, only_mod_since = NULL) {
 #'     \item \emph{dateEnd}: character
 #'     \item \emph{eventCount}: integer}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an HTTP date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an HTTP date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -476,25 +425,8 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'     \item \emph{pageCurrent}: integer
 #'     \item \emph{pageTotal}: integer}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -626,36 +558,12 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'     \item \emph{field}: character
 #'     \item \emph{start}: character
 #'     \item \emph{team}: factor
-#'     \item \emph{alliance}: factor (Red, Blue)
-#'     \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+#'     \item \emph{alliance}: factor (Blue, Red)
+#'     \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'     \item \emph{surrogate}: logical}
 #'
-#' @section Attributes:
-#'  \enumerate{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{shape}: Character vector that specifies the row and column
-#'       arrangement of the data frame. Initially set to \emph{team},
-#'       indicating there is one team per row and six rows per match. The
-#'       functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
-#'       the data frame to have either three teams per row or six teams per row
-#'       and will set the \emph{shape} attribute to \emph{alliance} or
-#'       \emph{match}.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -785,37 +693,14 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'      \item \emph{start}: character
 #'      \item \emph{actualStart}: character
 #'      \item \emph{team}: factor
-#'      \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+#'      \item \emph{alliance}: factor (Blue, Red)
+#'      \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'      \item \emph{surrogate}: logical
 #'      \item \emph{disqualified}: logical
 #'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{shape}: Character vector that specifies the row and column
-#'       arrangement of the data frame. Initially set to \emph{team},
-#'       indicating there is one team per row and six rows per match. The
-#'       functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
-#'       the data frame to have either three teams per row or six teams per row
-#'       and will set the \emph{shape} attribute to \emph{alliance} or
-#'       \emph{match}.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -904,7 +789,7 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
   sched$alliance <- substr(sched$station, 1, nchar(sched$station) - 1)
 
   # Transform categorical columns into factors.
-  sched <- .FactorColumns(sched, c("team", "station", "level"))
+  sched <- .FactorColumns(sched, c("team", "alliance", "station", "level"))
 
   # Set row names
   row.names(sched)<- tolower(paste(sched$match, sched$station, sep = "."))
@@ -975,37 +860,13 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'      \item \emph{actualStart}: character
 #'      \item \emph{postResult}: character
 #'      \item \emph{team}: factor
-#'      \item \emph{alliance}: factor
-#'      \item \emph{station}: factor (red1, red2, red3, blue1, blue2, blue3)
+#'      \item \emph{alliance}: factor (Blue, Red)
+#'      \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'      \item \emph{disqualified}: logical
 #'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{shape}: Character vector that specifies the row and column
-#'       arrangement of the data frame. Initially set to \emph{team},
-#'       indicating there is one team per row and six rows per match. The
-#'       functions \code{ToAllianceShape()} and \code{ToMatchShape} will reshape
-#'       the data frame to have either three teams per row or six teams per row
-#'       and will set the \emph{shape} attribute to \emph{alliance} or
-#'       \emph{match}.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -1081,19 +942,15 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
     }
   }
 
-    # Remove redundent score columns
-    xMatches$scoreRedFinal <- NULL
-    xMatches$scoreBlueFinal <- NULL
-    xMatches$scoreRedFoul <- NULL
-    xMatches$scoreBlueFoul <- NULL
-    xMatches$scoreRedAuto <- NULL
-    xMatches$scoreBlueAuto <- NULL
+  # Remove redundent score columns
+  xMatches$scoreRedFinal <- NULL
+  xMatches$scoreBlueFinal <- NULL
+  xMatches$scoreRedFoul <- NULL
+  xMatches$scoreBlueFoul <- NULL
+  xMatches$scoreRedAuto <- NULL
+  xMatches$scoreBlueAuto <- NULL
 
-    matches <- xMatches
-
-
-  # Convert categorical data into factors
-  matches$tournamentLevel <- factor(matches$tournamentLevel)
+  matches <- xMatches
 
   # Set column names to shorter, easier to type values.
   names(matches)[names(matches) == "tournamentLevel"] <- "level"
@@ -1104,6 +961,9 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 
   # Fill in alliance data
   matches$alliance <- substr(matches$station, 1, nchar(matches$station) - 1)
+
+  # Convert categorical data into factors
+  matches <- .FactorColumns(matches, c("team", "alliance", "station", "level"))
 
   # Set row names to match.station
   row.names(matches) <- tolower(paste(matches$match,
@@ -1179,16 +1039,16 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'   \enumerate{
 #'      \item \emph{level}: character
 #'      \item \emph{match}: integer
-#'      \item \emph{audienceGroup}: character
-#'      \item \emph{alliance}: character
-#'      \item \emph{robot1Auto, robot2Auto, robot3Auto}: character
+#'      \item \emph{audienceGroup}: factor
+#'      \item \emph{alliance}: factor
+#'      \item \emph{robot1Auto, robot2Auto, robot3Auto}: factor
 #'      \item \emph{autoBouldersLow, autoBouldersHigh}: integer
 #'      \item \emph{teleopBouldersLow, teleopBouldersHigh}: integer
-#'      \item \emph{towerFaceA, towerFaceB, towerFaceC}: character
+#'      \item \emph{towerFaceA, towerFaceB, towerFaceC}: factor
 #'      \item \emph{towerEndStrength}: integer
 #'      \item \emph{teleopTowerCaptured, teleopDefensesBreached}: logical
 #'      \item \emph{position1, position2, position3, position4,
-#'        position5}: character
+#'        position5}: factor
 #'      \item \emph{position1Crossings, position2Crossings, position3Crossings,
 #'        position4Crossings, position5Crossings}: integer
 #'      \item \emph{foulCount, techFoulCount}: integer
@@ -1199,25 +1059,8 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{breachPoints, capturePoints}: integer
 #'      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -1275,10 +1118,16 @@ GetScores <- function(session, event, level = "qual", team = NULL,
     }
   }
 
-  # Transform categorical columns into factors
+  # Transform categorical columns into factors or logical vectors
   for(col_name in names(scores)){
-    if(is.character(scores[[col_name]]))
-      scores[[col_name]] <- factor(scores[[col_name]])
+    if(is.character(scores[[col_name]])) {
+      lvls <- tolower(unique(scores[[col_name]]))
+      if(length(lvls) == 2) {
+        if(("true" %in% lvls) && ("false" %in% lvls))
+          scores[[col_name]] <- as.logical(scores[[col_name]])
+      } else
+        scores[[col_name]] <- factor(scores[[col_name]])
+    }
   }
 
   # Set column names to shorter, easier to type values.
@@ -1332,25 +1181,8 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{backup, backupReplaced}: integer
 #'      \item \emph{count}: integer}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -1412,7 +1244,7 @@ GetAlliances <- function (session, event, mod_since = NULL,
 #' @section Columns:
 #'   \enumerate{
 #'      \item \emph{rank}: integer
-#'      \item \emph{teamNumber}: integer
+#'      \item \emph{team}: integer
 #'      \item \emph{sortOrder1, sortOrder2, sortOrder3, sortOrder4, sortOrder5,
 #'        sortOrder6}: integer or numeric.
 #'      \item \emph{wins, losses, ties}: integer
@@ -1420,25 +1252,8 @@ GetAlliances <- function (session, event, mod_since = NULL,
 #'      \item \emph{dq}: integer
 #'      \item \emph{matchesPlayed}: integer}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -1511,29 +1326,12 @@ GetRankings <- function (session, event, team = NULL, top = NULL,
 #'      \item \emph{eventCode}: character
 #'      \item \emph{name}: character
 #'      \item \emph{series}: integer
-#'      \item \emph{teamNumber}: integer
+#'      \item \emph{team}: integer
 #'      \item \emph{fullTeamName}: character
 #'      \item \emph{person}: character}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since argument}, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'
@@ -1603,25 +1401,8 @@ GetAwards <- function(session, event = NULL, team = NULL,
 #'      \item \emph{description}: character
 #'      \item \emph{forPerson}: logical}
 #'
-#' @section Attributes:
-#'   \itemize{
-#'     \item \emph{url}: Character vector containing URL submitted to FIRST API
-#'       server.
-#'     \item \emph{local_test_data}: \code{TRUE} if data was extracted from
-#'       R/sysdata.rda file.
-#'     \item \emph{local_url}: Character vector containing URL used to download
-#'       local data.
-#'     \item \emph{time_downloaded}: Character vector containing the local
-#'       system time that the object was downladed from the FIRST API server.
-#'       Formatted an an http date and time string.
-#'     \item \emph{last_modified}: Character vector containing the date and time
-#'       that the data was last modified by the FIRST API server.
-#'     \item \emph{mod_since}: Character vector containing the value passed to
-#'       the \code{mod_since} argument, or NULL if no argument was passed.
-#'       Formatted as an http date and time string.
-#'     \item \emph{only_mod_since}: Character vector containing the value passed
-#'       to the \code{only_mod_since} argument, or NULL if no argument was
-#'       passed. Formatted as an http date and time string.}
+#' @seealso Refer to \code{\link{Standard firstapiR Attributes}} for data
+#' attributes returned by this function.
 #'
 #' @export
 #'

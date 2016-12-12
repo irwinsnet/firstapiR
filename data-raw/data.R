@@ -80,3 +80,19 @@ devtools::use_data(status_json, status_xml,
                    awards_list_json, awards_list_xml,
                    data_time,
                    internal = TRUE, overwrite = TRUE)
+
+sn <- GetSession(username, key, season = 2016)
+
+newton2016 <- firstapiR::GetAll(sn, "NEWTON")
+galileo2016 <- firstapiR::GetAll(sn, "GALILEO")
+archimedes2016 <- firstapiR::etAll(sn, "ARCHIMEDES")
+curie2016 <- firstapiR::GetAll(sn, "CURIE")
+tesla2016 <- firstapiR::GetAll(sn, "TESLA")
+hopper2016 <- firstapiR::GetAll(sn, "HOPPER")
+carver2016 <- firstapiR::GetAll(sn, "CARVER")
+carson2016 <- firstapiR::GetAll(sn, "CARSON")
+einstein2016 <- firstapiR::GetAll(sn, "CMP")
+
+devtools::use_data(newton2016, galileo2016, archimedes2016, curie2016,
+                   tesla2016, hopper2016, carver2016, carson2016,
+                   einstein2016, overwrite = TRUE)
