@@ -8,6 +8,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
 ---
+# Version 2.0.0
 
 The firstapiR package provides R functions that download FIRST Robotics 
 Competition (FRC) data from the FIRST API server via hypertext transfer protocol
@@ -36,7 +37,7 @@ To see what the FIRST API can do, visit the [FIRST API documentation page
 information on the formats for HTTP request and authorization headers, as well
 as detailed descriptions of the data provided by each type of API call.
 
-To use the FIRST API (via firatapiR functions or via HTTP requests that you
+To use the FIRST API (via firstapiR functions or via HTTP requests that you
 build yourself), you must have a username and authorization key issued by FIRST.
 To get a username and authorization key, go to the [FIRST Community Developers
 page on TeamForge 
@@ -44,6 +45,7 @@ page on TeamForge
 the instructions on the page to join the project and FIRST will email you a 
 username and authorization key. Make sure you keep your authorization key secret
 - don't post the key anywhere that is publicly accessible.
+
 
 ### Learning R
 
@@ -58,6 +60,8 @@ free IDE available for R, RStudio.
 If you are new to R, experimenting with firstapiR isn't the worst way to get 
 started, but there are some resources you should check out:
 
+1. Download R from [the main R
+website](https://cran.r-project.org/mirrors.html).
 1. Download and use the free version of [RStudio]( 
 https://www.rstudio.com/home/).
 1. To learn R, I recommend starting with the
@@ -72,6 +76,66 @@ website](http://adv-r.had.co.nz/), [R package website
 ](https://cran.r-project.org/web/packages/testthat/index.html) and [devtools 
 ](https://cran.r-project.org/web/packages/devtools/index.html) packages were 
 essential to the development of the firstapiR package.
+
+
+### Installing the firstapiR package
+
+1. Install the devtools package. This is easy to do in RStudio - just select
+_Tools->Install Packages..._ from the menu bar, type "devtools" in the
+package name box and hit _Install_.
+
+1. The devtools package provides a function for installing R packages from
+GitHub. Type the following command at the RStudio console prompt:
+```R
+devtools::install_github("irwinsnet/firstapiR", ref = "v2.0.0")
+```
+
+1. If you need the prior version of firstapiR, use this command instead:
+```R
+devtools::install_github("irwinsnet/firstapiR", ref = "v1.0.0")
+```
+
+
+## Differences between Versions 1.0.0 and 2.0.0
+
+1. Version 1.0.0 of firstapiR is still available from github per the firstapiR
+installation instructions above.
+
+1. The main difference from version 1.0.0 is that there are three shapes (i.e, 
+types) of *Schedule*, *HybridSchedule*, and *MatchResult* data frames. The three
+shapes are *team*, *alliance*, and *match*. Team data frames have one row per
+team, requiring six rows to contain all of the data for a single match. The 
+*station* column specifies the station to which the team was assigned. Alliance 
+data frames have three teams per row, with one row for the blue alliance and 
+another for the red alliance. The *alliance* column contains *Red* or *Blue*,
+depending on the alliance. Finally, match data frames have six teams per row
+and one row per match.
+
+1. The functions `GetSchedule()`, `GetHybridSchedule()`, and `GetMatchResults()`
+no longer accept the `expand_cols` argument. These functions can only return a
+data frame in team shape. Users can convert between team, alliance, and match 
+data frames with the functions `ToAllianceShape()`, `ToMatchShape()`, and 
+`ToTeamShape()`.
+
+1. I've added a `MergeReults()` function which merges the *HybridSchedule* and
+*Scores* data frames into a single data frame, providing team numbes and
+detailed performance data all in one table.
+
+1. I've added the function `GetAll()`, which downloads everything about a single
+competition and saves it in a single list.
+
+1. I've added functions for saving FIRST competition data locally in R data
+files. The functions `SaveData()` and `ReadData()` display file open and save
+dialogs for saving and loading data to and from *.RDS* files.
+
+1. To give users without an authorization key some data to play with, firstapiR
+now includes all performance data for the 2016 FIRST Robotics Championships.
+The data is available in R lists named `archimedes2016`, `carver2016`,
+`curie2016`, etc.
+
+1. I've fixed a few inconsistencies. Some character columns were changed to
+factors, some column names were shortened to reduce excess typing, row names are
+more consistent, etc.
 
 
 ## Getting started - Creating a Session Object
@@ -93,8 +157,8 @@ sn <- firstapiR::GetSession("username", "key")
 sn
 ```
 
-As you can see the Session object is really just an R list. It's also an an
-instance of class "Session", which will be useful to users who want to do some
+As you can see the Session object is really just an R list. It's also an 
+instance of class "Session", which will be useful to users who want to do some 
 type checking.
 
 In addition to the username and key, the Session object specifies the season, 
@@ -133,9 +197,9 @@ dist
 ```
 
 By default, GetSession creates a Session object with the current year, `format =
-"data.frame"`, and staging = `TRUE`. etDistricts() returns a data frame that is
-also an instance of class "Districts". GetDistricts() is useful because the
-three-letter district codes are used as arguments to several other firatapiR
+"data.frame"`, and staging = `TRUE`. `GetDistricts()` returns a data frame that
+is also an instance of class "Districts". `GetDistricts()` is useful because the
+three-letter district codes are used as arguments to several other firstapiR 
 functions.
 
 **Note**: If you run the example above, passing the string "key" to 
@@ -171,12 +235,14 @@ RStudio, just type the name of the function in the help view search box. Or type
 `help(function_name)` at the R console command prompt. Here are the 
 firstapiR functions:
 
-|                  |                   |                |                    | 
-|:-----------------|:------------------|:---------------|:-------------------|
-| GetSession()     | GetServerStatus() | GetSeason()    | GetDistricts()     |
-| GetEvents()      | GetTeams()        | GetSchedule()  | GetHybridSchedule()|
-| GetMatchResults()| GetScores()       | GetAlliances() | GetRankings()      |
-| GetAwards()      | GetAwardsList()   |                |                    |
+|                   |                   |                |                    | 
+|:------------------|:------------------|:---------------|:-------------------|
+| GetSession()      | GetServerStatus() | GetSeason()    | GetDistricts()     |
+| GetEvents()       | GetTeams()        | GetSchedule()  | GetHybridSchedule()|
+| GetMatchResults() | GetScores()       | GetAlliances() | GetRankings()      |
+| GetAwards()       | GetAwardsList()   | GetAll()       | MergeResults()     |
+| ReadData()        | SaveData()        | ToTeamShape()  | ToMatchShape()     |
+| ToAllianceShape() |
 
 Table: **External Functions in firstapiR Package**
 
