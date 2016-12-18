@@ -77,7 +77,7 @@ GetHybridSchedule(sn, event = "ORPHI")
 GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
 }
 \seealso{
-Refer to \code{\link{Standard firstapiR Attributes}} for data
+Refer to \code{\link{standard_attributes}} for data
 attributes returned by this function.
 }
 

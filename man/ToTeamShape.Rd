@@ -7,7 +7,7 @@
 ToTeamShape(df)
 }
 \arguments{
-\item{username}{A firstapiR data frame. The data frame must inherit from
+\item{df}{A firstapiR data frame. The data frame must inherit from
 the schedule, hybridSchedule, or matchResults class data frames returned
 by firstapiR functions. The data frame must also be in team shape and have
 the shape attribute set to "team".}

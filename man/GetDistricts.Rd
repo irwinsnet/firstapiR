@@ -49,7 +49,7 @@ sn <- GetSession("username", "key")
 districts <- GetDistricts(sn)
 }
 \seealso{
-Refer to \code{\link{Standard firstapiR Attributes}} for data
+Refer to \code{\link{standard_attributes}} for data
 attributes returned by this function.
 }
 

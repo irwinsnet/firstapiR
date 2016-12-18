@@ -28,12 +28,15 @@
 #'@name firstapiR
 NULL
 
-# FirstapiR's R code is split into two files.
-#   * firstapiR_http.R contains functions that generate HTTP requests, send
+# FirstapiR's R code is split into three files.
+#   * firstapiR_main.R contains functions that generate HTTP requests, send
 #     them to the FIRST API server, and format the returned data as either XML,
 #     JSON, or as R data frames.
-#   * firstapiR_http.R contains utility functions for working with FRC data
+#   * firstapiR_util.R contains utility functions for manipulating FRC data
 #     after it has been downloaded.
+#  *  firstapiR_internal contains internal helper functions that are only
+#     available within the firstapiR package.
+#  *
 
 # The firstapiR package requires the following R packages.
 #   * base64enc
@@ -56,7 +59,7 @@ NULL
 # TODO: Move .PreserveAttributes function DONE
 # TODO: Make sure .PreserveColumns is setting the attributes correctly. DONE
 # TODO: Add data from 2016 championships DONE
-# TODO: modify GetAll test to use local data.
+# TODO: modify GetAll test to use local data. DONE.
 # TODO: Finish url checking on Merge function. DONE
 
 #' Standard firstapiR Attributes
@@ -85,5 +88,54 @@ NULL
 #'
 #' Use the \code{attr()} function to retrieve the value of these attributes.
 #'
-#' @name Standard firstapiR Attributes
+#' @name standard_attributes
 NULL
+
+# FIRST CHAMPIONSHIP DATA - 2016 ===============================================
+#' 2016 FRC Championship Data
+#'
+#' firstapiR includes datasets for the 2016 FRC Championship. Each data set was
+#' produced by the \code{firstapiR::GetAll()}and consists of a list of data
+#' frames that were returned by the various event-related Get functions. See the
+#' documentation for \link{\code{GetAll()}} for details on the contents of these
+#' datasets.
+#'
+#' There is a data set for every championship division, and for the final
+#' championship matches on the Einstein field. The einstein2016 dataset is
+#' smaller than the other datasets because it doesn't have qualification or
+#' alliance selection data. Each dataset is stored in it's own rda file in the
+#' package's data directory.
+#'
+#' @seealso \link{\code{GetAll()}}
+#'
+#' @docType data
+#'
+#' @name FRC_Data
+NULL
+
+#' @rdname FRC_Data
+"archimedes2016"
+
+#' @rdname FRC_Data
+"carson2016"
+
+#' @rdname FRC_Data
+"carver2016"
+
+#' @rdname FRC_Data
+"curie2016"
+
+#' @rdname FRC_Data
+"galileo2016"
+
+#' @rdname FRC_Data
+"hopper2016"
+
+#' @rdname FRC_Data
+"newton2016"
+
+#' @rdname FRC_Data
+"tesla2016"
+
+#' @rdname FRC_Data
+"einstein2016"

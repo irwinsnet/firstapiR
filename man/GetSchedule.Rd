@@ -78,7 +78,7 @@ GetSchedule(sn, "WAAMV", level='playoff')
 GetSchedule(sn, "PNCMP", team=4911, end=25)
 }
 \seealso{
-Refer to \code{\link{Standard firstapiR Attributes}} for data
+Refer to \code{\link{standard_attributes}} for data
 attributes returned by this function.
 }
 

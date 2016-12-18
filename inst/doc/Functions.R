@@ -9,27 +9,6 @@ PNW_events <- GetEvents(sn, district = "PNW")
 PNW_events[, c("code", "name")]
 PNW_events[, c("code", "dateStart")]
 
-## ------------------------------------------------------------------------
-mr <- firstapiR::GetMatchResults(sn, "PNCMP")
-
-# Put the teams in order by average score
-mr$teamNumber <- reorder(mr$teamNumber, -mr$scoreFinal, mean)
-
-# Filter out all but the top 8 teams
-top8 <- mr$teamNumber[1:8]
-mr8 <- mr[mr$teamNumber %in% top8, ]
-mr8$teamNumber <- droplevels(mr8$teamNumber)
-
-# Boxplot the top 8 teams
-boxplot(scoreFinal~teamNumber, mr8, las = 2, main = "Qual Scores, Top 8 Teams",
-        sub = "2016 PNW District Championships")
-
-## ------------------------------------------------------------------------
-sched <- firstapiR::GetSchedule(sn, event = "ORPHI", expand_cols = TRUE)
-
-# Display the first 12 rows of the data frame, skipping the first three colums
-sched[1:3, 4:17]
-
 ## ----eval = FALSE--------------------------------------------------------
 #  # Create an HTTP date-time string set to midnight GMT yesterday
 #  mod_date <- httr::http_date(as.POSIXct(Sys.Date() - 1))
@@ -62,5 +41,40 @@ sched[1:3, 4:17]
 #  # The value passed to mod_since returned as an attribute, even when the
 #  #   result is NA
 #  print(attr(match_results, "only_mod_since"))
+#  
+
+## ------------------------------------------------------------------------
+sn <- firstapiR::GetSession("username", "key")
+match_results <- firstapiR::GetMatchResults(sn, "PNCMP", level = "qual")
+match_results[1:12, c("match", "alliance", "station", "team", "scoreAuto",
+                      "scoreFinal")]
+
+## ------------------------------------------------------------------------
+agg_scores <- aggregate(match_results[c("scoreFinal", "scoreAuto",
+                                        "scoreFoul")],
+                        list("team" = match_results$team), mean)
+agg_scores[order(agg_scores$scoreFinal, decreasing = TRUE), ][1:10, ]
+
+
+## ------------------------------------------------------------------------
+attr(match_results, "shape")
+
+## ------------------------------------------------------------------------
+mresults_alliance <- ToAllianceShape(match_results)
+mresults_alliance[1:4, c("match", "alliance", "team.1", "team.2", "team.3",
+                         "scoreAuto", "scoreFinal")]
+
+## ------------------------------------------------------------------------
+attr(mresults_alliance, "shape")
+
+## ------------------------------------------------------------------------
+mresults_match <- ToMatchShape(match_results)
+mresults_match[1:2, c("match", "team.Red1", "team.Red2", "team.Red3",
+                      "team.Blue1", "team.Blue2", "team.Blue3",
+                      "scoreFinal.Blue", "scoreFinal.Red")]
+
+## ----eval = FALSE--------------------------------------------------------
+#  SaveData(GetAlliances(sn, event = "WAAMV"))
+#  evt_alliances <- ReadData()
 #  
 

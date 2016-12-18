@@ -32,7 +32,7 @@
 #' data frame's shape attribute is missing or is anything other than
 #' \emph{team}.
 #'
-#' @param username A firstapiR data frame. The data frame must inherit from
+#' @param df A firstapiR data frame. The data frame must inherit from
 #'   the schedule, hybridSchedule, or matchResults class data frames returned
 #'   by firstapiR functions. The data frame must also be in team shape and have
 #'   the shape attribute set to "team".
@@ -68,7 +68,7 @@ ToMatchShape <- function(df) {
 
   # From team to alliance format for a schedule
   df$alliance <- NULL
-  alli.df <- reshape(df, direction = "wide", idvar = "match",
+  alli.df <- stats::reshape(df, direction = "wide", idvar = "match",
                      timevar = "station",
                      v.names = var.cols)
 
@@ -157,7 +157,7 @@ ToMatchShape <- function(df) {
 #' data frame's shape attribute is missing or is anything other than
 #' \emph{team}.
 #'
-#' @param username A firstapiR data frame. The data frame must inherit from
+#' @param df A firstapiR data frame. The data frame must inherit from
 #'   the schedule, hybridSchedule, or matchResults class data frames returned
 #'   by firstapiR functions. The data frame must also be in team shape and have
 #'   the shape attribute set to "team".
@@ -191,7 +191,7 @@ ToAllianceShape <- function(df) {
     var.cols <- c("team", "surrogate", "disqualified")
 
   # Create output data frame in match (wide) format.
-  mtch.df <- reshape(df, direction = "wide", idvar = c("match", "alliance"),
+  mtch.df <- stats::reshape(df, direction = "wide", idvar = c("match", "alliance"),
                      timevar = "station", v.names = var.cols)
 
   # Set row names to m.color where m is match number, color is red or blue.
@@ -237,7 +237,7 @@ ToAllianceShape <- function(df) {
 #' data frame's shape attribute is missing or is anything other than
 #' \emph{team}.
 #'
-#' @param username A firstapiR data frame. The data frame must inherit from
+#' @param df A firstapiR data frame. The data frame must inherit from
 #'   the schedule, hybridSchedule, or matchResults class data frames returned
 #'   by firstapiR functions. The data frame must also be in team shape and have
 #'   the shape attribute set to "team".
@@ -277,7 +277,7 @@ ToTeamShape <- function(df) {
 
   # Reshape data frame. Assumes df has reshapeWide attribute from prior call to
   #   reshape() function.
-  team.df <- reshape(df)
+  team.df <- stats::reshape(df)
 
   if(attr(df, "shape") == "match") {
     # Rebuild alliance column

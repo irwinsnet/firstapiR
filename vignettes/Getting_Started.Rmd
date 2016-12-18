@@ -8,6 +8,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown} 
   %\VignetteEncoding{UTF-8}
 ---
+
 # Version 2.0.0
 
 The firstapiR package provides R functions that download FIRST Robotics 
@@ -230,10 +231,11 @@ dist$name[dist$code == "PNW"]
 
 ## Next Steps
 
-This package provides a detailed help file for every firstapiR function. In 
-RStudio, just type the name of the function in the help view search box. Or type
-`help(function_name)` at the R console command prompt. Here are the 
-firstapiR functions:
+This package provides a detailed help file for every firstapiR function. Make 
+sure the firstapiR package is loaded by running the command 
+`library(firstapiR)`. Then in RStudio, just type the name of the function in the
+help view search box. Or type `help(function_name)` at the R console command
+prompt. Here are the firstapiR functions:
 
 |                   |                   |                |                    | 
 |:------------------|:------------------|:---------------|:-------------------|

@@ -33,24 +33,26 @@ test_that("Team shaped data frames are correct", {
   expect_equal(nrow(sched.t), 360)
   expect_named(sched.t, c("match", "description", "level", "field", "start",
                           "team", "alliance", "station", "surrogate"))
-  expect_equal(row.names(sched.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
-                                          "1.red1", "1.red2", "1.red3"))
+  expect_equal(row.names(sched.t)[1:6], c("q.1.blue1", "q.1.blue2", "q.1.blue3",
+                                          "q.1.red1", "q.1.red2", "q.1.red3"))
 
   expect_equal(nrow(hybrid.t), 468)
   expect_named(hybrid.t, c("match", "description", "level", "start",
                            "actualStart", "team", "alliance", "station",
                            "surrogate", "disqualified", "scoreFinal",
                            "scoreAuto", "scoreFoul"))
-  expect_equal(row.names(hybrid.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
-                                          "1.red1", "1.red2", "1.red3"))
+  expect_equal(row.names(hybrid.t)[1:6], c("q.1.blue1", "q.1.blue2",
+                                           "q.1.blue3", "q.1.red1", "q.1.red2",
+                                           "q.1.red3"))
 
   expect_equal(nrow(matches.t), 768)
   expect_named(matches.t, c("match", "description", "level", "actualStart",
                            "postResult", "team", "alliance", "station",
                            "disqualified", "scoreFinal", "scoreAuto",
                            "scoreFoul"))
-  expect_equal(row.names(matches.t)[1:6], c("1.blue1", "1.blue2", "1.blue3",
-                                           "1.red1", "1.red2", "1.red3"))
+  expect_equal(row.names(matches.t)[1:6], c("q.1.blue1", "q.1.blue2",
+                                            "q.1.blue3", "q.1.red1", "q.1.red2",
+                                            "q.1.red3"))
 })
 
 

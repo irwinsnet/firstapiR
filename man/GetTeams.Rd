@@ -91,7 +91,7 @@ GetTeams(sn, district = "FIM")
 GetTeams(sn, event = "CMP-CARVER")
 }
 \seealso{
-Refer to \code{\link{Standard firstapiR Attributes}} for data
+Refer to \code{\link{standard_attributes}} for data
 attributes returned by this function.
 }
 

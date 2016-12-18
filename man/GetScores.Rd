@@ -101,7 +101,7 @@ GetScores(sn, event = "WAELL", start = 1, end = 10)
 GetScores(sn, event = "WAELL", match = 15)
 }
 \seealso{
-Refer to \code{\link{Standard firstapiR Attributes}} for data
+Refer to \code{\link{standard_attributes}} for data
 attributes returned by this function.
 }
 

@@ -1,10 +1,40 @@
-# data-raw/data.R
+# data-raw/data.R Version 2.0.0
 #
-# This file downloads FIRST API data and saves it to the R/sysdata.rda file. The
-# data is saved in both XML and JSON text formats and is used returned by
-# firstapiR functions when the authorization key is set to "key". This local
-# data allows users to test firstapiR functions without an authorization key
-# or internet connection.
+# The R statements in this file were used to download the FIRST API data that
+# is included with the firstapiR package.
+#
+# The first section includes the commands and documentation for the 2016 FIRST
+# FRC Championships. This data is saved in rda files in the package's data
+# directory. See the help topic FRC_Data for more information.
+#
+# The second portion of the file includes the code for downloading data and
+# saving it to the R/sysdata.rda file. The data is saved in both XML and JSON
+# text formats and is returned by firstapiR functions when the authorization key
+# is set to "key". This local data allows users to test firstapiR functions
+# without an authorization key or internet connection.
+
+
+# FIRST CHAMPIONSHIP DATA - 2016 ===============================================
+
+# Session variables required to download championship data
+sn <- firstapiR::GetSession(username, key, season = 2016)
+
+archimedes2016 <- firstapiR::GetAll(sn, "ARCHIMEDES")
+carson2016 <- firstapiR::GetAll(sn, "CARSON")
+carver2016 <- firstapiR::GetAll(sn, "CARVER")
+curie2016 <- firstapiR::GetAll(sn, "CURIE")
+galileo2016 <- firstapiR::GetAll(sn, "GALILEO")
+hopper2016 <- firstapiR::GetAll(sn, "HOPPER")
+newton2016 <- firstapiR::GetAll(sn, "NEWTON")
+tesla2016 <- firstapiR::GetAll(sn, "TESLA")
+einstein2016 <- firstapiR::GetAll(sn, "CMP")
+
+devtools::use_data(newton2016, galileo2016, archimedes2016, curie2016,
+                   tesla2016, hopper2016, carver2016, carson2016,
+                   einstein2016, overwrite = TRUE)
+
+
+# LOCAL DATA ===================================================================
 
 ConvertXMLDocToText <- function(xml_doc) {
   url <- attr(xml_doc, "url")
@@ -64,7 +94,6 @@ awards_xml <- ConvertXMLDocToText(firstapiR::GetAwards(sn_x, "PNCMP"))
 awards_list_json <- firstapiR::GetAwardsList(sn_j)
 awards_list_xml <- ConvertXMLDocToText(firstapiR::GetAwardsList(sn_x))
 
-
 devtools::use_data(status_json, status_xml,
                    season_json, season_xml,
                    districts_json, districts_xml,
@@ -80,19 +109,3 @@ devtools::use_data(status_json, status_xml,
                    awards_list_json, awards_list_xml,
                    data_time,
                    internal = TRUE, overwrite = TRUE)
-
-sn <- GetSession(username, key, season = 2016)
-
-newton2016 <- firstapiR::GetAll(sn, "NEWTON")
-galileo2016 <- firstapiR::GetAll(sn, "GALILEO")
-archimedes2016 <- firstapiR::etAll(sn, "ARCHIMEDES")
-curie2016 <- firstapiR::GetAll(sn, "CURIE")
-tesla2016 <- firstapiR::GetAll(sn, "TESLA")
-hopper2016 <- firstapiR::GetAll(sn, "HOPPER")
-carver2016 <- firstapiR::GetAll(sn, "CARVER")
-carson2016 <- firstapiR::GetAll(sn, "CARSON")
-einstein2016 <- firstapiR::GetAll(sn, "CMP")
-
-devtools::use_data(newton2016, galileo2016, archimedes2016, curie2016,
-                   tesla2016, hopper2016, carver2016, carson2016,
-                   einstein2016, overwrite = TRUE)

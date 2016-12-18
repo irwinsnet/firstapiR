@@ -53,7 +53,7 @@ sn <- GetSession("username", "key", season = 2015, staging = TRUE)
 summary <- GetSeason(sn)
 }
 \seealso{
-Refer to \code{\link{Standard firstapiR Attributes}} for data
+Refer to \code{\link{standard_attributes}} for data
 attributes returned by this function.
 }
 

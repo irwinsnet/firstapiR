@@ -17,7 +17,7 @@ information on each function, type `help(function_name)` at the console or in
 the RStudio help view search box.
 
 
-## Simple Functions
+## Simple Functions for Retrieving FIRST Data
 
 There are several functions that take no arguments other than the `Session`
 argument.
@@ -35,7 +35,7 @@ argument.
   ~ Obtains a list and description of awards available to FRC teams.
   
   
-## Functions with Additional Arguments
+## Data Retrieval Functions with Additional Arguments
 
 All other firstapiR functions take at least a few additional arguments. Most of 
 the additional arguments are optional and, usually, only one or two of the
@@ -47,13 +47,13 @@ additional arguments are used at any one time.
 `GetTeams(session, team, event, district, state, page)`
   ~ Gets information about FIRST FRC teams.
   
-`GetSchedule(session, event, level, team, start, end, expand_cols)`
+`GetSchedule(session, event, level, team, start, end)
   ~ Downloads the match schedule for a specific event.
   
-`GetHybridSchedule(session, event, level, start, end, expand_cols)`
+`GetHybridSchedule(session, event, level, start, end)`
   ~ Downloads the match schedule, along with results for completed matches.
   
-`GetMatchResults(session, event, level, team, match, start, end, expand_cols)`
+`GetMatchResults(session, event, level, team, match, start, end)`
   ~ Gets the scores for the selected matches.
   
 `GetScores(session, event, level, team, match, start, end)`
@@ -92,7 +92,7 @@ districts <- GetDistricts(sn)
 
 An event code, such as _WAAMV_ (disctrict competition held at Auburn MountainView
 High School in Washington State) or _PNCMP_ (Pacific Northwest District
-Championships). Use the GetEvents() functio to get the event codes:
+Championships). Use the GetEvents() function to get the event codes:
 
 ``` {r eventCodes}
 sn <- GetSession("username", "key")
@@ -109,52 +109,6 @@ Either "playoff" or "qual". Defaults to "qual".
 
 Integers specifying the range of matches that will be included in the returned
 data.
-
-
-## Expanded Columns Option
-
-There are three functions that return data about competition matches and that
-accept the `expand_cols` argument:
-
-* GetSchedule()
-* GetHybridSchedule()
-* GetMatchResults()
-
-By default, `expand_cols` is _FALSE_. This causes the function to return a data 
-frame with six rows for every match, with one column for team number, one column
-for the alliance, etc. This format is preferable for analyzing data. For
-example, the following code extracts the top eight teams from the data frame by
-average match score and draws a boxplot for each team.
-
-``` {r}
-mr <- firstapiR::GetMatchResults(sn, "PNCMP")
-
-# Put the teams in order by average score
-mr$teamNumber <- reorder(mr$teamNumber, -mr$scoreFinal, mean)
-
-# Filter out all but the top 8 teams
-top8 <- mr$teamNumber[1:8]
-mr8 <- mr[mr$teamNumber %in% top8, ]
-mr8$teamNumber <- droplevels(mr8$teamNumber)
-
-# Boxplot the top 8 teams
-boxplot(scoreFinal~teamNumber, mr8, las = 2, main = "Qual Scores, Top 8 Teams",
-        sub = "2016 PNW District Championships")
-```
-
-Aggregating team performance data would be more difficult if the scores were
-spread across six different columns instead of contained within a single column.
-
-Setting `expand_cols` to _TRUE_ puts all data for the match into a single row
-in the data frame with six different columns for teamNumber, surrogate, final
-score, etc. This format is useful for displaying an easy to read table:
-
-``` {r}
-sched <- firstapiR::GetSchedule(sn, event = "ORPHI", expand_cols = TRUE)
-
-# Display the first 12 rows of the data frame, skipping the first three colums
-sched[1:3, 4:17]
-```
 
 ## Pages Argument
 
@@ -245,6 +199,114 @@ receive a 304 response in this situation should either add at least a second to
 the `last_modified` value, or should instead use the `time_downloaded` attribute
 value to set the `mod_since` or `only_mod_since` arguments.
 
+## Data Frame Shaping Functions
+
+### Team Shape
+
+The functions `GetSchedule()`, `GetHybridSchedule()`, and `GetMatchResults()`
+return data frames with one row per team. For example, let's take a look at the
+first two qualification matches from the 2016 Pacific Northwest District
+Championships:
+```{r}
+sn <- firstapiR::GetSession("username", "key")
+match_results <- firstapiR::GetMatchResults(sn, "PNCMP", level = "qual")
+match_results[1:12, c("match", "alliance", "station", "team", "scoreAuto",
+                      "scoreFinal")]
+```
+There is one team listed in each row, and it takes six rows to provide all of
+the information from a single match. This is called *team* shape. This format
+is useful for calculating summary statistics for individual teams. For example,
+to see average scores for the ten teams with the highest scores:
+```{r}
+agg_scores <- aggregate(match_results[c("scoreFinal", "scoreAuto",
+                                        "scoreFoul")],
+                        list("team" = match_results$team), mean)
+agg_scores[order(agg_scores$scoreFinal, decreasing = TRUE), ][1:10, ]
+
+```
+Data frames in team shape will have their *shape* attribute set to "team".
+```{r}
+attr(match_results, "shape")
+```
+
+
+### Alliance Shape
+
+For some calculations, such as offensive power rating (OPR), the alliance shape,
+with three teams per row and two rows per match (one row each for the red and
+blue alliances), is more suitable. The function `ToAllianceShape()` will
+reshape *Schedule*, *HybridSchedule*, or *MatchResults* data frames from *team*
+to *alliance* shape.
+```{r}
+mresults_alliance <- ToAllianceShape(match_results)
+mresults_alliance[1:4, c("match", "alliance", "team.1", "team.2", "team.3",
+                         "scoreAuto", "scoreFinal")]
+```
+Data frames in alliance shape will have their *shape* attribute set to
+"alliance".
+```{r}
+attr(mresults_alliance, "shape")
+```
+
+### Match Shape
+
+Finally, *Schedule*, *HybridSchedule*, and *MatchResults* data frames may be
+converted from *team* to *match* shape.
+
+```{r}
+mresults_match <- ToMatchShape(match_results)
+mresults_match[1:2, c("match", "team.Red1", "team.Red2", "team.Red3",
+                      "team.Blue1", "team.Blue2", "team.Blue3",
+                      "scoreFinal.Blue", "scoreFinal.Red")]
+```
+
+### Converting Back to Team Shape
+
+The `ToTeamShape()` function will convert *match* and *alliance* data frames
+back to *team* shape. This function depends on the *ReshapeWide* attribute,
+which is added to the *match* and *alliance* data frames by R's `reshape()`
+function. `ToTeamShape()` will not work if the *ReshapeWide* attribute is
+deleted.
+
+### Converting Between Match and Alliance Shape
+
+To convert a data frame from *match* to *alliance* shape or vice-versa, first
+convert the data frame back to team shape.
+
+## Merging Team and Score Data
+
+The `GetScores()` function retrieves detailed performance data for for both the
+red and blue alliances for each match. However the *Scores* data frame does not
+list the teams that were assigned to each alliance. The function `MergeResults()`
+merges a *HybridResults* data frame with a *Scores* data frame to create a
+*Results* data frame that contains both the detailed match performance data and
+the teams that were assigned to each match.
+
+## Merging Qualification and Playoff Data Frames
+
+There are several functions provide data for either qualification or playoff
+matches, but not both. Use R's `rbind()` function to merge this data into a
+single data frame.
+
+## Saving and Loading Data
+
+Use firstapiR's `SaveData()` function to open a save file dialog box and save
+data to an RDS data file. The `ReadData()` function opens an open file dialog
+and returns the value saved in the RDS file. Refer to R's documentation on the
+`saveRDS()` and `readRDS()' functions for more information on RDS data files.
+```{r eval = FALSE}
+SaveData(GetAlliances(sn, event = "WAAMV"))
+evt_alliances <- ReadData()
+
+```
+
+## Getting all Event Data
+
+Sometimes it's handy to get all the available information for an FRC competition
+with single command. The `GetAll()` function retrieves all data for a specific
+event and stores the data in a list. I recommend not using this function during
+competitions to avoid overloading the server. Also, save the event data to a
+file so it only needs to be downloaded once.
 
 ## Ask Questions
 Post an issue on the [firstapiR github repository](https://github.com/irwinsnet/firstapiR) if you have questions, find bugs or have recommendations for the next version.
