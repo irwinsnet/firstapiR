@@ -170,7 +170,7 @@ GetServerStatus <- function(session) {
 #'     \item \emph{FRCChampionships.startDate}: character
 #'     \item \emph{FRCChampionships.location}: character}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -223,7 +223,7 @@ GetSeason <- function(session, mod_since = NULL, only_mod_since = NULL) {
 #'     \item \emph{name}: character
 #'     \item \emph{districtCount}: integer}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -314,7 +314,7 @@ GetDistricts <- function(session, mod_since = NULL, only_mod_since = NULL) {
 #'     \item \emph{dateEnd}: character
 #'     \item \emph{eventCount}: integer}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -425,7 +425,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #'     \item \emph{pageCurrent}: integer
 #'     \item \emph{pageTotal}: integer}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -562,7 +562,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #'     \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
 #'     \item \emph{surrogate}: logical}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -700,7 +700,7 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #'      \item \emph{disqualified}: logical
 #'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -867,7 +867,7 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #'      \item \emph{disqualified}: logical
 #'      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -1061,7 +1061,7 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{breachPoints, capturePoints}: integer
 #'      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -1183,7 +1183,7 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{backup, backupReplaced}: integer
 #'      \item \emph{count}: integer}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -1254,7 +1254,7 @@ GetAlliances <- function (session, event, mod_since = NULL,
 #'      \item \emph{dq}: integer
 #'      \item \emph{matchesPlayed}: integer}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -1332,7 +1332,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL,
 #'      \item \emph{fullTeamName}: character
 #'      \item \emph{person}: character}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export
@@ -1403,7 +1403,7 @@ GetAwards <- function(session, event = NULL, team = NULL,
 #'      \item \emph{description}: character
 #'      \item \emph{forPerson}: logical}
 #'
-#' @seealso Refer to \code{\link{standard_attributes}} for data
+#' @seealso Refer to \code{\link{Standard_attributes}} for data
 #' attributes returned by this function.
 #'
 #' @export

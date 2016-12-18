@@ -53,7 +53,7 @@ sn <- GetSession("username", "key")
 GetAlliances(sn, "WAAMV")
 }
 \seealso{
-Refer to \code{\link{standard_attributes}} for data
+Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
 

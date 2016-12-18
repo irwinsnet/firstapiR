@@ -323,32 +323,44 @@ ToTeamShape <- function(df) {
 
 
 # GetAll() =====================================================================
-#' Download all data for a competition, including schedules, scores, and awards.
+#' Download all data for a specific FRC competition.
 #'
-#'
+#' Downloads all data for a specific FRC competition and returns the data in a
+#' list of data frames, or character vectors containing XML or JSON text,
+#' depending on the format setting in the session variable. The list's named
+#' elements are listed below in the \emph{Value} section.
 #'
 #' @param session A Session object created with \code{GetSession()}.
 #' @param event A character vector containing a FIRST API event code
 #'   (see \code{GetEvents}).
 #'
-#' @return A list containing the following firstapiR data frames:
+#' @return A list containing the following firstapiR elements which are data
+#'   frames, XML character vectors, or JSON character vectors:
 #'   \enumerate{
-#'     \item \emph{season}: Season class
-#'     \item \emph{event}: Events class
-#'     \item \emph{teams}: Teams class, listing all teams in the competition
-#'     \item \emph{matches_qual}: MatchResults class, for qualification matches
-#'     \item \emph{matches_playoff}: MatchResults class, for playoffs
-#'     \item \emph{schedule_qual}: Schedule class, for qualification matches
-#'     \item \emph{schedule_playoff}: Schedule class, for playoffs
-#'     \item \emph{scores_qual}: Scores class, for qualification matches
-#'     \item \emph{scores_playoff}: Scores class, for playoffs
-#'     \item \emph{rankings}: Rankings class
-#'     \item \emph{alliances}: Alliances class
-#'     \item \emph{awards}: Awards class}
+#'     \item \emph{season}: Season class. See \link{GetSeason}.
+#'     \item \emph{event}: Events class. See \link{GetEvents}.
+#'     \item \emph{teams}: Teams class, listing all teams in the competition.
+#'       See \link{GetTeams}.
+#'     \item \emph{matches_qual}: MatchResults class, for qualification matches.
+#'       See \link{GetMatchResults}.
+#'     \item \emph{matches_playoff}: MatchResults class, for playoffs. See
+#'       \link{GetMatchResults}.
+#'     \item \emph{schedule_qual}: Schedule class, for qualification matches.
+#'       See \link{GetSchedule}.
+#'     \item \emph{schedule_playoff}: Schedule class, for playoffs. See
+#'       \link{GetSchedule}.
+#'     \item \emph{scores_qual}: Scores class, for qualification matches. See
+#'       \link{GetScores}.
+#'     \item \emph{scores_playoff}: Scores class, for playoffs. See
+#'       \link{GetScores}.
+#'     \item \emph{rankings}: Rankings class. See \link{GetRankings}.
+#'     \item \emph{alliances}: Alliances class. See \link{GetAlliances}.
+#'     \item \emph{awards}: Awards class. See \link{GetAwards}.}
 #' \code{GetAll} will omit qualification-level elements and rankings if the
 #' \code{event} argument is set to "CMP", which corresponds to the finals on
 #' Einstein.
 #'
+#' @seealso \link{GetEvents}
 #'
 #' @export
 #'
@@ -455,4 +467,89 @@ MergeResults <- function(hybrid.df, scores.df) {
   attr(merged.df, "url") <- urls
   class(merged.df) <- append(class(merged.df), "Results")
   return(merged.df)
+}
+
+
+# SaveData =====================================================================
+#' Saves data to an RDS data file via a file save dialog.
+#'
+#' Displays the tcltk package's \emph{save file dialog}. Once the user enters or
+#' selects a file name, \code{SaveData()} will save the value passed in
+#' parameter x to an RDS data file. The dialog will initially display whatever
+#' folder the current working directory (see \code{getwd()} and \code{setwd()}).
+#'
+#' SaveData uses the \code{saveRDS()} function, from R's base package, to save
+#' R data. RDS files can only contain a single object. To save more than one
+#' object in single file, just put them in a list.
+#'
+#' Throws an error if the selected file does not end in "RDS"
+#' (case-insensitive). Prints a message if the user cancels the dialog without
+#' selecting a file.
+#'
+#' @param x An R object that will be saved to an RDS file.
+#'
+#' @return NULL (invisibly), or NA if the user cancels the dialog without
+#'   selecting a file.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' sn <- GetSession("username", "key")
+#' sched <- GetSchedule(sn, "ORPHI")
+#' SaveData(sched)
+#' }
+SaveData <- function(x) {
+  extensions = "{ {RDS Files} {.RDS} }"
+  filename <- tcltk::tclvalue(tcltk::tkgetSaveFile(title = "Save R Data",
+                                                   filetypes = extensions,
+                                                   defaultextension = "RDS"))
+  if(filename == "") {
+    message("User canceled file save dialog.")
+    return(NA)
+  }
+  if(!grepl(".+\\.rds$", tolower(filename)))
+    stop("File extension must be 'RDS'.")
+  saveRDS(x, file = filename)
+}
+
+
+# ReadData =====================================================================
+#' Reads data from an RDS data file via a file open dialog.
+#'
+#' Displays the tcltk package's \emph{save file dialog}. Once the user enters or
+#' selects a file name, \code{ReadData()} will read and return the value stored
+#' in the corresponding RDS data file. The dialog will initially display
+#' whatever folder the current working directory (see \code{getwd()} and
+#' \code{setwd()}).
+#'
+#' ReadData uses the \code{readRDS()} function, from R's base package, to read
+#' R data. The data is stored in the RDS file as an unnamed object, so the user
+#' must assign the return value to a named variable.
+#'
+#' Throws an error if the selected file does not end in "RDS"
+#' (case-insensitive). Prints a message if the user cancels the dialog without
+#' selecting a file.
+#'
+#' @return The R object stored in the RDS data file, or NA if the user cancels
+#'   the dialog without selecting a file.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' my.data <- ReadData()
+#' }
+ReadData <- function() {
+  extensions = "{ {RDS Files} {.RDS} }"
+  filename <- tcltk::tclvalue(tcltk::tkgetOpenFile(filetypes = extensions,
+                                                   defaultextension = "RDS",
+                                                   title = "Open an RDS Data File"))
+  if(filename == "") {
+    message("User canceled file save dialog.")
+    return(NA)
+  }
+  if(!grepl(".+\\.rds$", tolower(filename)))
+    stop("File extension must be 'RDS'.")
+  readRDS(filename)
 }

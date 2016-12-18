@@ -46,7 +46,7 @@ sn <- GetSession("username", "key")
 GetAwardsList(sn)
 }
 \seealso{
-Refer to \code{\link{standard_attributes}} for data
+Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
 

@@ -83,7 +83,7 @@ GetMatchResults(sn, "WAAMV", match=2, level="playoff")
 GetMatchResults(sn, "CMP-ARCHIMEDES", level="qual", start=10, end=20)
 }
 \seealso{
-Refer to \code{\link{standard_attributes}} for data
+Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
 

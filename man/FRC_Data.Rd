@@ -34,21 +34,21 @@ tesla2016
 einstein2016
 }
 \description{
-firstapiR includes datasets for the 2016 FRC Championship. Each data set was
-produced by the \code{firstapiR::GetAll()}and consists of a list of data
-frames that were returned by the various event-related Get functions. See the
-documentation for \link{\code{GetAll()}} for details on the contents of these
-datasets.
+The firstapiR package includes data sets for the 2016 FRC Championship. Each
+data set was produced by the \code{firstapiR::GetAll()} function and consists
+of a list of data frames that were returned by the various event-related
+\code{Get___()} functions. See the documentation for \code{GetAll()} for
+details on the contents of these data sets.
 }
 \details{
 There is a data set for every championship division, and for the final
-championship matches on the Einstein field. The einstein2016 dataset is
-smaller than the other datasets because it doesn't have qualification or
-alliance selection data. Each dataset is stored in it's own rda file in the
+championship matches on the Einstein field. The \code{einstein2016} data set
+is smaller than the other data sets because it doesn't have qualification or
+alliance selection data. Each data set is stored in it's own rda file in the
 package's data directory.
 }
 \seealso{
-\link{\code{GetAll()}}
+\link{GetAll}
 }
 \keyword{datasets}
 

@@ -61,7 +61,7 @@ GetAwards(sn, team = 360)
 GetAwards(sn, "PNCMP", 360)
 }
 \seealso{
-Refer to \code{\link{standard_attributes}} for data
+Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
 

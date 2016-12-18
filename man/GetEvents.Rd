@@ -90,7 +90,7 @@ frc_data <- GetEvents(sn, district = 'PNW')
 frc_data <- GetEvents(sn, team = 360, exclude_district = TRUE)
 }
 \seealso{
-Refer to \code{\link{standard_attributes}} for data
+Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
 

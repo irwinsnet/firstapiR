@@ -65,7 +65,7 @@ GetRankings(sn, "PNCMP", team = 1983)
 GetRankings(sn, "ARCHIMEDES", top = 5)
 }
 \seealso{
-Refer to \code{\link{standard_attributes}} for data
+Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
 
