@@ -55,11 +55,11 @@ for red.
 }
 \details{
 \code{GetScores()} contains both the blue and red alliance scores for each
-match, but it does not list the teams assigned to each alliance. Use R's
-\code{merge()} function to merge the data frames returned by
-\code{GetMatchResults} and \code{GetScores()} to create a data frame that
+match, but it does not list the teams assigned to each alliance. Use
+firstapiR \code{MergeResults()} function to merge the data frames returned by
+\code{GetHybridSchedule} and \code{GetScores()} to create a data frame that
 contains both team numbers and detailed scores:
-\code{merge(match_results_df, scores_df)} should do the trick.
+\code{MergeResults(hybrid_df, scores_df)} should do the trick.
 
 See the \emph{Detailed Scores} section of the FIRST API documentation at
 \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -95,13 +95,16 @@ teamNumber=team&matchNumber=match&start=start&end=end}
      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
 }
 \examples{
-sn <- GetSession("username", "key")
-GetScores(sn, event = "ARCHIMEDES")
-GetScores(sn, event = "WAELL", start = 1, end = 10)
-GetScores(sn, event = "WAELL", match = 15)
+sn <- GetSession("username", "key", season = 2016)
+archimedes_qual_scores <- GetScores(sn, event = "ARCHIMEDES")
+first_10_qual_matches <- GetScores(sn, event = "WAELL", start = 1, end = 10)
+qual_match_10_scores <- GetScores(sn, event = "WAELL", match = 15)
 }
 \seealso{
-Refer to \code{\link{Standard_attributes}} for data
-attributes returned by this function.
+Refer to \code{\link{Standard_attributes}} for data attributes
+  returned by this function.
+
+Refer to \code{\link{MergeResults}} for guidance on how to merge the
+  \emph{Scores} and \emph{HybridSchedule} data frames.
 }
 

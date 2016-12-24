@@ -47,7 +47,7 @@ elements are listed below in the \emph{Value} section.
 }
 \examples{
 \dontrun{
-sn <- GetSession("myUserName", "key")
+sn <- GetSession("myUserName", "key", season = 2016)
 archimedes <- GetAll(sn, "ARCHIMEDES")
 SaveData(archimedes)
 }

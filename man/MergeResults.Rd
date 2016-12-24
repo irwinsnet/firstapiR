@@ -2,20 +2,48 @@
 % Please edit documentation in R/firstapiR_util.R
 \name{MergeResults}
 \alias{MergeResults}
-\title{Merge MatchResults and Scores data frames into a single data frame.}
+\title{Merge HybridSchedule and Scores data into a single data frame.}
 \usage{
 MergeResults(hybrid.df, scores.df)
 }
 \arguments{
-\item{hybrid.df}{A HybridSchedule class data frame.}
+\item{hybrid.df}{A data frame with class \emph{HybridSchedule()}, obtained
+from the function \code{GetHybridSchedule}. The data frame must be in team
+shape.}
 
-\item{scores.df}{A Scores class data frame.}
+\item{scores.df}{A data frame with class \emph{Scores}, obtained from the
+function \code{GetScores()}.}
 }
 \value{
-A Results class data frame containing both the teams assigned to a
-  match and their detailed scores.
+A data frame containing both the teams assigned to a match and their
+  detailed scores. The data frame is in team shape, with six rows per match
+  and one team listed per row. The class is ("Results", "data.frame").
 }
 \description{
-Merge MatchResults and Scores data frames into a single data frame.
+\code{MergeResults()} uses R's merge function to combine the results of the
+\code{GetHybridSchedule()} and \code{GetScores(})) functions into a single
+data frame. While the \emph{DetailedScores} data frame contains every match
+detail that gets stored in the field management system, it doesn't list the
+teams that participated in the match. For each row of scores it only listss
+the match number and the alliance (red or blue). \code{MergeResults()} makes
+it easy to link detailed match performance data to specific FRC teams.
+}
+\section{Errors}{
+
+  \code{MergeResults()} throws an error if:
+  \itemize{
+    \item{hybrid.df does not have class \emph{HybridSchedule} or
+      is not in team shape}
+    \item{scores.df does not have class \emph{DetailedScores}}
+    \item{hybrid.df or scores.df urls are not valid FIRST API urls}
+    \item{scores.df and hybrid.df seasons, events, or match levels are not
+      equal}
+  }
+}
+\examples{
+sn <- GetSession("username", "key", season = 2016)
+hybrid_WAELL_qual <- GetHybridSchedule(sn, event = "WAELL")
+scores_WAELL_qual <- GetScores(sn, event = "WAELL")
+results_WAELL_qual <- MergeResults(hybrid_WAELL_qual, scores_WAELL_qual)
 }
 

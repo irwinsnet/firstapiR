@@ -28,6 +28,8 @@
 #'@name firstapiR
 NULL
 
+# TODO: Re-download data
+
 # FirstapiR's R code is split into three files.
 #   * firstapiR_main.R contains functions that generate HTTP requests, send
 #     them to the FIRST API server, and format the returned data as either XML,

@@ -47,10 +47,10 @@ Depending on the \code{session$format} value, returns JSON text, an
   \code{mod_since} or \code{only_mod_since}.
 }
 \description{
-The data frame returned by \code{GetMatchResults()} is in team shape,
-i.e., each ' row contains data for a single team and there are six rows per
-match. Use ' \code{ToAllianceShape()} or \code{ToMatchShape} to convert the
-data frame to ' a three-teams-per-row shape or a six-teams-per-row shape.
+The data frame returned by \code{GetMatchResults()} is in team shape, i.e.,
+each row contains data for a single team and there are six rows per match.
+Use \code{ToAllianceShape()} or \code{ToMatchShape()} to convert the data
+frame to a three-teams-per-row shape or a six-teams-per-row shape.
 }
 \details{
 See the \emph{Match Results} section of the FIRST API documentation at
@@ -76,7 +76,7 @@ The FIRST API URL format is:
      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 }
 \examples{
-sn <- GetSession("username", "key")
+sn <- GetSession("username", "key", season = 2016)
 GetMatchResults(sn, "PNCMP", level="qual")
 GetMatchResults(sn, "PNCMP", team="2990")
 GetMatchResults(sn, "WAAMV", match=2, level="playoff")

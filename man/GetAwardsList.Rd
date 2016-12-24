@@ -42,7 +42,7 @@ The FIRST API URL format is:
      \item \emph{forPerson}: logical}
 }
 \examples{
-sn <- GetSession("username", "key")
+sn <- GetSession("username", "key", season = 2016)
 GetAwardsList(sn)
 }
 \seealso{

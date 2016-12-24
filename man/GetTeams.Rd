@@ -85,7 +85,7 @@ The FIRST API URL format is:
     \item \emph{pageTotal}: integer}
 }
 \examples{
-sn <- GetSession("username", "key")
+sn <- GetSession("username", "key", season = 2016)
 GetTeams(sn, state = "California")
 GetTeams(sn, district = "FIM")
 GetTeams(sn, event = "CMP-CARVER")

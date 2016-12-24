@@ -19,7 +19,7 @@ event. Optional.}
 \item{district}{A character vector containing the FIRST API district code
 (see \code{GetDistricts()}). If \code{district} is specified,
 \code{GetTeams()} will filter results to only the events in the specified
-district.}
+district. Optional.}
 
 \item{exclude_district}{A logical vector. If set to \code{TRUE}, district
 events are excluded from results. Optional.}
@@ -84,10 +84,10 @@ The FIRST API URL format is:
     \item \emph{eventCount}: integer}
 }
 \examples{
-sn <- GetSession("username", "key")
-frc_data <- GetEvents(sn, team = 5803)
-frc_data <- GetEvents(sn, district = 'PNW')
-frc_data <- GetEvents(sn, team = 360, exclude_district = TRUE)
+sn <- GetSession("username", "key", season = 2016)
+team5803_events <- GetEvents(sn, team = 5803)
+pacificNW_events <- GetEvents(sn, district = 'PNW')
+team360_nondist_events <- GetEvents(sn, team = 360, exclude_district = TRUE)
 }
 \seealso{
 Refer to \code{\link{Standard_attributes}} for data

@@ -55,7 +55,7 @@ The FIRST API URL format is:
      \item \emph{person}: character}
 }
 \examples{
-sn <- GetSession("username", "key")
+sn <- GetSession("username", "key", season = 2016)
 GetAwards(sn, "PNCMP")
 GetAwards(sn, team = 360)
 GetAwards(sn, "PNCMP", 360)

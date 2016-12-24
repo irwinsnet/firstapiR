@@ -78,9 +78,9 @@ matches_json <- firstapiR::GetMatchResults(sn_j, event = "PNCMP")
 matches_xml <- ConvertXMLDocToText(
   firstapiR::GetMatchResults(sn_x, event = "PNCMP"))
 
-scores_json <- firstapiR::GetScores(sn_j, event = "ARCHIMEDES")
+scores_json <- firstapiR::GetScores(sn_j, event = "WAELL")
 scores_xml <- ConvertXMLDocToText(
-  firstapiR::GetScores(sn_x, event = "ARCHIMEDES"))
+  firstapiR::GetScores(sn_x, event = "WAELL"))
 
 alliances_json <- firstapiR::GetAlliances(sn_j, "WAAMV")
 alliances_xml <- ConvertXMLDocToText(firstapiR::GetAlliances(sn_x, "WAAMV"))

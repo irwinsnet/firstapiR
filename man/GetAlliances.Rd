@@ -49,7 +49,7 @@ The FIRST API URL format is:
      \item \emph{count}: integer}
 }
 \examples{
-sn <- GetSession("username", "key")
+sn <- GetSession("username", "key", season = 2016)
 GetAlliances(sn, "WAAMV")
 }
 \seealso{

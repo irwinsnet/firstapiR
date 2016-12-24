@@ -7,15 +7,15 @@
 ToAllianceShape(df)
 }
 \arguments{
-\item{df}{A firstapiR data frame. The data frame must inherit from
-the schedule, hybridSchedule, or matchResults class data frames returned
-by firstapiR functions. The data frame must also be in team shape and have
-the shape attribute set to "team".}
+\item{df}{A firstapiR data frame. The data frame must inherit from the
+\emph{schedule}, \emph{hybridSchedule}, or emph{matchResults} class data
+frames that are returned by firstapiR functions. The data frame must also
+be in team shape and have the shape attribute set to "team".}
 }
 \value{
-A data frame of class schedule, hybridSchedule, or matchResults
-  (depending on the class of the df argument) in match shape, with the shape
-  attribute set to "alliance".
+A data frame of class \emph{schedule}, \emph{hybridSchedule}, or
+  \emph{matchResults} (depending on the class of the df argument) in match
+  shape, with the shape attribute set to "alliance".
 }
 \description{
 The firstapiR functions \code{GetSchedule()}, \code{GetHybridSchedule()}, and
@@ -23,8 +23,8 @@ The firstapiR functions \code{GetSchedule()}, \code{GetHybridSchedule()}, and
 listed in every row, and six rows per match. R documentation often refers to
 data frames in this format as \emph{narrow} data frames. \code{ToMatchShape}
 will convert these narrow data frames to a wide data frame (it's wide because
-it has more columns) with all six teams listed in one row and only one row
-per match.
+it has more columns) with three teams per row and two rows per match, one row
+for the blue alliance and one row for the red alliance.
 }
 \details{
 ToMatchShape will only convert data frames that are in team shape, with their
@@ -36,7 +36,7 @@ shape.
 FirstapiR proivdes functions to reshape data frames because different shapes
 are useful for different purposes. For example, team shape is useful for
 extracting data for a single team because it's only necessary to subset the
-data frame on the single team column. Match shape is useful for displaying
+data frame on the team column. Match shape is useful for displaying
 schedules. Alliance shape is useful for calculating offensive power rating
 (OPR).
 
@@ -46,8 +46,12 @@ data frame's shape attribute is missing or is anything other than
 \emph{team}.
 }
 \examples{
-sn <- GetSession("myUserName", "key")
-matchResults <- GetMatchResults(sn, event = "PNCMP")
-matchResults.a <- ToAllianceShape(matchResults)
+sn <- GetSession("myUserName", "key", season = 2016)
+matchResults_teamshape <- GetMatchResults(sn, event = "PNCMP")
+matchResults_allianceshape <- ToAllianceShape(matchResults_teamshape)
+}
+\seealso{
+\code{\link{GetMatchResults}}, \code{\link{GetHybridSchedule}},
+  \code{\link{GetSchedule}}
 }
 

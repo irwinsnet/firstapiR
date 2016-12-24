@@ -171,7 +171,9 @@ GetServerStatus <- function(session) {
 #'     \item \emph{FRCChampionships.location}: character}
 #'
 #' @seealso Refer to \code{\link{Standard_attributes}} for data
-#' attributes returned by this function.
+#'   attributes returned by this function.
+#' @seealso Refer to \code{\link{GetSession}} for information on specifying the
+#'   FRC season.
 #'
 #' @export
 #'
@@ -279,7 +281,7 @@ GetDistricts <- function(session, mod_since = NULL, only_mod_since = NULL) {
 #' @param district A character vector containing the FIRST API district code
 #'   (see \code{GetDistricts()}). If \code{district} is specified,
 #'   \code{GetTeams()} will filter results to only the events in the specified
-#'   district.
+#'   district. Optional.
 #' @param exclude_district A logical vector. If set to \code{TRUE}, district
 #'   events are excluded from results. Optional.
 #' @param mod_since A character vector containing an HTTP formatted date and
@@ -320,10 +322,10 @@ GetDistricts <- function(session, mod_since = NULL, only_mod_since = NULL) {
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
-#' frc_data <- GetEvents(sn, team = 5803)
-#' frc_data <- GetEvents(sn, district = 'PNW')
-#' frc_data <- GetEvents(sn, team = 360, exclude_district = TRUE)
+#' sn <- GetSession("username", "key", season = 2016)
+#' team5803_events <- GetEvents(sn, team = 5803)
+#' pacificNW_events <- GetEvents(sn, district = 'PNW')
+#' team360_nondist_events <- GetEvents(sn, team = 360, exclude_district = TRUE)
 GetEvents <- function(session, event = NULL, team = NULL,
                       district = NULL, exclude_district = NULL,
                       mod_since = NULL, only_mod_since = NULL) {
@@ -431,7 +433,7 @@ GetEvents <- function(session, event = NULL, team = NULL,
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
+#' sn <- GetSession("username", "key", season = 2016)
 #' GetTeams(sn, state = "California")
 #' GetTeams(sn, district = "FIM")
 #' GetTeams(sn, event = "CMP-CARVER")
@@ -498,7 +500,7 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 
   # Shorten the column names to reduce amount of typing required.
   names(teams) <- .TrimColNames(names(teams))
-  names(teams)[names(teams == "teamNumber")] <- "team"
+  names(teams)[names(teams) == "teamNumber"] <- "team"
 
   # Convert categorical coluns to factor data types.
   teams <- .FactorColumns(teams, c("districtCode", "stateProv", "country"))
@@ -568,11 +570,11 @@ GetTeams <- function (session, team = NULL, event = NULL, district = NULL,
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
-#' GetSchedule(sn, "PNCMP")
-#' GetSchedule(sn, "PNCMP", start=5, end=10)
-#' GetSchedule(sn, "WAAMV", level='playoff')
-#' GetSchedule(sn, "PNCMP", team=4911, end=25)
+#' sn <- GetSession("username", "key", season = 2016)
+#' PNW_champs_qual_sched <- GetSchedule(sn, "PNCMP")
+#' qual_matches_5_to_10 <- GetSchedule(sn, "PNCMP", start=5, end=10)
+#' CWU_playoff_sched <- GetSchedule(sn, "WAAMV", level='playoff')
+#' frc4911_matches_thru_25 <- GetSchedule(sn, "PNCMP", team=4911, end=25)
 GetSchedule <- function (session, event, level = "qual", team = NULL,
                          start = NULL, end = NULL, mod_since = NULL,
                          only_mod_since = NULL) {
@@ -652,10 +654,10 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' played, the assigned teams and schedule data are returned, but the result
 #' fields are blank.
 #'
-#' The data frame returned by \code{GetHybridSchedule()} is in team shape,
-#' i.e., each ' row contains data for a single team and there are six rows per
-#' match. Use ' \code{ToAllianceShape()} or \code{ToMatchShape} to convert the
-#' data frame to ' a three-teams-per-row shape or a six-teams-per-row shape.
+#' The data frame returned by \code{GetHybridSchedule()} is in team shape, i.e.,
+#' each row contains data for a single team and there are six rows per match.
+#' Use \code{ToAllianceShape()} or \code{ToMatchShape()} to convert the data
+#' frame to a three-teams-per-row shape or a six-teams-per-row shape.
 #'
 #' See the \emph{Hybrid Schedule} section of the FIRST API documentation for
 #' more details.
@@ -706,9 +708,10 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
-#' GetHybridSchedule(sn, event = "ORPHI")
-#' GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
+#' sn <- GetSession("username", "key", season = 2016)
+#' Philometh_qual_sched <- GetHybridSchedule(sn, event = "ORPHI")
+#' CWU_playoffs <- GetHybridSchedule(sn, event = "WAELL", level = "playoff",
+#'                                   start = 3, end = 6)
 GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
                               end = NULL, mod_since = NULL,
                               only_mod_since = NULL) {
@@ -812,10 +815,10 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #  GetMatchResults() ===========================================================
 #' Get match scores and participating teams
 #'
-#' The data frame returned by \code{GetMatchResults()} is in team shape,
-#' i.e., each ' row contains data for a single team and there are six rows per
-#' match. Use ' \code{ToAllianceShape()} or \code{ToMatchShape} to convert the
-#' data frame to ' a three-teams-per-row shape or a six-teams-per-row shape.
+#' The data frame returned by \code{GetMatchResults()} is in team shape, i.e.,
+#' each row contains data for a single team and there are six rows per match.
+#' Use \code{ToAllianceShape()} or \code{ToMatchShape()} to convert the data
+#' frame to a three-teams-per-row shape or a six-teams-per-row shape.
 #'
 #' See the \emph{Match Results} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -873,7 +876,7 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
+#' sn <- GetSession("username", "key", season = 2016)
 #' GetMatchResults(sn, "PNCMP", level="qual")
 #' GetMatchResults(sn, "PNCMP", team="2990")
 #' GetMatchResults(sn, "WAAMV", match=2, level="playoff")
@@ -994,11 +997,11 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #' for red.
 #'
 #' \code{GetScores()} contains both the blue and red alliance scores for each
-#' match, but it does not list the teams assigned to each alliance. Use R's
-#' \code{merge()} function to merge the data frames returned by
-#' \code{GetMatchResults} and \code{GetScores()} to create a data frame that
+#' match, but it does not list the teams assigned to each alliance. Use
+#' firstapiR \code{MergeResults()} function to merge the data frames returned by
+#' \code{GetHybridSchedule} and \code{GetScores()} to create a data frame that
 #' contains both team numbers and detailed scores:
-#' \code{merge(match_results_df, scores_df)} should do the trick.
+#' \code{MergeResults(hybrid_df, scores_df)} should do the trick.
 #'
 #' See the \emph{Detailed Scores} section of the FIRST API documentation at
 #' \url{http://docs.frcevents2.apiary.io/#} for more details.
@@ -1061,16 +1064,18 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 #'      \item \emph{breachPoints, capturePoints}: integer
 #'      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
 #'
-#' @seealso Refer to \code{\link{Standard_attributes}} for data
-#' attributes returned by this function.
+#' @seealso Refer to \code{\link{Standard_attributes}} for data attributes
+#'   returned by this function.
+#' @seealso Refer to \code{\link{MergeResults}} for guidance on how to merge the
+#'   \emph{Scores} and \emph{HybridSchedule} data frames.
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
-#' GetScores(sn, event = "ARCHIMEDES")
-#' GetScores(sn, event = "WAELL", start = 1, end = 10)
-#' GetScores(sn, event = "WAELL", match = 15)
+#' sn <- GetSession("username", "key", season = 2016)
+#' archimedes_qual_scores <- GetScores(sn, event = "ARCHIMEDES")
+#' first_10_qual_matches <- GetScores(sn, event = "WAELL", start = 1, end = 10)
+#' qual_match_10_scores <- GetScores(sn, event = "WAELL", match = 15)
 GetScores <- function(session, event, level = "qual", team = NULL,
                               match = NULL, start = NULL, end = NULL,
                               mod_since = NULL, only_mod_since = NULL) {
@@ -1124,8 +1129,8 @@ GetScores <- function(session, event, level = "qual", team = NULL,
   for(col_name in names(scores)){
     if(is.character(scores[[col_name]])) {
       lvls <- tolower(unique(scores[[col_name]]))
-      if(length(lvls) == 2) {
-        if(("true" %in% lvls) && ("false" %in% lvls))
+      if(length(lvls) <= 2) {
+        if(("true" %in% lvls) || ("false" %in% lvls))
           scores[[col_name]] <- as.logical(scores[[col_name]])
       } else
         scores[[col_name]] <- factor(scores[[col_name]])
@@ -1189,7 +1194,7 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
+#' sn <- GetSession("username", "key", season = 2016)
 #' GetAlliances(sn, "WAAMV")
 GetAlliances <- function (session, event, mod_since = NULL,
                           only_mod_since = NULL) {
@@ -1260,10 +1265,10 @@ GetAlliances <- function (session, event, mod_since = NULL,
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
-#' GetRankings(sn, "WAAMV")
-#' GetRankings(sn, "PNCMP", team = 1983)
-#' GetRankings(sn, "ARCHIMEDES", top = 5)
+#' sn <- GetSession("username", "key", season = 2016)
+#' CWU_rankings <- GetRankings(sn, "WAAMV")
+#' frc1938_rank_PNWChamps <- GetRankings(sn, "PNCMP", team = 1983)
+#' archimedes_top5_teams <- GetRankings(sn, "ARCHIMEDES", top = 5)
 GetRankings <- function (session, event, team = NULL, top = NULL,
                          mod_since = NULL, only_mod_since = NULL) {
   # Check for unallowed combinations of arguments.
@@ -1338,7 +1343,7 @@ GetRankings <- function (session, event, team = NULL, top = NULL,
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
+#' sn <- GetSession("username", "key", season = 2016)
 #' GetAwards(sn, "PNCMP")
 #' GetAwards(sn, team = 360)
 #' GetAwards(sn, "PNCMP", 360)
@@ -1409,7 +1414,7 @@ GetAwards <- function(session, event = NULL, team = NULL,
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("username", "key")
+#' sn <- GetSession("username", "key", season = 2016)
 #' GetAwardsList(sn)
 GetAwardsList <- function(session, mod_since = NULL, only_mod_since = NULL) {
   # Assemble URL

@@ -71,11 +71,11 @@ tournamentLevel=level&teamNumber=team&start=start&end=end}
     \item \emph{surrogate}: logical}
 }
 \examples{
-sn <- GetSession("username", "key")
-GetSchedule(sn, "PNCMP")
-GetSchedule(sn, "PNCMP", start=5, end=10)
-GetSchedule(sn, "WAAMV", level='playoff')
-GetSchedule(sn, "PNCMP", team=4911, end=25)
+sn <- GetSession("username", "key", season = 2016)
+PNW_champs_qual_sched <- GetSchedule(sn, "PNCMP")
+qual_matches_5_to_10 <- GetSchedule(sn, "PNCMP", start=5, end=10)
+CWU_playoff_sched <- GetSchedule(sn, "WAAMV", level='playoff')
+frc4911_matches_thru_25 <- GetSchedule(sn, "PNCMP", team=4911, end=25)
 }
 \seealso{
 Refer to \code{\link{Standard_attributes}} for data

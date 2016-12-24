@@ -16,13 +16,13 @@ NULL (invisibly), or NA if the user cancels the dialog without
 \description{
 Displays the tcltk package's \emph{save file dialog}. Once the user enters or
 selects a file name, \code{SaveData()} will save the value passed in
-parameter x to an RDS data file. The dialog will initially display whatever
-folder the current working directory (see \code{getwd()} and \code{setwd()}).
+parameter x to an RDS data file. The dialog will initially display the
+current working directory (see \code{getwd()} and \code{setwd()}).
 }
 \details{
 SaveData uses the \code{saveRDS()} function, from R's base package, to save
 R data. RDS files can only contain a single object. To save more than one
-object in single file, just put them in a list.
+object in single file, just put the objects in a list.
 
 Throws an error if the selected file does not end in "RDS"
 (case-insensitive). Prints a message if the user cancels the dialog without
@@ -30,9 +30,12 @@ selecting a file.
 }
 \examples{
 \dontrun{
-sn <- GetSession("username", "key")
+sn <- GetSession("username", "key", season = 2016)
 sched <- GetSchedule(sn, "ORPHI")
 SaveData(sched)
 }
+}
+\seealso{
+\code{\link{saveRDS}}, \code{\link{getwd}}, \code{\link{setwd}}
 }
 

@@ -59,10 +59,10 @@ The FIRST API URL format is:
      \item \emph{matchesPlayed}: integer}
 }
 \examples{
-sn <- GetSession("username", "key")
-GetRankings(sn, "WAAMV")
-GetRankings(sn, "PNCMP", team = 1983)
-GetRankings(sn, "ARCHIMEDES", top = 5)
+sn <- GetSession("username", "key", season = 2016)
+CWU_rankings <- GetRankings(sn, "WAAMV")
+frc1938_rank_PNWChamps <- GetRankings(sn, "PNCMP", team = 1983)
+archimedes_top5_teams <- GetRankings(sn, "ARCHIMEDES", top = 5)
 }
 \seealso{
 Refer to \code{\link{Standard_attributes}} for data

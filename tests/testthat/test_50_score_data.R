@@ -65,12 +65,12 @@ test_that("only_mod_since and mod_since return NA when set to current time", {
 
 # GetScores() ==================================================================
 test_that("GetScores() returns a data frame", {
-  sc <- GetScores(sess_local, event = "ARCHIMEDES")
+  sc <- GetScores(sess_local, event = "WAELL")
 
   expect_is(sc, "Scores")
   expect_equal(attr(sc, "url"),
-          "https://frc-api.firstinspires.org/v2.0/2016/scores/ARCHIMEDES/qual")
-  expect_equal(nrow(sc), 250)
+          "https://frc-api.firstinspires.org/v2.0/2016/scores/WAELL/qual")
+  expect_equal(nrow(sc), 156)
   expect_equal(length(sc), 42)
   expect_equal(names(sc)[5:10], c("robot1Auto", "robot2Auto", "robot3Auto",
                                   "autoBouldersLow", "autoBouldersHigh",

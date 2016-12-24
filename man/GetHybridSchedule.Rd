@@ -43,10 +43,10 @@ played, the assigned teams and schedule data are returned, but the result
 fields are blank.
 }
 \details{
-The data frame returned by \code{GetHybridSchedule()} is in team shape,
-i.e., each ' row contains data for a single team and there are six rows per
-match. Use ' \code{ToAllianceShape()} or \code{ToMatchShape} to convert the
-data frame to ' a three-teams-per-row shape or a six-teams-per-row shape.
+The data frame returned by \code{GetHybridSchedule()} is in team shape, i.e.,
+each row contains data for a single team and there are six rows per match.
+Use \code{ToAllianceShape()} or \code{ToMatchShape()} to convert the data
+frame to a three-teams-per-row shape or a six-teams-per-row shape.
 
 See the \emph{Hybrid Schedule} section of the FIRST API documentation for
 more details.
@@ -72,9 +72,10 @@ hybrid?start=start&end=end}
      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 }
 \examples{
-sn <- GetSession("username", "key")
-GetHybridSchedule(sn, event = "ORPHI")
-GetHybridSchedule(sn, event = "WAELL", level = "playoff", start = 3, end = 6)
+sn <- GetSession("username", "key", season = 2016)
+Philometh_qual_sched <- GetHybridSchedule(sn, event = "ORPHI")
+CWU_playoffs <- GetHybridSchedule(sn, event = "WAELL", level = "playoff",
+                                  start = 3, end = 6)
 }
 \seealso{
 Refer to \code{\link{Standard_attributes}} for data

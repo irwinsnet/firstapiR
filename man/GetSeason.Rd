@@ -54,6 +54,9 @@ summary <- GetSeason(sn)
 }
 \seealso{
 Refer to \code{\link{Standard_attributes}} for data
-attributes returned by this function.
+  attributes returned by this function.
+
+Refer to \code{\link{GetSession}} for information on specifying the
+  FRC season.
 }
 

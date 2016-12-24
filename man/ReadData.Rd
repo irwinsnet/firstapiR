@@ -11,11 +11,10 @@ The R object stored in the RDS data file, or NA if the user cancels
   the dialog without selecting a file.
 }
 \description{
-Displays the tcltk package's \emph{save file dialog}. Once the user enters or
+Displays the tcltk package's \emph{read file dialog}. Once the user enters or
 selects a file name, \code{ReadData()} will read and return the value stored
-in the corresponding RDS data file. The dialog will initially display
-whatever folder the current working directory (see \code{getwd()} and
-\code{setwd()}).
+in the corresponding RDS data file. The dialog will initially display the
+current working directory (see \code{getwd()} and \code{setwd()}).
 }
 \details{
 ReadData uses the \code{readRDS()} function, from R's base package, to read
@@ -30,5 +29,8 @@ selecting a file.
 \dontrun{
 my.data <- ReadData()
 }
+}
+\seealso{
+\code{\link{readRDS}}, \code{\link{getwd}}, \code{\link{setwd}}
 }
 

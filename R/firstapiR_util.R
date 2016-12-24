@@ -15,15 +15,15 @@
 #' per match.
 #'
 #' ToMatchShape will only convert data frames that are in team shape, with their
-#' shape attribute set to "team". To convert data frame that are in alliance
-#' shape to match shape, first use \code{ToTeamShape} to convert the data frame
-#' back to team shape, and then use \code{ToMatchShape} to convert it to match
-#' shape.
+#' shape attribute set to "team". To convert a data frame that is in alliance
+#' shape to match shape, first use \code{ToTeamShape()} to convert the data
+#' frame back to team shape, and then use \code{ToMatchShape()} to convert it to
+#' match shape.
 #'
 #' FirstapiR proivdes functions to reshape data frames because different shapes
 #' are useful for different purposes. For example, team shape is useful for
 #' extracting data for a single team because it's only necessary to subset the
-#' data frame on the single team column. Match shape is useful for displaying
+#' data frame on the team column. Match shape is useful for displaying
 #' schedules. Alliance shape is useful for calculating offensive power rating
 #' (OPR).
 #'
@@ -32,21 +32,24 @@
 #' data frame's shape attribute is missing or is anything other than
 #' \emph{team}.
 #'
-#' @param df A firstapiR data frame. The data frame must inherit from
-#'   the schedule, hybridSchedule, or matchResults class data frames returned
-#'   by firstapiR functions. The data frame must also be in team shape and have
-#'   the shape attribute set to "team".
+#' @param df A firstapiR data frame. The data frame must inherit from the
+#'   \emph{schedule}, \emph{hybridSchedule}, or emph{matchResults} class data
+#'   frames that are returned by firstapiR functions. The data frame must also
+#'   be in team shape and have the shape attribute set to "team".
 #'
-#' @return A data frame of class schedule, hybridSchedule, or matchResults
-#'   (depending on the class of the df argument) in match shape, with the shape
-#'   attribute set to "match".
+#' @return A data frame of class \emph{matchResults}, \emph{schedule}, or
+#'   \emph{hybridSchedule} (depending on the class of the df argument) in match
+#'   shape, with the shape attribute set to "match".
+#'
+#' @seealso \code{\link{GetMatchResults}}, \code{\link{GetHybridSchedule}},
+#'   \code{\link{GetSchedule}}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("myUserName", "key")
-#' matchResults <- GetMatchResults(sn, event = "PNCMP")
-#' matchResults.m <- ToMatchShape(matchResults)
+#' sn <- GetSession("myUserName", "key", season = 2016)
+#' matchResults_teamshape <- GetMatchResults(sn, event = "PNCMP")
+#' matchResults_matchshape <- ToMatchShape(matchResults_teamshape)
 ToMatchShape <- function(df) {
   # Verify input data frame in team format
   if(!("shape" %in% names(attributes(df))))
@@ -136,8 +139,8 @@ ToMatchShape <- function(df) {
 #' listed in every row, and six rows per match. R documentation often refers to
 #' data frames in this format as \emph{narrow} data frames. \code{ToMatchShape}
 #' will convert these narrow data frames to a wide data frame (it's wide because
-#' it has more columns) with all six teams listed in one row and only one row
-#' per match.
+#' it has more columns) with three teams per row and two rows per match, one row
+#' for the blue alliance and one row for the red alliance.
 #'
 #' ToMatchShape will only convert data frames that are in team shape, with their
 #' shape attribute set to "team". To convert data frame that are in alliance
@@ -148,7 +151,7 @@ ToMatchShape <- function(df) {
 #' FirstapiR proivdes functions to reshape data frames because different shapes
 #' are useful for different purposes. For example, team shape is useful for
 #' extracting data for a single team because it's only necessary to subset the
-#' data frame on the single team column. Match shape is useful for displaying
+#' data frame on the team column. Match shape is useful for displaying
 #' schedules. Alliance shape is useful for calculating offensive power rating
 #' (OPR).
 #'
@@ -157,21 +160,24 @@ ToMatchShape <- function(df) {
 #' data frame's shape attribute is missing or is anything other than
 #' \emph{team}.
 #'
-#' @param df A firstapiR data frame. The data frame must inherit from
-#'   the schedule, hybridSchedule, or matchResults class data frames returned
-#'   by firstapiR functions. The data frame must also be in team shape and have
-#'   the shape attribute set to "team".
+#' @param df A firstapiR data frame. The data frame must inherit from the
+#'   \emph{schedule}, \emph{hybridSchedule}, or emph{matchResults} class data
+#'   frames that are returned by firstapiR functions. The data frame must also
+#'   be in team shape and have the shape attribute set to "team".
 #'
-#' @return A data frame of class schedule, hybridSchedule, or matchResults
-#'   (depending on the class of the df argument) in match shape, with the shape
-#'   attribute set to "alliance".
+#' @return A data frame of class \emph{schedule}, \emph{hybridSchedule}, or
+#'   \emph{matchResults} (depending on the class of the df argument) in match
+#'   shape, with the shape attribute set to "alliance".
+#'
+#' @seealso \code{\link{GetMatchResults}}, \code{\link{GetHybridSchedule}},
+#'   \code{\link{GetSchedule}}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("myUserName", "key")
-#' matchResults <- GetMatchResults(sn, event = "PNCMP")
-#' matchResults.a <- ToAllianceShape(matchResults)
+#' sn <- GetSession("myUserName", "key", season = 2016)
+#' matchResults_teamshape <- GetMatchResults(sn, event = "PNCMP")
+#' matchResults_allianceshape <- ToAllianceShape(matchResults_teamshape)
 ToAllianceShape <- function(df) {
   # Verify input data frame in team format
   if(!("shape" %in% names(attributes(df))))
@@ -217,18 +223,18 @@ ToAllianceShape <- function(df) {
 #' listed in every row, and six rows per match. R documentation often refers to
 #' data frames in this format as \emph{narrow} data frames. The functions
 #' \code{ToMatchShape} and \code{ToAllianceShape} will convert data frames in
-#' the narrow team shape to the wide match or alliance shapes (they're called
-#' wide because they have more columns). \code{ToTeamShape} converts these wide
+#' the narrow team shape to the wide (they're called wide because they have more
+#' columns) alliance or match shapes. \code{ToTeamShape} converts these wide
 #' data frames back to narrow data frames in team shape.
 #'
-#' /code{ToTeamShape} will only convert data frames that are in match or
+#' \code{ToTeamShape} will only convert data frames that are in match or
 #' alliance shape, with their shape attribute set to \emph{match} or
 #' \emph{alliance}.
 #'
 #' FirstapiR proivdes functions to reshape data frames because different shapes
 #' are useful for different purposes. For example, team shape is useful for
 #' extracting data for a single team because it's only necessary to subset the
-#' data frame on the single team column. Match shape is useful for displaying
+#' data frame on the team column. Match shape is useful for displaying
 #' schedules. Alliance shape is useful for calculating offensive power rating
 #' (OPR).
 #'
@@ -237,22 +243,25 @@ ToAllianceShape <- function(df) {
 #' data frame's shape attribute is missing or is anything other than
 #' \emph{team}.
 #'
-#' @param df A firstapiR data frame. The data frame must inherit from
-#'   the schedule, hybridSchedule, or matchResults class data frames returned
-#'   by firstapiR functions. The data frame must also be in team shape and have
-#'   the shape attribute set to "team".
+#' @param df A firstapiR data frame. The data frame must inherit from the
+#'   \emph{schedule}, \emph{hybridSchedule}, or \emph{matchResults} class data
+#'   frames returned by firstapiR functions. The data frame must also be in team
+#'   shape and have the shape attribute set to "match" or "alliance".
 #'
-#' @return A data frame of class schedule, hybridSchedule, or matchResults
-#'   (depending on the class of the df argument) in match shape, with the shape
-#'   attribute set to "match".
+#' @return A data frame of class \emph{schedule}, \emph{hybridSchedule}, or
+#'   \emph{matchResults} (depending on the class of the df argument) in match
+#'   shape, with the shape attribute set to "match".
+#'
+#' @seealso \code{\link{GetMatchResults}}, \code{\link{GetHybridSchedule}},
+#'   \code{\link{GetSchedule}}
 #'
 #' @export
 #'
 #' @examples
-#' sn <- GetSession("myUserName", "key")
-#' matchResults <- GetMatchResults(sn, event = "PNCMP")
-#' matchResults.m <- ToMatchShape(matchResults)
-#' matchResults.m.t <- ToTeamShape(matchResults.m)
+#' sn <- GetSession("myUserName", "key", season = 2016)
+#' matchResults_teamshape <- GetMatchResults(sn, event = "PNCMP")
+#' matchResults_matchshape <- ToMatchShape(matchResults_teamshape)
+#' matchResults_back_to_teamshape <- ToTeamShape(matchResults_matchshape)
 ToTeamShape <- function(df) {
   # Check for valid input
   if(!("shape" %in% names(attributes(df))))
@@ -366,7 +375,7 @@ ToTeamShape <- function(df) {
 #'
 #' @examples
 #' \dontrun{
-#' sn <- GetSession("myUserName", "key")
+#' sn <- GetSession("myUserName", "key", season = 2016)
 #' archimedes <- GetAll(sn, "ARCHIMEDES")
 #' SaveData(archimedes)
 #' }
@@ -395,16 +404,45 @@ GetAll <- function(session, event) {
 }
 
 
-# MergeScores() ================================================================
-#' Merge MatchResults and Scores data frames into a single data frame.
+# MergeResults() ================================================================
+#' Merge HybridSchedule and Scores data into a single data frame.
 #'
-#' @param hybrid.df A HybridSchedule class data frame.
-#' @param scores.df A Scores class data frame.
+#' \code{MergeResults()} uses R's merge function to combine the results of the
+#' \code{GetHybridSchedule()} and \code{GetScores(})) functions into a single
+#' data frame. While the \emph{DetailedScores} data frame contains every match
+#' detail that gets stored in the field management system, it doesn't list the
+#' teams that participated in the match. For each row of scores it only listss
+#' the match number and the alliance (red or blue). \code{MergeResults()} makes
+#' it easy to link detailed match performance data to specific FRC teams.
 #'
-#' @return A Results class data frame containing both the teams assigned to a
-#'   match and their detailed scores.
+#' @param hybrid.df A data frame with class \emph{HybridSchedule()}, obtained
+#'   from the function \code{GetHybridSchedule}. The data frame must be in team
+#'   shape.
+#' @param scores.df A data frame with class \emph{Scores}, obtained from the
+#'   function \code{GetScores()}.
+#'
+#' @return A data frame containing both the teams assigned to a match and their
+#'   detailed scores. The data frame is in team shape, with six rows per match
+#'   and one team listed per row. The class is ("Results", "data.frame").
+#'
+#' @section Errors:
+#'   \code{MergeResults()} throws an error if:
+#'   \itemize{
+#'     \item{hybrid.df does not have class \emph{HybridSchedule} or
+#'       is not in team shape}
+#'     \item{scores.df does not have class \emph{DetailedScores}}
+#'     \item{hybrid.df or scores.df urls are not valid FIRST API urls}
+#'     \item{scores.df and hybrid.df seasons, events, or match levels are not
+#'       equal}
+#'   }
 #'
 #' @export
+#'
+#' @examples
+#' sn <- GetSession("username", "key", season = 2016)
+#' hybrid_WAELL_qual <- GetHybridSchedule(sn, event = "WAELL")
+#' scores_WAELL_qual <- GetScores(sn, event = "WAELL")
+#' results_WAELL_qual <- MergeResults(hybrid_WAELL_qual, scores_WAELL_qual)
 MergeResults <- function(hybrid.df, scores.df) {
 
   # Check arguments
@@ -475,12 +513,12 @@ MergeResults <- function(hybrid.df, scores.df) {
 #'
 #' Displays the tcltk package's \emph{save file dialog}. Once the user enters or
 #' selects a file name, \code{SaveData()} will save the value passed in
-#' parameter x to an RDS data file. The dialog will initially display whatever
-#' folder the current working directory (see \code{getwd()} and \code{setwd()}).
+#' parameter x to an RDS data file. The dialog will initially display the
+#' current working directory (see \code{getwd()} and \code{setwd()}).
 #'
 #' SaveData uses the \code{saveRDS()} function, from R's base package, to save
 #' R data. RDS files can only contain a single object. To save more than one
-#' object in single file, just put them in a list.
+#' object in single file, just put the objects in a list.
 #'
 #' Throws an error if the selected file does not end in "RDS"
 #' (case-insensitive). Prints a message if the user cancels the dialog without
@@ -491,11 +529,13 @@ MergeResults <- function(hybrid.df, scores.df) {
 #' @return NULL (invisibly), or NA if the user cancels the dialog without
 #'   selecting a file.
 #'
+#' @seealso \code{\link{saveRDS}}, \code{\link{getwd}}, \code{\link{setwd}}
+#'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' sn <- GetSession("username", "key")
+#' sn <- GetSession("username", "key", season = 2016)
 #' sched <- GetSchedule(sn, "ORPHI")
 #' SaveData(sched)
 #' }
@@ -517,11 +557,10 @@ SaveData <- function(x) {
 # ReadData =====================================================================
 #' Reads data from an RDS data file via a file open dialog.
 #'
-#' Displays the tcltk package's \emph{save file dialog}. Once the user enters or
+#' Displays the tcltk package's \emph{read file dialog}. Once the user enters or
 #' selects a file name, \code{ReadData()} will read and return the value stored
-#' in the corresponding RDS data file. The dialog will initially display
-#' whatever folder the current working directory (see \code{getwd()} and
-#' \code{setwd()}).
+#' in the corresponding RDS data file. The dialog will initially display the
+#' current working directory (see \code{getwd()} and \code{setwd()}).
 #'
 #' ReadData uses the \code{readRDS()} function, from R's base package, to read
 #' R data. The data is stored in the RDS file as an unnamed object, so the user
@@ -533,6 +572,8 @@ SaveData <- function(x) {
 #'
 #' @return The R object stored in the RDS data file, or NA if the user cancels
 #'   the dialog without selecting a file.
+#'
+#' @seealso \code{\link{readRDS}}, \code{\link{getwd}}, \code{\link{setwd}}
 #'
 #' @export
 #'
