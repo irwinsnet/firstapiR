@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stacy Irwin" />
 
-<meta name="date" content="2016-12-14" />
+<meta name="date" content="2016-12-28" />
 
 <title>Getting Started with firstapiR</title>
 
@@ -70,13 +70,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Getting Started with firstapiR</h1>
 <h4 class="author"><em>Stacy Irwin</em></h4>
-<h4 class="date"><em>2016-12-14</em></h4>
+<h4 class="date"><em>2016-12-28</em></h4>
 
 
 
-<div id="version-2.0.0" class="section level1">
-<h1>Version 2.0.0</h1>
 <p>The firstapiR package provides R functions that download FIRST Robotics Competition (FRC) data from the FIRST API server via hypertext transfer protocol (HTTP) requests. The firstapiR package formats the resulting data as JSON text, XML text, or as R data frames.</p>
+<div id="version-2.0.0" class="section level3">
+<h3>Version 2.0.0</h3>
+<p>This guide is for version 2.0.0 of the firstapiR package. <a href="http://irwinsnet.github.io/projects/firstapiR/Getting_Started_v100">Guidance for version 1.0.0 of firstapiR is located here</a>.</p>
+</div>
 <div id="first---for-inspiration-and-recognition-in-science-and-technology" class="section level3">
 <h3>FIRST - <em>F</em>or <em>I</em>nspiration and <em>R</em>ecognition in <em>S</em>cience and <em>T</em>echnology</h3>
 <p>FIRST engages kids in kindergarten through high school in exciting, mentor-based, research and robotics programs that help them become science and technology leaders, as well as well-rounded contributors to society. Learn more about FIRST by <a href="http://www.firstinspires.org/">visiting their website.</a></p>
@@ -89,7 +91,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="learning-r" class="section level3">
 <h3>Learning R</h3>
-<p>R is a functional language intended for statistical computing, data analysis and plotting. I initially considered building this package in Python, but in the end I wanted to learn to use R, so here we are. Compared to other languages like Java or Python, R does seem a bit quirky at first, but it has some useful, built-in features for working with data. R has an extensive array of free add-in packages for manipulating and visualizing data, plus there is an excellent and free IDE available for R, RStudio.</p>
+<p>R is a functional language intended for statistical computing, data analysis and plotting. I initially considered building this package in Python, but in the end I wanted to learn to use R, so here we are. R seems a bit quirky at first, especially compared to other languages like Java or Python, but it has some useful, built-in features for working with data. R has an extensive array of free add-in packages for manipulating and visualizing data, plus there is an excellent and free IDE available for R, RStudio.</p>
 <p>If you are new to R, experimenting with firstapiR isn’t the worst way to get started, but there are some resources you should check out:</p>
 <ol style="list-style-type: decimal">
 <li>Download R from <a href="https://cran.r-project.org/mirrors.html">the main R website</a>.</li>
@@ -103,11 +105,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3>Installing the firstapiR package</h3>
 <ol style="list-style-type: decimal">
 <li><p>Install the devtools package. This is easy to do in RStudio - just select <em>Tools-&gt;Install Packages…</em> from the menu bar, type “devtools” in the package name box and hit <em>Install</em>.</p></li>
-<li><p>The devtools package provides a function for installing R packages from GitHub. Type the following command at the RStudio console prompt:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;irwinsnet/firstapiR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;v2.0.0&quot;</span>)</code></pre></div></li>
-<li><p>If you need the prior version of firstapiR, use this command instead:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;irwinsnet/firstapiR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;v1.0.0&quot;</span>)</code></pre></div></li>
+<li><p>The devtools package provides a function for installing R packages from GitHub. Type the following command at the RStudio console prompt:</p></li>
 </ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;irwinsnet/firstapiR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;v2.0.0&quot;</span>)</code></pre></div>
+<p>If you need the prior version of firstapiR, use this command instead:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;irwinsnet/firstapiR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;v1.0.0&quot;</span>)</code></pre></div>
 </div>
 <div id="differences-between-versions-1.0.0-and-2.0.0" class="section level2">
 <h2>Differences between Versions 1.0.0 and 2.0.0</h2>
@@ -115,7 +117,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><p>Version 1.0.0 of firstapiR is still available from github per the firstapiR installation instructions above.</p></li>
 <li><p>The main difference from version 1.0.0 is that there are three shapes (i.e, types) of <em>Schedule</em>, <em>HybridSchedule</em>, and <em>MatchResult</em> data frames. The three shapes are <em>team</em>, <em>alliance</em>, and <em>match</em>. Team data frames have one row per team, requiring six rows to contain all of the data for a single match. The <em>station</em> column specifies the station to which the team was assigned. Alliance data frames have three teams per row, with one row for the blue alliance and another for the red alliance. The <em>alliance</em> column contains <em>Red</em> or <em>Blue</em>, depending on the alliance. Finally, match data frames have six teams per row and one row per match.</p></li>
 <li><p>The functions <code>GetSchedule()</code>, <code>GetHybridSchedule()</code>, and <code>GetMatchResults()</code> no longer accept the <code>expand_cols</code> argument. These functions can only return a data frame in team shape. Users can convert between team, alliance, and match data frames with the functions <code>ToAllianceShape()</code>, <code>ToMatchShape()</code>, and <code>ToTeamShape()</code>.</p></li>
-<li><p>I’ve added a <code>MergeReults()</code> function which merges the <em>HybridSchedule</em> and <em>Scores</em> data frames into a single data frame, providing team numbes and detailed performance data all in one table.</p></li>
+<li><p>I’ve added a <code>MergeReults()</code> function which merges the <em>HybridSchedule</em> and <em>Scores</em> data frames into a single data frame, providing team numbers and detailed performance data all in one table.</p></li>
 <li><p>I’ve added the function <code>GetAll()</code>, which downloads everything about a single competition and saves it in a single list.</p></li>
 <li><p>I’ve added functions for saving FIRST competition data locally in R data files. The functions <code>SaveData()</code> and <code>ReadData()</code> display file open and save dialogs for saving and loading data to and from <em>.RDS</em> files.</p></li>
 <li><p>To give users without an authorization key some data to play with, firstapiR now includes all performance data for the 2016 FIRST Robotics Championships. The data is available in R lists named <code>archimedes2016</code>, <code>carver2016</code>, <code>curie2016</code>, etc.</p></li>
@@ -124,7 +126,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="getting-started---creating-a-session-object" class="section level2">
 <h2>Getting started - Creating a Session Object</h2>
-<p>Every HTTP request to the FIRST API requires a username, an authorization key, a four digit year that identifies the season of interest, and a header that specifies whether the data should be returned as XML or JSON. Having to type all of these parameters into every function call would make firstapiR very cumbersome to use, especially from the R console. The firstapiR package solves this problem with the <code>GetSession()</code> function, which returns a Session object that contains all of the parameters listed above. All other firstapiR functions require a Session object as the first parameter. Here’s an example:</p>
+<p>Every HTTP request to the FIRST API requires a username, an authorization key, a four digit year that identifies the season of interest, and a header that specifies whether the data should be returned as XML or JSON. Having to type all of these parameters into every function call would make firstapiR very cumbersome to use, especially from the R console. The firstapiR package addresses this problem with the <code>GetSession()</code> function, which returns a Session object that contains all of the parameters listed above. All other firstapiR functions require a Session object as the first parameter. Here’s an example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create a Session object</span>
 sn &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetSession</span>(<span class="st">&quot;username&quot;</span>, <span class="st">&quot;key&quot;</span>)
 
@@ -280,13 +282,13 @@ dist$name[dist$code ==<span class="st"> &quot;PNW&quot;</span>]</code></pre></di
 ##  - attr(*, &quot;url&quot;)= chr &quot;https://frc-api.firstinspires.org/v2.0/2016/districts&quot;
 ##  - attr(*, &quot;local_test_data&quot;)= logi TRUE
 ##  - attr(*, &quot;local_url&quot;)= chr &quot;https://frc-api.firstinspires.org/v2.0/2016/districts&quot;
-##  - attr(*, &quot;time_downloaded&quot;)= POSIXct, format: &quot;2016-12-11 16:17:29&quot;
+##  - attr(*, &quot;time_downloaded&quot;)= POSIXct, format: &quot;2016-12-23 08:11:00&quot;
 ##  - attr(*, &quot;last_modified&quot;)= chr &quot;Fri, 07 Oct 2016 14:40:53 GMT&quot;</code></pre>
 <p>The attribute <em>local_test_data</em> is set to TRUE if the object was created from cached data in the R/sysdata.rda file. The <em>local_url</em> attribute contains the actual URL that was sent to the FIRST API server to request the data, and the <em>time_downloaded</em> attribute shows when the data was downloaded from the server.</p>
 <p>For non-local, HTTP data, <em>local_test_data</em> will be set to FALSE, and <em>local_url</em> will be NULL. The <em>time_downloaded</em> attribute will contain the time that the HTTP request was received, based on the local system time.</p>
 <p>There is also a <em>url</em> attribute. This attribute always contains the URL that is constructed from the arguments passed to the firstapiR function. Normally, this is the actual URL that is sent to the FIRST API server, but when extracting local data, this URL is mostly ignored. In the GetDistricts() example, <em>local_url</em> matches <em>url</em> because GetDistricts has no optional parameters and there is only one way to call this function. Most other firstapiR functions have many optional parameters and a multitude of possible return values. Since it’s not practical to cache the entire FIRST API server, when requesting local data (by setting the key parameter to “key”), firstapiR ignores the optional parameters. The local data will be of the same type and format as what was requested. In these situations the <em>url</em> attribute will represent was was requested, and the <em>local_url</em> attribute will describe what was cached and returned.</p>
 <p>Use the <code>attr(object, attribute_name)</code> function and syntax to retrive an attribute from an object.</p>
-<p>Open the <em>data-raw/data.R</em> folder (only available in the firstapiR github repository) to see the firstapiR commands that were used to generate the local data.</p>
+<p>Open the <em>tools/data.R</em> folder (only available in the firstapiR github repository) to see the firstapiR commands that were used to generate the local data.</p>
 </div>
 <div id="testing-firstapir-on-your-system" class="section level3">
 <h3>Testing firstapiR on Your System</h3>
@@ -303,6 +305,9 @@ dist$name[dist$code ==<span class="st"> &quot;PNW&quot;</span>]</code></pre></di
 <h2>Next Vignette</h2>
 <p><a href="http://irwinsnet.github.io/firstapiR/Functions">Overview of firstapiR Functions</a></p>
 </div>
+<div id="links" class="section level2">
+<h2>Links</h2>
+<p><a href="http://irwinsnet.github.io">Irwinsnet Home Page</a></p>
 </div>
 
 

@@ -9,12 +9,18 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Version 2.0.0
-
 The firstapiR package provides R functions that download FIRST Robotics 
 Competition (FRC) data from the FIRST API server via hypertext transfer protocol
 (HTTP) requests. The firstapiR package formats the resulting data as JSON text,
 XML text, or as R data frames.
+
+
+### Version 2.0.0
+
+This guide is for version 2.0.0 of the firstapiR package. [Guidance for version
+1.0.0 of firstapiR is located here
+](http://irwinsnet.github.io/projects/firstapiR/Getting_Started_v100).
+
 
 ### FIRST - *F*or *I*nspiration and *R*ecognition in *S*cience and *T*echnology
 
@@ -30,6 +36,7 @@ The competitions have detailed rules ([check out the 2016 game manual
 and an extensive amount of data is generated at each competition. All 
 scheduling, team, scoring, and ranking data is stored in FIRST servers and is 
 made available to users via the FIRST API.
+
 
 ### Getting Access to the FIRST API
 
@@ -52,11 +59,11 @@ username and authorization key. Make sure you keep your authorization key secret
 
 R is a functional language intended for statistical computing, data analysis and
 plotting. I initially considered building this package in Python, but in the end
-I wanted to learn to use R, so here we are. Compared to other languages like
-Java or Python, R does seem a bit quirky at first, but it has some useful,
-built-in features for working with data. R has an extensive array of free add-in
-packages for manipulating and visualizing data, plus there is an excellent and
-free IDE available for R, RStudio.
+I wanted to learn to use R, so here we are. R seems a bit quirky at first, 
+especially compared to other languages like Java or Python, but it has some
+useful, built-in features for working with data. R has an extensive array of
+free add-in packages for manipulating and visualizing data, plus there is an
+excellent and free IDE available for R, RStudio.
 
 If you are new to R, experimenting with firstapiR isn't the worst way to get 
 started, but there are some resources you should check out:
@@ -87,12 +94,12 @@ package name box and hit _Install_.
 
 1. The devtools package provides a function for installing R packages from
 GitHub. Type the following command at the RStudio console prompt:
-```R
+```{r install_v2.0.0, eval = FALSE}
 devtools::install_github("irwinsnet/firstapiR", ref = "v2.0.0")
 ```
 
-1. If you need the prior version of firstapiR, use this command instead:
-```R
+If you need the prior version of firstapiR, use this command instead:
+```{r install_v1.0.0, eval= FALSE}
 devtools::install_github("irwinsnet/firstapiR", ref = "v1.0.0")
 ```
 
@@ -119,7 +126,7 @@ data frames with the functions `ToAllianceShape()`, `ToMatchShape()`, and
 `ToTeamShape()`.
 
 1. I've added a `MergeReults()` function which merges the *HybridSchedule* and
-*Scores* data frames into a single data frame, providing team numbes and
+*Scores* data frames into a single data frame, providing team numbers and
 detailed performance data all in one table.
 
 1. I've added the function `GetAll()`, which downloads everything about a single
@@ -145,10 +152,10 @@ Every HTTP request to the FIRST API requires a username, an authorization key, a
 four digit year that identifies the season of interest, and a header that 
 specifies whether the data should be returned as XML or JSON. Having to type all
 of these parameters into every function call would make firstapiR very 
-cumbersome to use, especially from the R console. The firstapiR package solves 
-this problem with the `GetSession()` function, which returns a Session object 
-that contains all of the parameters listed above. All other firstapiR functions 
-require a Session object as the first parameter. Here's an example:
+cumbersome to use, especially from the R console. The firstapiR package
+addresses this problem with the `GetSession()` function, which returns a Session
+object that contains all of the parameters listed above. All other firstapiR
+functions require a Session object as the first parameter. Here's an example:
 
 ```{r GetSession_1}
 # Create a Session object
@@ -274,6 +281,7 @@ without a FIRST API user account.
 * Most of firstapiR's functionality can be tested without internet access or a
 FIRST API account.
 
+
 ### Attributes of Returned firstapiR Objects
 
 All of the firstapiR functions add attributes to whatever data they return. 
@@ -314,9 +322,10 @@ returned.
 Use the `attr(object, attribute_name)` function and syntax to retrive an
 attribute from an object.
 
-Open the _data-raw/data.R_ folder (only available in the firstapiR github 
+Open the _tools/data.R_ folder (only available in the firstapiR github 
 repository) to see the firstapiR commands that were used to generate the local
 data.
+
 
 ### Testing firstapiR on Your System
 
@@ -344,8 +353,14 @@ will fail due to an HTTP 401 error.
 
 
 ## Ask Questions
-Post an issue on the [firstapiR github repository](https://github.com/irwinsnet/firstapiR) if you have questions, find bugs or have recommendations for the next version.
+Post an issue on the [firstapiR github
+repository](https://github.com/irwinsnet/firstapiR) if you have questions, find
+bugs or have recommendations for the next version.
 
 ## Next Vignette
 
 [Overview of firstapiR Functions](http://irwinsnet.github.io/firstapiR/Functions)
+
+## Links
+
+[Irwinsnet Home Page](http://irwinsnet.github.io)

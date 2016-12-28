@@ -16,6 +16,12 @@ vignette provides an overview of the remaining firstapiR functions. For detailed
 information on each function, type `help(function_name)` at the console or in
 the RStudio help view search box.
 
+### Version 2.0.0
+
+This guide is for version 2.0.0 of the firstapiR package. [Guidance for version
+1.0.0 of firstapiR is located here
+](http://irwinsnet.github.io/projects/firstapiR/Functions_v100).
+
 
 ## Simple Functions for Retrieving FIRST Data
 
@@ -47,7 +53,7 @@ additional arguments are used at any one time.
 `GetTeams(session, team, event, district, state, page)`
   ~ Gets information about FIRST FRC teams.
   
-`GetSchedule(session, event, level, team, start, end)
+`GetSchedule(session, event, level, team, start, end)`
   ~ Downloads the match schedule for a specific event.
   
 `GetHybridSchedule(session, event, level, start, end)`
@@ -110,6 +116,7 @@ Either "playoff" or "qual". Defaults to "qual".
 Integers specifying the range of matches that will be included in the returned
 data.
 
+
 ## Pages Argument
 
 There is one firstapiR function, `GetTeams()`, that accepts the `page`
@@ -123,6 +130,7 @@ into a single data frame. This feature is not available when XML or JSON formats
 are sepecifed in the `Session$format` parameter. Users requesting XML or JSON
 formatted data will have to call GetTeams() for each page of data, incrementing
 the `page` argument for each request.
+
 
 ## Modified-Since Arguments
 
@@ -141,7 +149,7 @@ argument, the FIRST API server will provide an HTTP 304 response with no
 content. When this happens, irstapiR functions will return a logical character
 vector with the value `NA`. Here is an example:
 
-```{r eval = FALSE}
+```{r modified_since_1, eval = FALSE}
 # Create an HTTP date-time string set to midnight GMT yesterday
 mod_date <- httr::http_date(as.POSIXct(Sys.Date() - 1))
 
@@ -165,7 +173,7 @@ return only the data that has changed since the date and time specified in the
 provides a 304 response and firstapiR functions return a logical vector set to
 `NA`.
 
-```{r eval = FALSE}
+```{r modified_since_2, eval = FALSE}
 # Create an HTTP date-time string set to midnight GMT yesterday
 mod_date <- httr::http_date(as.POSIXct(Sys.Date() - 1))
 
@@ -199,6 +207,7 @@ receive a 304 response in this situation should either add at least a second to
 the `last_modified` value, or should instead use the `time_downloaded` attribute
 value to set the `mod_since` or `only_mod_since` arguments.
 
+
 ## Data Frame Shaping Functions
 
 ### Team Shape
@@ -207,7 +216,7 @@ The functions `GetSchedule()`, `GetHybridSchedule()`, and `GetMatchResults()`
 return data frames with one row per team. For example, let's take a look at the
 first two qualification matches from the 2016 Pacific Northwest District
 Championships:
-```{r}
+```{r team_shape_1}
 sn <- firstapiR::GetSession("username", "key")
 match_results <- firstapiR::GetMatchResults(sn, "PNCMP", level = "qual")
 match_results[1:12, c("match", "alliance", "station", "team", "scoreAuto",
@@ -217,7 +226,7 @@ There is one team listed in each row, and it takes six rows to provide all of
 the information from a single match. This is called *team* shape. This format
 is useful for calculating summary statistics for individual teams. For example,
 to see average scores for the ten teams with the highest scores:
-```{r}
+```{r team_shape_2}
 agg_scores <- aggregate(match_results[c("scoreFinal", "scoreAuto",
                                         "scoreFoul")],
                         list("team" = match_results$team), mean)
@@ -225,7 +234,7 @@ agg_scores[order(agg_scores$scoreFinal, decreasing = TRUE), ][1:10, ]
 
 ```
 Data frames in team shape will have their *shape* attribute set to "team".
-```{r}
+```{r team_shape_3}
 attr(match_results, "shape")
 ```
 
@@ -237,28 +246,30 @@ with three teams per row and two rows per match (one row each for the red and
 blue alliances), is more suitable. The function `ToAllianceShape()` will
 reshape *Schedule*, *HybridSchedule*, or *MatchResults* data frames from *team*
 to *alliance* shape.
-```{r}
-mresults_alliance <- ToAllianceShape(match_results)
+```{r alliance_shape_1}
+mresults_alliance <- firstapiR::ToAllianceShape(match_results)
 mresults_alliance[1:4, c("match", "alliance", "team.1", "team.2", "team.3",
                          "scoreAuto", "scoreFinal")]
 ```
 Data frames in alliance shape will have their *shape* attribute set to
 "alliance".
-```{r}
+```{r alliance_shape_2}
 attr(mresults_alliance, "shape")
 ```
+
 
 ### Match Shape
 
 Finally, *Schedule*, *HybridSchedule*, and *MatchResults* data frames may be
 converted from *team* to *match* shape.
 
-```{r}
-mresults_match <- ToMatchShape(match_results)
+```{r match_shape}
+mresults_match <- firstapiR::ToMatchShape(match_results)
 mresults_match[1:2, c("match", "team.Red1", "team.Red2", "team.Red3",
                       "team.Blue1", "team.Blue2", "team.Blue3",
                       "scoreFinal.Blue", "scoreFinal.Red")]
 ```
+
 
 ### Converting Back to Team Shape
 
@@ -268,10 +279,59 @@ which is added to the *match* and *alliance* data frames by R's `reshape()`
 function. `ToTeamShape()` will not work if the *ReshapeWide* attribute is
 deleted.
 
+
 ### Converting Between Match and Alliance Shape
 
 To convert a data frame from *match* to *alliance* shape or vice-versa, first
 convert the data frame back to team shape.
+
+
+## Saving and Loading Data
+
+Use firstapiR's `SaveData()` function to open a save file dialog box and save
+data to an RDS data file. The `ReadData()` function opens an open file dialog
+and returns the value saved in the RDS file. Refer to R's documentation on the
+`saveRDS()` and `readRDS()' functions for more information on RDS data files.
+```{r save_load_data, eval = FALSE}
+SaveData(firstapiR::GetAlliances(sn, event = "WAAMV"))
+evt_alliances <- firstapiR::ReadData()
+
+```
+
+
+## Getting all Event Data
+
+Sometimes it's handy to get all the available information for an FRC competition
+with single command. The `GetAll()` function retrieves all data for a specific 
+event and stores the data in a list. I recommend **not** using this function
+during competitions to avoid overloading the server. Also, save the event data
+to a file so it only needs to be downloaded once.
+
+```{r GetAll, eval = FALSE}
+# Get all data for the 2016 district competition at Auburn Mountainview HS
+sn <- firstapiR::GetSession("username", "key")
+all_data <- firstapiR::GetAll(sn, event = "WAAMV")
+```
+
+
+## Preloaded Data
+
+Version 2.0.0 of firstapiR includes all competition data for the 2016 FRC 
+championships in St. Louis. Data for each subdivision and the finals are 
+available in R lists named `archimedes2016`, `carson2016`, `carver2016`,
+`curie2016`, `galileo2016`, `hopper2016`, `newton2016`, `tesla2016`, and
+`einstein2016`.
+
+```{r preloaded_data_1}
+# Show elements in curie2016 list:
+names(firstapiR::curie2016)
+```
+
+```{r preloaded_data_2}
+# Show alliances for Curie Subdivision (first 8 columns)
+firstapiR::curie2016$alliances[1:8]
+```
+
 
 ## Merging Team and Score Data
 
@@ -282,31 +342,50 @@ merges a *HybridResults* data frame with a *Scores* data frame to create a
 *Results* data frame that contains both the detailed match performance data and
 the teams that were assigned to each match.
 
+```{r merge_results}
+# Merge MatchResults and Scores data frames
+curie_results <- firstapiR::MergeResults(firstapiR::curie2016$hybrid.qual,
+                                         firstapiR::curie2016$scores.qual)
+# Show structure of resulting data frame
+str(curie_results)
+```
+
+Actually, using `MergeResults()` is not necessary for preloaded data (such as
+`curie2016` or for any data structures created with the `GetAll()` function.
+These lists already contain merged data frames -- see `curie2016$results.qual`
+and `curie2016$results.playoff` for examples. I used the preloaded data to
+demonstrate the `MergeResults()` function because that's an easy way to do it.
+
 ## Merging Qualification and Playoff Data Frames
 
 There are several functions provide data for either qualification or playoff
 matches, but not both. Use R's `rbind()` function to merge this data into a
 single data frame.
 
-## Saving and Loading Data
+```{r merge_rows}
+# Number qualification matches
+nrow(firstapiR::curie2016$matches.qual)
 
-Use firstapiR's `SaveData()` function to open a save file dialog box and save
-data to an RDS data file. The `ReadData()` function opens an open file dialog
-and returns the value saved in the RDS file. Refer to R's documentation on the
-`saveRDS()` and `readRDS()' functions for more information on RDS data files.
-```{r eval = FALSE}
-SaveData(GetAlliances(sn, event = "WAAMV"))
-evt_alliances <- ReadData()
+# Number playoff matches
+nrow(firstapiR::curie2016$matches.playoff)
 
+# Merge qualification and playoff data into a single table
+all_matches <- rbind(firstapiR::curie2016$matches.qual,
+                     firstapiR::curie2016$matches.playoff)
+
+# Total Matches
+nrow(all_matches)
 ```
 
-## Getting all Event Data
-
-Sometimes it's handy to get all the available information for an FRC competition
-with single command. The `GetAll()` function retrieves all data for a specific
-event and stores the data in a list. I recommend not using this function during
-competitions to avoid overloading the server. Also, save the event data to a
-file so it only needs to be downloaded once.
 
 ## Ask Questions
-Post an issue on the [firstapiR github repository](https://github.com/irwinsnet/firstapiR) if you have questions, find bugs or have recommendations for the next version.
+Post an issue on the [firstapiR github
+repository](https://github.com/irwinsnet/firstapiR) if you have questions, find
+bugs or have recommendations for the next version.
+
+
+## Links
+
+[Getting Started Guide](http://irwinsnet.github.io/firstapiR/Getting_Started)
+
+[Irwinsnet Home Page](http://irwinsnet.github.io)

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stacy Irwin" />
 
-<meta name="date" content="2016-12-14" />
+<meta name="date" content="2016-12-28" />
 
 <title>Overview of firstapiR Functions</title>
 
@@ -70,11 +70,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Overview of firstapiR Functions</h1>
 <h4 class="author"><em>Stacy Irwin</em></h4>
-<h4 class="date"><em>2016-12-14</em></h4>
+<h4 class="date"><em>2016-12-28</em></h4>
 
 
 
 <p>The <a href="http://irwinsnet.github.io/firstapiR/Getting_Started">Getting Started</a> vignette covered how to use the <code>GetSession()</code> function to create a Session object and how to use that Session object in other firstapiR functions. This vignette provides an overview of the remaining firstapiR functions. For detailed information on each function, type <code>help(function_name)</code> at the console or in the RStudio help view search box.</p>
+<div id="version-2.0.0" class="section level3">
+<h3>Version 2.0.0</h3>
+<p>This guide is for version 2.0.0 of the firstapiR package. <a href="http://irwinsnet.github.io/projects/firstapiR/Functions_v100">Guidance for version 1.0.0 of firstapiR is located here</a>.</p>
+</div>
 <div id="simple-functions-for-retrieving-first-data" class="section level2">
 <h2>Simple Functions for Retrieving FIRST Data</h2>
 <p>There are several functions that take no arguments other than the <code>Session</code> argument.</p>
@@ -103,7 +107,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <dt><code>GetTeams(session, team, event, district, state, page)</code></dt>
 <dd>Gets information about FIRST FRC teams.
 </dd>
-<dt>`GetSchedule(session, event, level, team, start, end)</dt>
+<dt><code>GetSchedule(session, event, level, team, start, end)</code></dt>
 <dd>Downloads the match schedule for a specific event.
 </dd>
 <dt><code>GetHybridSchedule(session, event, level, start, end)</code></dt>
@@ -264,7 +268,7 @@ agg_scores[<span class="kw">order</span>(agg_scores$scoreFinal, <span class="dt"
 <div id="alliance-shape" class="section level3">
 <h3>Alliance Shape</h3>
 <p>For some calculations, such as offensive power rating (OPR), the alliance shape, with three teams per row and two rows per match (one row each for the red and blue alliances), is more suitable. The function <code>ToAllianceShape()</code> will reshape <em>Schedule</em>, <em>HybridSchedule</em>, or <em>MatchResults</em> data frames from <em>team</em> to <em>alliance</em> shape.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mresults_alliance &lt;-<span class="st"> </span><span class="kw">ToAllianceShape</span>(match_results)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mresults_alliance &lt;-<span class="st"> </span>firstapiR::<span class="kw">ToAllianceShape</span>(match_results)
 mresults_alliance[<span class="dv">1</span>:<span class="dv">4</span>, <span class="kw">c</span>(<span class="st">&quot;match&quot;</span>, <span class="st">&quot;alliance&quot;</span>, <span class="st">&quot;team.1&quot;</span>, <span class="st">&quot;team.2&quot;</span>, <span class="st">&quot;team.3&quot;</span>,
                          <span class="st">&quot;scoreAuto&quot;</span>, <span class="st">&quot;scoreFinal&quot;</span>)]</code></pre></div>
 <pre><code>##        match alliance team.1 team.2 team.3 scoreAuto scoreFinal
@@ -279,7 +283,7 @@ mresults_alliance[<span class="dv">1</span>:<span class="dv">4</span>, <span cla
 <div id="match-shape" class="section level3">
 <h3>Match Shape</h3>
 <p>Finally, <em>Schedule</em>, <em>HybridSchedule</em>, and <em>MatchResults</em> data frames may be converted from <em>team</em> to <em>match</em> shape.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mresults_match &lt;-<span class="st"> </span><span class="kw">ToMatchShape</span>(match_results)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mresults_match &lt;-<span class="st"> </span>firstapiR::<span class="kw">ToMatchShape</span>(match_results)
 mresults_match[<span class="dv">1</span>:<span class="dv">2</span>, <span class="kw">c</span>(<span class="st">&quot;match&quot;</span>, <span class="st">&quot;team.Red1&quot;</span>, <span class="st">&quot;team.Red2&quot;</span>, <span class="st">&quot;team.Red3&quot;</span>,
                       <span class="st">&quot;team.Blue1&quot;</span>, <span class="st">&quot;team.Blue2&quot;</span>, <span class="st">&quot;team.Blue3&quot;</span>,
                       <span class="st">&quot;scoreFinal.Blue&quot;</span>, <span class="st">&quot;scoreFinal.Red&quot;</span>)]</code></pre></div>
@@ -299,27 +303,128 @@ mresults_match[<span class="dv">1</span>:<span class="dv">2</span>, <span class=
 <p>To convert a data frame from <em>match</em> to <em>alliance</em> shape or vice-versa, first convert the data frame back to team shape.</p>
 </div>
 </div>
+<div id="saving-and-loading-data" class="section level2">
+<h2>Saving and Loading Data</h2>
+<p>Use firstapiR’s <code>SaveData()</code> function to open a save file dialog box and save data to an RDS data file. The <code>ReadData()</code> function opens an open file dialog and returns the value saved in the RDS file. Refer to R’s documentation on the <code>saveRDS()</code> and `readRDS()’ functions for more information on RDS data files.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SaveData</span>(firstapiR::<span class="kw">GetAlliances</span>(sn, <span class="dt">event =</span> <span class="st">&quot;WAAMV&quot;</span>))
+evt_alliances &lt;-<span class="st"> </span>firstapiR::<span class="kw">ReadData</span>()</code></pre></div>
+</div>
+<div id="getting-all-event-data" class="section level2">
+<h2>Getting all Event Data</h2>
+<p>Sometimes it’s handy to get all the available information for an FRC competition with single command. The <code>GetAll()</code> function retrieves all data for a specific event and stores the data in a list. I recommend <strong>not</strong> using this function during competitions to avoid overloading the server. Also, save the event data to a file so it only needs to be downloaded once.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get all data for the 2016 district competition at Auburn Mountainview HS</span>
+sn &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetSession</span>(<span class="st">&quot;username&quot;</span>, <span class="st">&quot;key&quot;</span>)
+all_data &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetAll</span>(sn, <span class="dt">event =</span> <span class="st">&quot;WAAMV&quot;</span>)</code></pre></div>
+</div>
+<div id="preloaded-data" class="section level2">
+<h2>Preloaded Data</h2>
+<p>Version 2.0.0 of firstapiR includes all competition data for the 2016 FRC championships in St. Louis. Data for each subdivision and the finals are available in R lists named <code>archimedes2016</code>, <code>carson2016</code>, <code>carver2016</code>, <code>curie2016</code>, <code>galileo2016</code>, <code>hopper2016</code>, <code>newton2016</code>, <code>tesla2016</code>, and <code>einstein2016</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Show elements in curie2016 list:</span>
+<span class="kw">names</span>(firstapiR::curie2016)</code></pre></div>
+<pre><code>##  [1] &quot;season&quot;           &quot;event&quot;            &quot;teams&quot;           
+##  [4] &quot;schedule.qual&quot;    &quot;schedule.playoff&quot; &quot;hybrid.qual&quot;     
+##  [7] &quot;hybrid.playoff&quot;   &quot;matches.qual&quot;     &quot;matches.playoff&quot; 
+## [10] &quot;scores.qual&quot;      &quot;scores.playoff&quot;   &quot;results.qual&quot;    
+## [13] &quot;results.playoff&quot;  &quot;rankings&quot;         &quot;alliances&quot;       
+## [16] &quot;awards&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Show alliances for Curie Subdivision (first 8 columns)</span>
+firstapiR::curie2016$alliances[<span class="dv">1</span>:<span class="dv">8</span>]</code></pre></div>
+<pre><code>##   number       name captain round1 round2 round3 backup backupReplaced
+## 1      1 Alliance 1    3546    166    858   3618     NA             NA
+## 2      2 Alliance 2    1089   1983   4469    836     NA             NA
+## 3      3 Alliance 3      25   2848   4329   1885     NA             NA
+## 4      4 Alliance 4    5803   3310   2168   5940     NA             NA
+## 5      5 Alliance 5    5406   3641   1261   2883     NA             NA
+## 6      6 Alliance 6     639   3990   1662    287     NA             NA
+## 7      7 Alliance 7    3005    876   2557   4061     NA             NA
+## 8      8 Alliance 8     694   3339    379   1511     NA             NA</code></pre>
+</div>
 <div id="merging-team-and-score-data" class="section level2">
 <h2>Merging Team and Score Data</h2>
 <p>The <code>GetScores()</code> function retrieves detailed performance data for for both the red and blue alliances for each match. However the <em>Scores</em> data frame does not list the teams that were assigned to each alliance. The function <code>MergeResults()</code> merges a <em>HybridResults</em> data frame with a <em>Scores</em> data frame to create a <em>Results</em> data frame that contains both the detailed match performance data and the teams that were assigned to each match.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Merge MatchResults and Scores data frames</span>
+curie_results &lt;-<span class="st"> </span>firstapiR::<span class="kw">MergeResults</span>(firstapiR::curie2016$hybrid.qual,
+                                         firstapiR::curie2016$scores.qual)
+<span class="co"># Show structure of resulting data frame</span>
+<span class="kw">str</span>(curie_results)</code></pre></div>
+<pre><code>## Classes 'Results' and 'data.frame':  750 obs. of  49 variables:
+##  $ match                 : int  1 1 1 1 1 1 2 2 2 2 ...
+##  $ level                 : Factor w/ 1 level &quot;Qualification&quot;: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ alliance              : Factor w/ 2 levels &quot;Blue&quot;,&quot;Red&quot;: 1 1 1 2 2 2 1 1 1 2 ...
+##  $ description           : chr  &quot;Qualification 1 (B)&quot; &quot;Qualification 1 (B)&quot; &quot;Qualification 1 (B)&quot; &quot;Qualification 1 (B)&quot; ...
+##  $ start                 : chr  &quot;2016-04-28T08:30:00&quot; &quot;2016-04-28T08:30:00&quot; &quot;2016-04-28T08:30:00&quot; &quot;2016-04-28T08:30:00&quot; ...
+##  $ actualStart           : chr  &quot;2016-04-28T08:31:22.123&quot; &quot;2016-04-28T08:31:22.123&quot; &quot;2016-04-28T08:31:22.123&quot; &quot;2016-04-28T08:31:22.123&quot; ...
+##  $ team                  : Factor w/ 75 levels &quot;8&quot;,&quot;25&quot;,&quot;166&quot;,..: 34 6 12 29 74 54 7 65 45 8 ...
+##  $ station               : Factor w/ 6 levels &quot;Blue1&quot;,&quot;Blue2&quot;,..: 1 2 3 4 5 6 1 2 3 4 ...
+##  $ surrogate             : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ disqualified          : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
+##  $ AudienceGroup         : Factor w/ 4 levels &quot;GroupA&quot;,&quot;GroupB&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ robot1Auto            : Factor w/ 3 levels &quot;Crossed&quot;,&quot;None&quot;,..: 1 1 1 3 3 3 1 1 1 3 ...
+##  $ robot2Auto            : Factor w/ 3 levels &quot;Crossed&quot;,&quot;None&quot;,..: 3 3 3 1 1 1 1 1 1 3 ...
+##  $ robot3Auto            : Factor w/ 3 levels &quot;Crossed&quot;,&quot;None&quot;,..: 1 1 1 3 3 3 1 1 1 1 ...
+##  $ autoBouldersLow       : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ autoBouldersHigh      : int  1 1 1 0 0 0 0 0 0 1 ...
+##  $ teleopBouldersLow     : int  6 6 6 6 6 6 5 5 5 4 ...
+##  $ teleopBouldersHigh    : int  4 4 4 0 0 0 12 12 12 1 ...
+##  $ towerFaceA            : Factor w/ 4 levels &quot;Challenged&quot;,&quot;None&quot;,..: 1 1 1 2 2 2 1 1 1 1 ...
+##  $ towerFaceB            : Factor w/ 4 levels &quot;Challenged&quot;,&quot;None&quot;,..: 1 1 1 4 4 4 3 3 3 3 ...
+##  $ towerFaceC            : Factor w/ 4 levels &quot;Challenged&quot;,&quot;None&quot;,..: 1 1 1 4 4 4 2 2 2 1 ...
+##  $ towerEndStrength      : int  5 5 5 -1 -1 -1 4 4 4 -6 ...
+##  $ teleopTowerCaptured   : logi  TRUE TRUE TRUE FALSE FALSE FALSE ...
+##  $ teleopDefensesBreached: logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+##  $ position1crossings    : int  2 2 2 2 2 2 2 2 2 2 ...
+##  $ position2             : Factor w/ 7 levels &quot;A_ChevalDeFrise&quot;,..: 6 6 6 1 1 1 6 6 6 6 ...
+##  $ position2crossings    : int  2 2 2 1 1 1 2 2 2 2 ...
+##  $ position3             : Factor w/ 5 levels &quot;A_ChevalDeFrise&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ position3crossings    : int  2 2 2 2 2 2 2 2 2 2 ...
+##  $ position4             : Factor w/ 8 levels &quot;A_ChevalDeFrise&quot;,..: 7 7 7 6 6 6 7 7 7 1 ...
+##  $ position4crossings    : int  2 2 2 2 2 2 2 2 2 2 ...
+##  $ position5             : Factor w/ 8 levels &quot;A_ChevalDeFrise&quot;,..: 1 1 1 7 7 7 1 1 1 7 ...
+##  $ position5crossings    : int  2 2 2 2 2 2 2 2 2 2 ...
+##  $ foulCount             : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ techFoulCount         : int  0 0 0 1 1 1 1 1 1 0 ...
+##  $ autoPoints            : int  32 32 32 14 14 14 30 30 30 24 ...
+##  $ autoReachPoints       : int  2 2 2 4 4 4 0 0 0 4 ...
+##  $ autoCrossingPoints    : int  20 20 20 10 10 10 30 30 30 10 ...
+##  $ autoBoulderPoints     : int  10 10 10 0 0 0 0 0 0 10 ...
+##  $ teleopPoints          : int  87 87 87 52 52 52 125 125 125 83 ...
+##  $ teleopCrossingPoints  : int  40 40 40 40 40 40 35 35 35 45 ...
+##  $ teleopBoulderPoints   : int  32 32 32 12 12 12 70 70 70 13 ...
+##  $ teleopChallengePoints : int  15 15 15 0 0 0 5 5 5 10 ...
+##  $ teleopScalePoints     : int  0 0 0 0 0 0 15 15 15 15 ...
+##  $ breachPoints          : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ capturePoints         : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ adjustPoints          : int  0 0 0 0 0 0 0 0 0 0 ...
+##  $ foulPoints            : int  5 5 5 0 0 0 0 0 0 5 ...
+##  $ totalPoints           : int  124 124 124 66 66 66 155 155 155 112 ...
+##  - attr(*, &quot;url&quot;)= chr  &quot;https://frc-api.firstinspires.org/v2.0/2016/schedule/CURIE/qual/hybrid&quot; &quot;https://frc-api.firstinspires.org/v2.0/2016/scores/CURIE/qual&quot;</code></pre>
+<p>Actually, using <code>MergeResults()</code> is not necessary for preloaded data (such as <code>curie2016</code> or for any data structures created with the <code>GetAll()</code> function. These lists already contain merged data frames – see <code>curie2016$results.qual</code> and <code>curie2016$results.playoff</code> for examples. I used the preloaded data to demonstrate the <code>MergeResults()</code> function because that’s an easy way to do it.</p>
 </div>
 <div id="merging-qualification-and-playoff-data-frames" class="section level2">
 <h2>Merging Qualification and Playoff Data Frames</h2>
 <p>There are several functions provide data for either qualification or playoff matches, but not both. Use R’s <code>rbind()</code> function to merge this data into a single data frame.</p>
-</div>
-<div id="saving-and-loading-data" class="section level2">
-<h2>Saving and Loading Data</h2>
-<p>Use firstapiR’s <code>SaveData()</code> function to open a save file dialog box and save data to an RDS data file. The <code>ReadData()</code> function opens an open file dialog and returns the value saved in the RDS file. Refer to R’s documentation on the <code>saveRDS()</code> and `readRDS()’ functions for more information on RDS data files.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">SaveData</span>(<span class="kw">GetAlliances</span>(sn, <span class="dt">event =</span> <span class="st">&quot;WAAMV&quot;</span>))
-evt_alliances &lt;-<span class="st"> </span><span class="kw">ReadData</span>()</code></pre></div>
-</div>
-<div id="getting-all-event-data" class="section level2">
-<h2>Getting all Event Data</h2>
-<p>Sometimes it’s handy to get all the available information for an FRC competition with single command. The <code>GetAll()</code> function retrieves all data for a specific event and stores the data in a list. I recommend not using this function during competitions to avoid overloading the server. Also, save the event data to a file so it only needs to be downloaded once.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Number qualification matches</span>
+<span class="kw">nrow</span>(firstapiR::curie2016$matches.qual)</code></pre></div>
+<pre><code>## [1] 750</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Number playoff matches</span>
+<span class="kw">nrow</span>(firstapiR::curie2016$matches.playoff)</code></pre></div>
+<pre><code>## [1] 102</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Merge qualification and playoff data into a single table</span>
+all_matches &lt;-<span class="st"> </span><span class="kw">rbind</span>(firstapiR::curie2016$matches.qual,
+                     firstapiR::curie2016$matches.playoff)
+
+<span class="co"># Total Matches</span>
+<span class="kw">nrow</span>(all_matches)</code></pre></div>
+<pre><code>## [1] 852</code></pre>
 </div>
 <div id="ask-questions" class="section level2">
 <h2>Ask Questions</h2>
 <p>Post an issue on the <a href="https://github.com/irwinsnet/firstapiR">firstapiR github repository</a> if you have questions, find bugs or have recommendations for the next version.</p>
+</div>
+<div id="links" class="section level2">
+<h2>Links</h2>
+<p><a href="http://irwinsnet.github.io/firstapiR/Getting_Started">Getting Started Guide</a></p>
+<p><a href="http://irwinsnet.github.io">Irwinsnet Home Page</a></p>
 </div>
 
 
