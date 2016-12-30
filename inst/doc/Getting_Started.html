@@ -12,7 +12,7 @@
 
 <meta name="author" content="Stacy Irwin" />
 
-<meta name="date" content="2016-12-28" />
+<meta name="date" content="2016-12-30" />
 
 <title>Getting Started with firstapiR</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Getting Started with firstapiR</h1>
 <h4 class="author"><em>Stacy Irwin</em></h4>
-<h4 class="date"><em>2016-12-28</em></h4>
+<h4 class="date"><em>2016-12-30</em></h4>
 
 
 
@@ -107,9 +107,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><p>Install the devtools package. This is easy to do in RStudio - just select <em>Tools-&gt;Install Packages…</em> from the menu bar, type “devtools” in the package name box and hit <em>Install</em>.</p></li>
 <li><p>The devtools package provides a function for installing R packages from GitHub. Type the following command at the RStudio console prompt:</p></li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;irwinsnet/firstapiR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;v2.0.0&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;irwinsnet/firstapiR&quot;</span>)</code></pre></div>
 <p>If you need the prior version of firstapiR, use this command instead:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">install_github</span>(<span class="st">&quot;irwinsnet/firstapiR&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;v1.0.0&quot;</span>)</code></pre></div>
+<p>You can also download source or binary versions of the firstapiR package <a href="https://irwinsnet.github.io/">from this website</a>. Type <code>help(install.packages)</code> in the R or Rstudio console to see the documentation for installing packages.</p>
 </div>
 <div id="differences-between-versions-1.0.0-and-2.0.0" class="section level2">
 <h2>Differences between Versions 1.0.0 and 2.0.0</h2>
@@ -125,7 +126,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ol>
 </div>
 <div id="getting-started---creating-a-session-object" class="section level2">
-<h2>Getting started - Creating a Session Object</h2>
+<h2>Getting Started - Creating a Session Object</h2>
 <p>Every HTTP request to the FIRST API requires a username, an authorization key, a four digit year that identifies the season of interest, and a header that specifies whether the data should be returned as XML or JSON. Having to type all of these parameters into every function call would make firstapiR very cumbersome to use, especially from the R console. The firstapiR package addresses this problem with the <code>GetSession()</code> function, which returns a Session object that contains all of the parameters listed above. All other firstapiR functions require a Session object as the first parameter. Here’s an example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create a Session object</span>
 sn &lt;-<span class="st"> </span>firstapiR::<span class="kw">GetSession</span>(<span class="st">&quot;username&quot;</span>, <span class="st">&quot;key&quot;</span>)
@@ -307,7 +308,7 @@ dist$name[dist$code ==<span class="st"> &quot;PNW&quot;</span>]</code></pre></di
 </div>
 <div id="links" class="section level2">
 <h2>Links</h2>
-<p><a href="http://irwinsnet.github.io">Irwinsnet Home Page</a></p>
+<p><a href="http://irwinsnet.github.io">Irwinsnet Home Page</a> <a href="http://irwinsnet.github.io/firstapiR/Data">firstapiR Local Data</a></p>
 </div>
 
 

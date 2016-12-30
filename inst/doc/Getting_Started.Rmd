@@ -95,7 +95,7 @@ package name box and hit _Install_.
 1. The devtools package provides a function for installing R packages from
 GitHub. Type the following command at the RStudio console prompt:
 ```{r install_v2.0.0, eval = FALSE}
-devtools::install_github("irwinsnet/firstapiR", ref = "v2.0.0")
+devtools::install_github("irwinsnet/firstapiR")
 ```
 
 If you need the prior version of firstapiR, use this command instead:
@@ -103,6 +103,10 @@ If you need the prior version of firstapiR, use this command instead:
 devtools::install_github("irwinsnet/firstapiR", ref = "v1.0.0")
 ```
 
+You can also download source or binary versions of the firstapiR package
+[from this website](https://irwinsnet.github.io/). Type
+`help(install.packages)` in the R or Rstudio console to see the documentation
+for installing packages.
 
 ## Differences between Versions 1.0.0 and 2.0.0
 
@@ -145,8 +149,7 @@ The data is available in R lists named `archimedes2016`, `carver2016`,
 factors, some column names were shortened to reduce excess typing, row names are
 more consistent, etc.
 
-
-## Getting started - Creating a Session Object
+## Getting Started - Creating a Session Object
 
 Every HTTP request to the FIRST API requires a username, an authorization key, a
 four digit year that identifies the season of interest, and a header that 
@@ -364,3 +367,4 @@ bugs or have recommendations for the next version.
 ## Links
 
 [Irwinsnet Home Page](http://irwinsnet.github.io)
+[firstapiR Local Data](http://irwinsnet.github.io/firstapiR/Data)

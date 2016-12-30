@@ -1,5 +1,5 @@
 ## ----install_v2.0.0, eval = FALSE----------------------------------------
-#  devtools::install_github("irwinsnet/firstapiR", ref = "v2.0.0")
+#  devtools::install_github("irwinsnet/firstapiR")
 
 ## ----install_v1.0.0, eval= FALSE-----------------------------------------
 #  devtools::install_github("irwinsnet/firstapiR", ref = "v1.0.0")

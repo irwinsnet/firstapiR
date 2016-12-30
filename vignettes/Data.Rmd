@@ -1,0 +1,142 @@
+---
+title: "firstapiR Data"
+author: "Stacy Irwin"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The firstapiR package comes preloaded with FRC data.
+
+* Functions will skip the
+  HTTP request and provide FRC data that is stored within the package when the
+  session key is set to the literal value "key".
+* The firstapiR package provides objects that contain all 2016 FRC championship
+  data.
+  
+The R code that was used to download and store the FRC data is provided below.
+
+```{R data, eval = FALSE}
+# data-raw/data.R Version 2.0.0
+#
+# The R statements in this file were used to download the FIRST API data that
+# is included with the firstapiR package.
+#
+# The first section includes the commands and documentation for the 2016 FIRST
+# FRC Championships. This data is saved in rda files in the package's data
+# directory. See the help topic FRC_Data for more information.
+#
+# The second portion of the file includes the code for downloading data and
+# saving it to the R/sysdata.rda file. The data is saved in both XML and JSON
+# text formats and is returned by firstapiR functions when the authorization key
+# is set to "key". This local data allows users to test firstapiR functions
+# without an authorization key or internet connection.
+
+
+# FIRST CHAMPIONSHIP DATA - 2016 ===============================================
+
+# Session variables required to download championship data
+sn <- firstapiR::GetSession(username, key, season = 2016)
+
+# Download Championship Data
+archimedes2016 <- firstapiR::GetAll(sn, "ARCHIMEDES")
+carson2016 <- firstapiR::GetAll(sn, "CARSON")
+carver2016 <- firstapiR::GetAll(sn, "CARVER")
+curie2016 <- firstapiR::GetAll(sn, "CURIE")
+galileo2016 <- firstapiR::GetAll(sn, "GALILEO")
+hopper2016 <- firstapiR::GetAll(sn, "HOPPER")
+newton2016 <- firstapiR::GetAll(sn, "NEWTON")
+tesla2016 <- firstapiR::GetAll(sn, "TESLA")
+einstein2016 <- firstapiR::GetAll(sn, "CMP")
+
+# Save Championship Data to files in data directory
+devtools::use_data(newton2016, galileo2016, archimedes2016, curie2016,
+                   tesla2016, hopper2016, carver2016, carson2016,
+                   einstein2016, overwrite = TRUE)
+
+
+# LOCAL DATA ===================================================================
+
+# Helper function that converts XML object to XML text
+ConvertXMLDocToText <- function(xml_doc) {
+  url <- attr(xml_doc, "url")
+  last_modified <- attr(xml_doc, "last_modified")
+  xml_text <- toString(xml_doc)
+  attr(xml_text, "url") <- url
+  attr(xml_text, "last_modified") <- last_modified
+  return(xml_text)
+}
+
+# Get Current Time
+data_time <- Sys.time()
+
+# Create session objects for downloading data in either XML or JSON formats
+sn_j <- firstapiR::GetSession(username, key, format = "json", season = 2016)
+sn_x <- firstapiR::GetSession(username, key, format = "xml", season = 2016)
+
+
+# Download Data
+status_json <- firstapiR::GetServerStatus(sn_j)
+status_xml <- ConvertXMLDocToText(firstapiR::GetServerStatus(sn_x))
+
+season_json <- firstapiR::GetSeason(sn_j)
+season_xml <- ConvertXMLDocToText(firstapiR::GetSeason(sn_x))
+
+districts_json <- firstapiR::GetDistricts(sn_j)
+districts_xml <- ConvertXMLDocToText(firstapiR::GetDistricts(sn_x))
+
+events_json <- firstapiR::GetEvents(sn_j, district = "PNW")
+events_xml <- ConvertXMLDocToText(firstapiR::GetEvents(sn_x, district = "PNW"))
+
+teams_json <- firstapiR::GetTeams(sn_j, state = "Idaho", page = 1)
+teams_xml <- ConvertXMLDocToText(
+  firstapiR::GetTeams(sn_x, state = "Idaho", page = 1))
+
+schedule_json <- firstapiR::GetSchedule(sn_j, event = "ORPHI")
+schedule_xml <- ConvertXMLDocToText(
+  firstapiR::GetSchedule(sn_x, event = "ORPHI"))
+
+hybrid_json <- firstapiR::GetHybridSchedule(sn_j, event = "WAELL")
+hybrid_xml <- ConvertXMLDocToText(
+  firstapiR::GetHybridSchedule(sn_x, event = "WAELL"))
+
+matches_json <- firstapiR::GetMatchResults(sn_j, event = "PNCMP")
+matches_xml <- ConvertXMLDocToText(
+  firstapiR::GetMatchResults(sn_x, event = "PNCMP"))
+
+scores_json <- firstapiR::GetScores(sn_j, event = "WAELL")
+scores_xml <- ConvertXMLDocToText(
+  firstapiR::GetScores(sn_x, event = "WAELL"))
+
+alliances_json <- firstapiR::GetAlliances(sn_j, "WAAMV")
+alliances_xml <- ConvertXMLDocToText(firstapiR::GetAlliances(sn_x, "WAAMV"))
+
+rankings_json <- firstapiR::GetRankings(sn_j, "WAAMV")
+rankings_xml <- ConvertXMLDocToText(firstapiR::GetRankings(sn_x, "WAAMV"))
+
+awards_json <- firstapiR::GetAwards(sn_j, "PNCMP")
+awards_xml <- ConvertXMLDocToText(firstapiR::GetAwards(sn_x, "PNCMP"))
+
+awards_list_json <- firstapiR::GetAwardsList(sn_j)
+awards_list_xml <- ConvertXMLDocToText(firstapiR::GetAwardsList(sn_x))
+
+# Save data to package
+devtools::use_data(status_json, status_xml,
+                   season_json, season_xml,
+                   districts_json, districts_xml,
+                   events_json, events_xml,
+                   teams_json, teams_xml,
+                   schedule_json, schedule_xml,
+                   hybrid_json, hybrid_xml,
+                   matches_json, matches_xml,
+                   scores_json, scores_xml,
+                   alliances_json, alliances_xml,
+                   rankings_json, rankings_xml,
+                   awards_json, awards_xml,
+                   awards_list_json, awards_list_xml,
+                   data_time,
+                   internal = TRUE, overwrite = TRUE)
+```
