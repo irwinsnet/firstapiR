@@ -86,7 +86,7 @@ package name box and hit _Install_.
 1. The devtools package provides a function for installing R packages from
 GitHub. Type the following command at the RStudio console prompt:
 ```{r install_v2.0.0, eval = FALSE}
-devtools::install_github("irwinsnet/firstapiR", ref = "v2.0.0")
+devtools::install_github("irwinsnet/firstapiR")
 ```
 
 If you need the prior version of firstapiR, use this command instead:
