@@ -140,3 +140,13 @@ devtools::use_data(status_json, status_xml,
                    data_time,
                    internal = TRUE, overwrite = TRUE)
 ```
+
+## Links
+
+[Irwinsnet Home Page](http://irwinsnet.github.io)  
+
+[Getting Started Guide](http://irwinsnet.github.io/firstapiR/Getting_Started)  
+
+[Overview of firstapiR Functions](
+http://irwinsnet.github.io/firstapiR/Functions)  
+
