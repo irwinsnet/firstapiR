@@ -366,6 +366,6 @@ bugs or have recommendations for the next version.
 
 ## Links
 
-[Irwinsnet Home Page](http://irwinsnet.github.io)
+[Irwinsnet Home Page](http://irwinsnet.github.io)  
 
 [firstapiR Local Data](http://irwinsnet.github.io/firstapiR/Data)
