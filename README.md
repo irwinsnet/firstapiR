@@ -7,7 +7,9 @@ XML text, or as R data frames.
 
 ### Version 2.0.0
 
-[Full documentation for version 2.0.0 of the firstapiR package is available here](https://irwinsnet.github.io/firstapiR/Getting_Started). [Guidance for version
+[Full documentation for version 2.0.0 of the firstapiR package is available here](https://irwinsnet.github.io/firstapiR/Getting_Started).
+
+[Guidance for version
 1.0.0 of firstapiR is located here
 ](http://irwinsnet.github.io/projects/firstapiR/Getting_Started_v100).
 
