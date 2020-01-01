@@ -4,8 +4,16 @@
 \alias{GetSchedule}
 \title{Get the match schedule for a specific event}
 \usage{
-GetSchedule(session, event, level = "qual", team = NULL, start = NULL,
-  end = NULL, mod_since = NULL, only_mod_since = NULL)
+GetSchedule(
+  session,
+  event,
+  level = "qual",
+  team = NULL,
+  start = NULL,
+  end = NULL,
+  mod_since = NULL,
+  only_mod_since = NULL
+)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -70,6 +78,7 @@ tournamentLevel=level&teamNumber=team&start=start&end=end}
     \item \emph{station}: factor (Red1, Red2, Red3, Blue1, Blue2, Blue3)
     \item \emph{surrogate}: logical}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 PNW_champs_qual_sched <- GetSchedule(sn, "PNCMP")
@@ -81,4 +90,3 @@ frc4911_matches_thru_25 <- GetSchedule(sn, "PNCMP", team=4911, end=25)
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

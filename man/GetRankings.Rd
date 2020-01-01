@@ -4,8 +4,14 @@
 \alias{GetRankings}
 \title{Get team rankings}
 \usage{
-GetRankings(session, event, team = NULL, top = NULL, mod_since = NULL,
-  only_mod_since = NULL)
+GetRankings(
+  session,
+  event,
+  team = NULL,
+  top = NULL,
+  mod_since = NULL,
+  only_mod_since = NULL
+)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -58,6 +64,7 @@ The FIRST API URL format is:
      \item \emph{dq}: integer
      \item \emph{matchesPlayed}: integer}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 CWU_rankings <- GetRankings(sn, "WAAMV")
@@ -68,4 +75,3 @@ archimedes_top5_teams <- GetRankings(sn, "ARCHIMEDES", top = 5)
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

@@ -13,9 +13,9 @@ context("firstapiR Rankings and Alliances Functions")
 
 
 sess_http_valid <- FALSE
-sess_local <- GetSession("username", "key")
+sess_local <- GetSession("username", "key", "2016")
 if(exists("username") & exists("key")) {
-  sess_http <- GetSession(username, key)
+  sess_http <- GetSession(username, key, "2016")
   sess_http_valid <- TRUE
 }
 # GetAlliances =================================================================

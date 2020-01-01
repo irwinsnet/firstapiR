@@ -4,8 +4,13 @@
 \alias{GetAwards}
 \title{Get the awards that were presented at an event}
 \usage{
-GetAwards(session, event = NULL, team = NULL, mod_since = NULL,
-  only_mod_since = NULL)
+GetAwards(
+  session,
+  event = NULL,
+  team = NULL,
+  mod_since = NULL,
+  only_mod_since = NULL
+)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -54,6 +59,7 @@ The FIRST API URL format is:
      \item \emph{fullTeamName}: character
      \item \emph{person}: character}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 GetAwards(sn, "PNCMP")
@@ -64,4 +70,3 @@ GetAwards(sn, "PNCMP", 360)
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

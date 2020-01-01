@@ -54,4 +54,3 @@ matchResults_back_to_teamshape <- ToTeamShape(matchResults_matchshape)
 \code{\link{GetMatchResults}}, \code{\link{GetHybridSchedule}},
   \code{\link{GetSchedule}}
 }
-

@@ -41,6 +41,7 @@ The FIRST API URL format is:
      \item \emph{description}: character
      \item \emph{forPerson}: logical}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 GetAwardsList(sn)
@@ -49,4 +50,3 @@ GetAwardsList(sn)
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

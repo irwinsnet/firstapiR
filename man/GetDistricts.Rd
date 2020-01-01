@@ -44,6 +44,7 @@ The FIRST API URL format is:
     \item \emph{name}: character
     \item \emph{districtCount}: integer}
 }
+
 \examples{
 sn <- GetSession("username", "key")
 districts <- GetDistricts(sn)
@@ -52,4 +53,3 @@ districts <- GetDistricts(sn)
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

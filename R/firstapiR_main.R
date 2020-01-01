@@ -603,8 +603,8 @@ GetSchedule <- function (session, event, level = "qual", team = NULL,
   sched["surrogate"] <- vector(mode = "logical", length = nrow(sched))
 
   # Extract teams and delete nested teams column.
-  teams <- sched$Teams
-  sched$Teams <- NULL
+  teams <- sched$teams
+  sched$teams <- NULL
 
   # Expand the matches data frame so there are six rows per match.
   sched <- sched[sort(rep(1:nrow(sched), 6)), ]
@@ -748,8 +748,8 @@ GetHybridSchedule <- function(session, event, level = "qual", start = NULL,
   sched["scoreAuto"] <- vector(mode = "integer", length = nrow(sched))
 
   # Extract teams and delete nested teams column.
-  teams <- sched$Teams
-  sched$Teams <- NULL
+  teams <- sched$teams
+  sched$teams <- NULL
 
   # Expand the matches data frame so there are six rows per match.
   sched <- sched[sort(rep(1:nrow(sched), 6)), ]
@@ -905,6 +905,8 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
 
   # Delete 'Matches.' from the beginning of column names.
   names(matches) <- substr(names(matches), 9, 100)
+  # Convert first character of column names to lower case
+  substr(names(matches), 1, 1) <- tolower(substr(names(matches), 1, 1))
 
   # The FIRST API returns nested schedule data. The remainder of this function
   # is necessary to extract the nested data into new rows so that the scheule
@@ -921,8 +923,8 @@ GetMatchResults <- function(session, event, level = "qual", team = NULL,
   matches["scoreAuto"] <- vector(mode = "integer", length = nrow(matches))
 
   # Extract teams and delete nested teams column.
-  teams <- matches$Teams
-  matches$Teams <- NULL
+  teams <- matches$teams
+  matches$teams <- NULL
 
   # Expand the matches data frame so there are six rows per match.
   xMatches <- matches[sort(rep(1:nrow(matches), 6)), ]
@@ -1098,10 +1100,12 @@ GetScores <- function(session, event, level = "qual", team = NULL,
 
   # Delete 'MatcheScores.' from the beginning of column names.
   names(scores) <- .TrimColNames(names(scores))
+  # Convert first character of column names to lower case
+  substr(names(scores), 1, 1) <- tolower(substr(names(scores), 1, 1))
 
   # Extract nested alliances column from data frame.
-  alliances <- scores$Alliances
-  scores$Alliances <- NULL
+  alliances <- scores$alliances
+  scores$alliances <- NULL
 
   # Expand data frame to include six rows for each match.
   scores <- scores[sort(rep(1:nrow(scores), 2)), ]

@@ -55,4 +55,3 @@ SaveData(archimedes)
 \seealso{
 \link{GetEvents}
 }
-

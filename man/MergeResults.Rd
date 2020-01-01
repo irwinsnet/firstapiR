@@ -40,10 +40,10 @@ it easy to link detailed match performance data to specific FRC teams.
       equal}
   }
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 hybrid_WAELL_qual <- GetHybridSchedule(sn, event = "WAELL")
 scores_WAELL_qual <- GetScores(sn, event = "WAELL")
 results_WAELL_qual <- MergeResults(hybrid_WAELL_qual, scores_WAELL_qual)
 }
-

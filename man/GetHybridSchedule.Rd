@@ -4,8 +4,15 @@
 \alias{GetHybridSchedule}
 \title{Get the match schedule and results}
 \usage{
-GetHybridSchedule(session, event, level = "qual", start = NULL,
-  end = NULL, mod_since = NULL, only_mod_since = NULL)
+GetHybridSchedule(
+  session,
+  event,
+  level = "qual",
+  start = NULL,
+  end = NULL,
+  mod_since = NULL,
+  only_mod_since = NULL
+)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -71,6 +78,7 @@ hybrid?start=start&end=end}
      \item \emph{disqualified}: logical
      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 Philometh_qual_sched <- GetHybridSchedule(sn, event = "ORPHI")
@@ -81,4 +89,3 @@ CWU_playoffs <- GetHybridSchedule(sn, event = "WAELL", level = "playoff",
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

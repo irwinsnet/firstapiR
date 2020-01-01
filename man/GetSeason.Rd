@@ -48,6 +48,7 @@ The FIRST API URL format is:
     \item \emph{FRCChampionships.startDate}: character
     \item \emph{FRCChampionships.location}: character}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2015, staging = TRUE)
 summary <- GetSeason(sn)
@@ -59,4 +60,3 @@ Refer to \code{\link{Standard_attributes}} for data
 Refer to \code{\link{GetSession}} for information on specifying the
   FRC season.
 }
-

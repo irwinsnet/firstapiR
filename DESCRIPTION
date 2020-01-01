@@ -16,9 +16,10 @@ Imports:
     XML (>= 3.98-1.5),
     stats (>= 3.3.1),
     tcltk (>= 3.3.1)
-RoxygenNote: 5.0.1
+RoxygenNote: 7.0.1
 Suggests: testthat,
     knitr,
     rmarkdown
 LazyData: true
 VignetteBuilder: knitr
+Encoding: UTF-8

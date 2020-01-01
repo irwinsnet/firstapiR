@@ -4,8 +4,16 @@
 \alias{GetTeams}
 \title{Get details on FRC teams}
 \usage{
-GetTeams(session, team = NULL, event = NULL, district = NULL,
-  state = NULL, page = NULL, mod_since = NULL, only_mod_since = NULL)
+GetTeams(
+  session,
+  team = NULL,
+  event = NULL,
+  district = NULL,
+  state = NULL,
+  page = NULL,
+  mod_since = NULL,
+  only_mod_since = NULL
+)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -84,6 +92,7 @@ The FIRST API URL format is:
     \item \emph{pageCurrent}: integer
     \item \emph{pageTotal}: integer}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 GetTeams(sn, state = "California")
@@ -94,4 +103,3 @@ GetTeams(sn, event = "CMP-CARVER")
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

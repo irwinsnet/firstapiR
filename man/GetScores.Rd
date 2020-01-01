@@ -4,8 +4,17 @@
 \alias{GetScores}
 \title{Get detailed match scores}
 \usage{
-GetScores(session, event, level = "qual", team = NULL, match = NULL,
-  start = NULL, end = NULL, mod_since = NULL, only_mod_since = NULL)
+GetScores(
+  session,
+  event,
+  level = "qual",
+  team = NULL,
+  match = NULL,
+  start = NULL,
+  end = NULL,
+  mod_since = NULL,
+  only_mod_since = NULL
+)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -94,6 +103,7 @@ teamNumber=team&matchNumber=match&start=start&end=end}
      \item \emph{breachPoints, capturePoints}: integer
      \item \emph{adustPoints, foulPoints, totalPoints}: integer}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 archimedes_qual_scores <- GetScores(sn, event = "ARCHIMEDES")
@@ -107,4 +117,3 @@ Refer to \code{\link{Standard_attributes}} for data attributes
 Refer to \code{\link{MergeResults}} for guidance on how to merge the
   \emph{Scores} and \emph{HybridSchedule} data frames.
 }
-

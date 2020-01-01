@@ -48,6 +48,7 @@ The FIRST API URL format is:
      \item \emph{backup, backupReplaced}: integer
      \item \emph{count}: integer}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 GetAlliances(sn, "WAAMV")
@@ -56,4 +57,3 @@ GetAlliances(sn, "WAAMV")
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

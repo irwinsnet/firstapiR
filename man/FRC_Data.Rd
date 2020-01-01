@@ -7,11 +7,11 @@
 \alias{carson2016}
 \alias{carver2016}
 \alias{curie2016}
-\alias{einstein2016}
 \alias{galileo2016}
 \alias{hopper2016}
 \alias{newton2016}
 \alias{tesla2016}
+\alias{einstein2016}
 \title{2016 FRC Championship Data}
 \format{An object of class \code{list} of length 16.}
 \usage{
@@ -51,4 +51,3 @@ package's data directory.
 \link{GetAll}
 }
 \keyword{datasets}
-

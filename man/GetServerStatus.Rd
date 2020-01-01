@@ -46,8 +46,8 @@ The FIRST API URL format is:
  \item \emph{last_modified}: Character vector containing the date and time
    that the data was last modified by the FIRST API server.}
 }
+
 \examples{
 sn <- GetSession("username", "key")
 status <- GetServerStatus(sn)
 }
-

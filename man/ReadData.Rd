@@ -33,4 +33,3 @@ my.data <- ReadData()
 \seealso{
 \code{\link{readRDS}}, \code{\link{getwd}}, \code{\link{setwd}}
 }
-

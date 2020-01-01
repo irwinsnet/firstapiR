@@ -29,4 +29,3 @@ following attributes:
 
 Use the \code{attr()} function to retrieve the value of these attributes.
 }
-

@@ -86,7 +86,7 @@
 #' @param session A Session object created with \code{GetSession()}.
 #' @param url A character vector containing a partial FIRST API url. The url
 #'   argument includes everything to the right of the season. For example,
-#'   \code{'events?teamNumber=team&districtCode=district}.
+#'   \code{events?teamNumber=team&districtCode=district}.
 #'
 #' @return Returns either JSON text, an XML::XMLNode object, or an R data frame,
 #'   depending on the value of session$format.
@@ -140,7 +140,7 @@
     content <- httr::content(r, "text")
     last_modified <- httr::headers(r)[["Last-Modified"]]
 
-    no_results <- (httr::status_code(r) == 304)
+    no_results <- (httr::status_code(r) == 304 || content == "")
   }
 
   # Set results to NA if no records are returned
@@ -201,7 +201,9 @@
 #' @examples
 #' names(rankings) <- .TrimColNames(names(rankings))
 .TrimColNames <- function(col_names) {
-  sub("\\w+\\.", "", col_names, perl = TRUE)
+  col_names <- sub("\\w+\\.", "", col_names, perl = TRUE)
+  substr(col_names, 1, 1) <- tolower(substr(col_names, 1, 1))
+  return(col_names)
 }
 
 

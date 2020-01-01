@@ -4,8 +4,13 @@
 \alias{GetSession}
 \title{Create a firstapiR session}
 \usage{
-GetSession(username, key, season = .default_season, format = "data.frame",
-  staging = FALSE)
+GetSession(
+  username,
+  key,
+  season = .default_season,
+  format = "data.frame",
+  staging = FALSE
+)
 }
 \arguments{
 \item{username}{A character vector containing the username assigned by FIRST.}
@@ -54,4 +59,3 @@ sn <- GetSession("myUserName", "myAuthorizationKey")
 sn <- GetSession("myUserName", "myAuthorizationKey", season = 2015)
 sn$format <- "xml"
 }
-

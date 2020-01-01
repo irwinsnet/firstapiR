@@ -4,8 +4,15 @@
 \alias{GetEvents}
 \title{Get information about FRC events}
 \usage{
-GetEvents(session, event = NULL, team = NULL, district = NULL,
-  exclude_district = NULL, mod_since = NULL, only_mod_since = NULL)
+GetEvents(
+  session,
+  event = NULL,
+  team = NULL,
+  district = NULL,
+  exclude_district = NULL,
+  mod_since = NULL,
+  only_mod_since = NULL
+)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -60,7 +67,7 @@ arguments are specified.
 
 The FIRST API URL format is:
 
-\code{https://frc-api.firstinspires.org/v2.0/season/events?
+  \code{https://frc-api.firstinspires.org/v2.0/season/events?
   teamNumber=team&districtCode=district&excludeDistrict=district}
 }
 \section{Columns}{
@@ -83,6 +90,7 @@ The FIRST API URL format is:
     \item \emph{dateEnd}: character
     \item \emph{eventCount}: integer}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 team5803_events <- GetEvents(sn, team = 5803)
@@ -93,4 +101,3 @@ team360_nondist_events <- GetEvents(sn, team = 360, exclude_district = TRUE)
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-

@@ -13,7 +13,7 @@ test_that("GetSession returns correct list", {
   expect_is(sess, "Session")
   expect_equal(sess$username, test_username)
   expect_equal(sess$key, test_key)
-  expect_equal(sess$season, 2016)
+  expect_equal(sess$season, as.integer(format(Sys.Date(), "%Y")))
   expect_false(sess$staging)
   expect_equal(sess$format, "data.frame")
 })

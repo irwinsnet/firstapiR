@@ -38,4 +38,3 @@ SaveData(sched)
 \seealso{
 \code{\link{saveRDS}}, \code{\link{getwd}}, \code{\link{setwd}}
 }
-

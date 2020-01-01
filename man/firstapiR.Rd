@@ -29,4 +29,3 @@ detailed description of all response data fields.
 These functions use version 2.0 of the FIRST API. They have not been tested
 with version 1.0.
 }
-

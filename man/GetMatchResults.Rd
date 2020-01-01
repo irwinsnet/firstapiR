@@ -4,8 +4,17 @@
 \alias{GetMatchResults}
 \title{Get match scores and participating teams}
 \usage{
-GetMatchResults(session, event, level = "qual", team = NULL, match = NULL,
-  start = NULL, end = NULL, mod_since = NULL, only_mod_since = NULL)
+GetMatchResults(
+  session,
+  event,
+  level = "qual",
+  team = NULL,
+  match = NULL,
+  start = NULL,
+  end = NULL,
+  mod_since = NULL,
+  only_mod_since = NULL
+)
 }
 \arguments{
 \item{session}{A Session object created with \code{GetSession()}.}
@@ -75,6 +84,7 @@ The FIRST API URL format is:
      \item \emph{disqualified}: logical
      \item \emph{scoreFinal, scoreAuto, scoreFoul}: integer}
 }
+
 \examples{
 sn <- GetSession("username", "key", season = 2016)
 GetMatchResults(sn, "PNCMP", level="qual")
@@ -86,4 +96,3 @@ GetMatchResults(sn, "CMP-ARCHIMEDES", level="qual", start=10, end=20)
 Refer to \code{\link{Standard_attributes}} for data
 attributes returned by this function.
 }
-
