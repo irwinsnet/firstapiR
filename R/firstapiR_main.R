@@ -1,4 +1,4 @@
-#  firstapiR_http.R version 2.0.0===============================================
+#  firstapiR_http.R version 2.0.1===============================================
 #  Contains functions that retrieve data from the FIRST API server and format
 #  the data as either XML, JSON, or as R data frames.
 
@@ -7,7 +7,7 @@
 .staging_url <- "https://frc-staging-api.firstinspires.org"
 .production_url <- "https://frc-api.firstinspires.org"
 .first_http_api_version <- "v2.0"
-.package_version <- "2.0.0"
+.package_version <- "2.0.1"
 .user_agent_name <- paste("firstapiR: Version", .package_version)
 .default_season <- as.integer(format(Sys.Date(), "%Y"))
 

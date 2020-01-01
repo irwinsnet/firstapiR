@@ -16,9 +16,9 @@ vignette provides an overview of the remaining firstapiR functions. For detailed
 information on each function, type `help(function_name)` at the console or in
 the RStudio help view search box.
 
-### Version 2.0.0
+### Version 2.0.1
 
-This guide is for version 2.0.0 of the firstapiR package. [Guidance for version
+This guide is for version 2.0.1 of the firstapiR package. [Guidance for version
 1.0.0 of firstapiR is located here
 ](http://irwinsnet.github.io/projects/firstapiR/Functions_v100).
 
@@ -316,7 +316,7 @@ all_data <- firstapiR::GetAll(sn, event = "WAAMV")
 
 ## Preloaded Data
 
-Version 2.0.0 of firstapiR includes all competition data for the 2016 FRC 
+Version 2.0.1 of firstapiR includes all competition data for the 2016 FRC 
 championships in St. Louis. Data for each subdivision and the finals are 
 available in R lists named `archimedes2016`, `carson2016`, `carver2016`,
 `curie2016`, `galileo2016`, `hopper2016`, `newton2016`, `tesla2016`, and

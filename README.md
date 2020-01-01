@@ -5,9 +5,9 @@ Competition (FRC) data from the FIRST API server via hypertext transfer protocol
 (HTTP) requests. The firstapiR package formats the resulting data as JSON text,
 XML text, or as R data frames.
 
-### Version 2.0.0
+### Version 2.0.1
 
-[Full documentation for version 2.0.0 of the firstapiR package is available here](https://irwinsnet.github.io/firstapiR/Getting_Started).
+[Full documentation for version 2.0.1 of the firstapiR package is available here](https://irwinsnet.github.io/firstapiR/Getting_Started).
 
 [Guidance for version
 1.0.0 of firstapiR is located here
@@ -86,7 +86,7 @@ package name box and hit _Install_.
 
 1. The devtools package provides a function for installing R packages from
 GitHub. Type the following command at the RStudio console prompt:
-```{r install_v2.0.0, eval = FALSE}
+```{r install_v2.0.1, eval = FALSE}
 devtools::install_github("irwinsnet/firstapiR")
 ```
 
@@ -96,7 +96,7 @@ devtools::install_github("irwinsnet/firstapiR", ref = "v1.0.0")
 ```
 
 
-## Differences between Versions 1.0.0 and 2.0.0
+## Differences between Versions 1.0.0 and 2.0.1
 
 1. Version 1.0.0 of firstapiR is still available from github per the firstapiR
 installation instructions above.

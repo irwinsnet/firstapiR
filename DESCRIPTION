@@ -1,7 +1,7 @@
 Package: firstapiR
 Type: Package
 Title: Tools to Download and Convert FIRST API Data to R Data Frames
-Version: 2.0.0
+Version: 2.0.1
 Author: Stacy Irwin
 Maintainer: Stacy Irwin <firstapiR1@outlook.com>
 Description: Downloads FIRST Robotics Competition (FRC) performance data from

@@ -1,5 +1,5 @@
 # test_10_session.R
-# Version 2.0.0
+# Version 2.0.1
 
 
 context("firstapiR Sessions and Variables")
@@ -31,5 +31,5 @@ test_that("Version and URL variables are correct", {
   expect_equal(firstapiR:::.staging_url,
                "https://frc-staging-api.firstinspires.org")
   expect_equal(firstapiR:::.production_url, "https://frc-api.firstinspires.org")
-  expect_equal(firstapiR:::.package_version, "2.0.0")
+  expect_equal(firstapiR:::.package_version, "2.0.1")
 })

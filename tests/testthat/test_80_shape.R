@@ -1,5 +1,5 @@
 # test_80_shape.R
-# Version 2.0.0
+# Version 2.0.1
 
 
 context("firstapiR Functions for Reshaping Data")

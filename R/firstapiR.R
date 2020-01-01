@@ -1,5 +1,5 @@
-#  firstapiR.R version 2.0.0 ===================================================
-#' firstapiR 2.0.0: R Functions for Connecting to the FIRST API Server
+#  firstapiR.R version 2.0.1 ===================================================
+#' firstapiR 2.0.1: R Functions for Connecting to the FIRST API Server
 #'
 #' The firstapiR package provides functions that connect to the FIRST API server
 #' and download data on FIRST Robotics Competition (FRC) teams, events, match

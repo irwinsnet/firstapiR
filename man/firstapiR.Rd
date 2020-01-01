@@ -2,7 +2,7 @@
 % Please edit documentation in R/firstapiR.R
 \name{firstapiR}
 \alias{firstapiR}
-\title{firstapiR 2.0.0: R Functions for Connecting to the FIRST API Server}
+\title{firstapiR 2.0.1: R Functions for Connecting to the FIRST API Server}
 \description{
 The firstapiR package provides functions that connect to the FIRST API server
 and download data on FIRST Robotics Competition (FRC) teams, events, match

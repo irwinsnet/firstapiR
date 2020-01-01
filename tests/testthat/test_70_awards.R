@@ -1,5 +1,5 @@
 # test_70_awards.R
-# Version 2.0.0
+# Version 2.0.1
 #
 # By default, these tests run locally, without making HTTP connections to the
 # FIRST API server. To run test that firstapiR connects to the FIRST API
