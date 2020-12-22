@@ -23,7 +23,7 @@ about FIRST by [visiting their website.](http://www.firstinspires.org/)
 
 FRC is one of four FIRST programs. In FRC, high-school students, in cooperation
 with adult mentors, design and build robots and operate them in competitions.
-The competitions have detailed rules ([check out the 2016 game manual 
+The competitions have detailed rules ([check out the most recent game manual 
 ](http://www.firstinspires.org/resource-library/frc/competition-manual-qa-system))
 and an extensive amount of data is generated at each competition. All 
 scheduling, team, scoring, and ranking data is stored in FIRST servers and is 
@@ -63,7 +63,7 @@ started, but there are some resources you should check out:
 1. Download R from [the main R
 website](https://cran.r-project.org/mirrors.html).
 1. Download and use the free version of [RStudio]( 
-https://www.rstudio.com/home/).
+https://rstudio.com/products/rstudio/download/).
 1. To learn R, I recommend starting with the
 [Quick R Website ](http://www.statmethods.net/)
 1. Next, check out the R
@@ -101,9 +101,9 @@ devtools::install_github("irwinsnet/firstapiR", ref = "v1.0.0")
 1. Version 1.0.0 of firstapiR is still available from github per the firstapiR
 installation instructions above.
 
-1. The main difference from version 1.0.0 is that there are three shapes (i.e, 
-types) of *Schedule*, *HybridSchedule*, and *MatchResult* data frames. The three
-shapes are *team*, *alliance*, and *match*. Team data frames have one row per
+1. The main difference from version 1.0.0 is that there are three widths of
+*Schedule*, *HybridSchedule*, and *MatchResult* data frames. The three
+widths are *team*, *alliance*, and *match*. Team data frames have one row per
 team, requiring six rows to contain all of the data for a single match. The 
 *station* column specifies the station to which the team was assigned. Alliance 
 data frames have three teams per row, with one row for the blue alliance and 
